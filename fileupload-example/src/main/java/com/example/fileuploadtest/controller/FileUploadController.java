@@ -5,7 +5,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -32,6 +34,15 @@ public class FileUploadController {
             }
         }
 
+        return "";
+    }
+
+    @PostMapping("/v2/file")
+    public String saveFileV2(@RequestParam String name,
+                             @RequestParam MultipartFile file) throws IOException {
+        if (file != null && !file.isEmpty()) {
+            fileService.saveFileV2(file);
+        }
         return "";
     }
 }
