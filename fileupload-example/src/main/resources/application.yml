@@ -7,3 +7,8 @@ spring:
 logging:
   level:
     org.apache.coyote.http11: debug
+
+
+file:
+  dir:
+    "D:/filesystem/"
