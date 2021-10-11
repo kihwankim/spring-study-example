@@ -25,6 +25,10 @@ public class FileStoreService {
     @Value("${file.dir}")
     private String fileDir;
 
+    public String getFullPath(String filename) {
+        return fileDir + filename;
+    }
+
     public List<UploadFile> saveFilesByParts(Collection<Part> parts) throws IOException {
         List<UploadFile> uploadFiles = new ArrayList<>();
         for (Part part : parts) {
@@ -81,6 +85,6 @@ public class FileStoreService {
             throw new IllegalComponentStateException();
         }
         int positionOfLastExt = originalFileName.lastIndexOf(POINT);
-        return originalFileName.substring(positionOfLastExt);
+        return originalFileName.substring(positionOfLastExt + 1);
     }
 }

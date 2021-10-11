@@ -2,17 +2,20 @@ package com.example.fileuploadtest.controller;
 
 import com.example.fileuploadtest.domain.UploadFile;
 import com.example.fileuploadtest.domain.dto.FileStoreRequest;
+import com.example.fileuploadtest.file.FileStoreService;
 import com.example.fileuploadtest.service.UploadFileService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.Part;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.Collection;
 import java.util.List;
 
@@ -22,6 +25,7 @@ import java.util.List;
 public class FileUploadController {
 
     private final UploadFileService uploadFileService;
+    private final FileStoreService fileStoreService;
 
     @PostMapping("/v1/file")
     public String saveFile(HttpServletRequest request) throws ServletException, IOException {
@@ -39,5 +43,11 @@ public class FileUploadController {
         List<MultipartFile> files = fileStoreRequest.getFiles();
 
         return uploadFileService.saveFilesByMultipartFile(files);
+    }
+
+    @ResponseBody
+    @GetMapping("/v2/file/{filename}")
+    public Resource downloadImg(@PathVariable("filename") String filename) throws MalformedURLException {
+        return new UrlResource("file:" + fileStoreService.getFullPath(filename));
     }
 }
