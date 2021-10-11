@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -49,5 +51,15 @@ public class FileUploadController {
     @GetMapping("/v2/file/{filename}")
     public Resource downloadImg(@PathVariable("filename") String filename) throws MalformedURLException {
         return new UrlResource("file:" + fileStoreService.getFullPath(filename));
+    }
+
+    @GetMapping("/v2/file/attach/{filename}")
+    public ResponseEntity<Resource> downloadFile(@PathVariable String filename) throws MalformedURLException {
+        UrlResource urlResource = new UrlResource("file:" + fileStoreService.getFullPath(filename));
+        String contentDisposition = "attachment; filename=\"" + filename + "\"";
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, contentDisposition)
+                .body(urlResource);
     }
 }
