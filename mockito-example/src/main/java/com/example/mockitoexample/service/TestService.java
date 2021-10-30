@@ -6,6 +6,8 @@ import com.example.mockitoexample.repository.TestRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class TestService {
@@ -15,6 +17,10 @@ public class TestService {
     public Long save(Entity entity) {
         entity.setId(entityIdCreator.generateNewId());
         return testRepository.save(entity).getId();
+    }
+
+    public List<Entity> findEntiy() {
+        return testRepository.findAll();
     }
 
     public Entity findById(Long id) {
