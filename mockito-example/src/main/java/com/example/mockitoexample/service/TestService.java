@@ -12,7 +12,7 @@ public class TestService {
     private final TestRepository testRepository;
     private final EntityIdCreator entityIdCreator;
 
-    private Long save(Entity entity) {
+    public Long save(Entity entity) {
         entity.setId(entityIdCreator.generateNewId());
         return testRepository.save(entity).getId();
     }
