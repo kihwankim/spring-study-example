@@ -16,4 +16,8 @@ public class TestService {
         entity.setId(entityIdCreator.generateNewId());
         return testRepository.save(entity).getId();
     }
+
+    public Entity findById(Long id) {
+        return testRepository.findById(id);
+    }
 }

@@ -14,4 +14,8 @@ public class TestRepository {
         db.put(saveCandidate.getId(), saveCandidate);
         return saveCandidate;
     }
+
+    public Entity findById(Long id) {
+        return db.get(id);
+    }
 }
