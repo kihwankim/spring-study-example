@@ -29,10 +29,12 @@
         <logger name="com.example.logginglab" level="DEBUG">
             <appender-ref ref="CONSOLE"/>
         </logger>
+        <logger name="com.example.logginglab.other" level="INFO">
+            <appender-ref ref="FILE-OTHER-ERROR"/>
+        </logger>
         <root level="INFO">
             <appender-ref ref="FILE-WARN"/>
             <appender-ref ref="FILE-ERROR"/>
-            <appender-ref ref="FILE-OTHER-ERROR"/>
         </root>
     </springProfile>
 
@@ -44,7 +46,9 @@
         <root level="INFO">
             <appender-ref ref="FILE-WARN"/>
             <appender-ref ref="FILE-ERROR"/>
-            <appender-ref ref="FILE-OTHER-ERROR"/>
+            <logger name="com.example.logginglab.other" level="DEBUG">
+                <appender-ref ref="FILE-OTHER-ERROR"/>
+            </logger>
         </root>
     </springProfile>
 </configuration>
