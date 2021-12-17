@@ -1,0 +1,14 @@
+spring:
+  profiles:
+    active: local
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:test_db
+    username: sa
+    password:
+  h2:
+    console:
+      enabled: true
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
