@@ -1,0 +1,22 @@
+ifndef::snippets[]
+:snippets: ../../../build/generated-snippets
+endif::[]
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 4
+
+== Hello Controller
+
+=== get 방식
+
+====
+REQUEST
+include::{snippets}/hello-get/http-request.adoc[]
+====
+
+====
+Response
+include::{snippets}/hello-get/http-response.adoc[]
+====
