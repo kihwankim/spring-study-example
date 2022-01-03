@@ -9,9 +9,11 @@ import org.springframework.batch.core.configuration.annotation.StepBuilderFactor
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 
 @Slf4j
 @Configuration
+@Profile("simplejob")
 @RequiredArgsConstructor
 public class SimpleJobConfiguration {
     private final JobBuilderFactory jobBuilderFactory;
