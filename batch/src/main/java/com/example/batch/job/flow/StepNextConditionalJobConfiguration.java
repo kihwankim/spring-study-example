@@ -1,4 +1,4 @@
-package com.example.batch.job;
+package com.example.batch.job.flow;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,7 +40,7 @@ public class StepNextConditionalJobConfiguration {
      * on() : catch 할 ExitStatus 지정
      * to() : 다음으로 이동할 Step 지정
      * from(): 이벤트 리스너로 사용, 상태값을 보고 일치하는 상태라면 to()에 포함된 step 호출
-     *          step1의 이벤트 캐치가 FAILED로 되있는 상태에서 추가로 이벤트 캐치 하려면 from을 써야마 함
+     * step1의 이벤트 캐치가 FAILED로 되있는 상태에서 추가로 이벤트 캐치 하려면 from을 써야마 함
      */
 
     @Bean
@@ -78,4 +78,11 @@ public class StepNextConditionalJobConfiguration {
                 })
                 .build();
     }
+
+    /**
+     * Batch Status와 Exit Status 차이점
+     * BatchStatus: Job/Step의 실행 결과를 Spring에서 기록할 때 사용하는 Enum정보
+     * COMPLETED, STARTING, STARTED, STOPPING, STOPPED, FAILED, ABANDONED, UNKNOWN 등이 있음
+     * ExitStatus : Step의 실행 후 상태를 의미, Enum type은 아니고 static final class 형태로 선언 되어 있음 -> BatchStatus와 동일한 String 값을 가짐
+     */
 }
