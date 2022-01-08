@@ -119,8 +119,9 @@ where not exists(select * from BATCH_JOB_SEQ);
 
 create table pay
 (
-    id           bigint auto_increment primary key,
+    id           bigint not null auto_increment,
     amount       bigint,
     tx_name      varchar(255),
-    tx_date_time datetime
-);
+    tx_date_time datetime,
+    primary key (id)
+) engine = InnoDB;
