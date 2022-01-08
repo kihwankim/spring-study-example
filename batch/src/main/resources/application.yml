@@ -1,12 +1,8 @@
 spring:
   profiles:
     active: mysql
-  batch:
-    job:
-      names: ${job.name:NONE}
-logging:
-  level:
-    org.springframework.batch: DEBUG
+
+logging.level.org.springframework.batch: DEBUG
 
 ---
 spring:
