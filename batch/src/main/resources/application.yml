@@ -6,7 +6,7 @@ spring:
       names: ${job.name:NONE}
 logging:
   level:
-    org.spring.framework.batch: DEBUG
+    org.springframework.batch: DEBUG
 
 ---
 spring:
