@@ -14,4 +14,18 @@ public class SkipCheckingListener extends StepExecutionListenerSupport {
 
         return null;
     }
+
+    /**
+     * .start(step1())
+     *     .on("FAILED") step 1이 failed 이면 바로 종료 -> job 실패
+     *     .end()
+     * .from(step1())
+     *     .on("COMPLETED WITH SKIPS")
+     *     .to(errorPrint1())
+     *     .end()
+     * .from(step1()) // step1 성공시 step 2실행
+     *     .on("*")
+     *     .to(step2())
+     *     .end()
+     */
 }
