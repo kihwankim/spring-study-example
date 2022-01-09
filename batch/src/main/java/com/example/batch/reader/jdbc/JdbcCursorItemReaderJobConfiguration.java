@@ -1,6 +1,6 @@
 package com.example.batch.reader.jdbc;
 
-import com.example.batch.entity.Pay;
+import com.example.batch.entity.pay.Pay;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
