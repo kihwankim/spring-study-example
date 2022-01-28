@@ -99,5 +99,73 @@ OK
 (integer) 1997
 ```
 
-### Set
+- 기본 문법
 
+```
+# 저장
+> HSET hkey name kkh # 1개저장
+> HMSET hkey age 25 workplace nhn # 여러개 저장(multiple)
+
+# 읽기
+> HGET hkey name # name 읽기
+> HMGET hkey name age workplace # 여러 filed 읽기
+> HGETALL hkey # hkey 내부 값 전체 읽기 filed - value 순으로 출력
+
+# 제거
+> HDEL hkey workplace name # filed 삭제
+> DEL hkey # key 자체를 삭제
+```
+
+### Set
+- 정렬되지 않은 문자열의 모음 입니다
+- 중복 불가
+- 교집합, 합집합, 차집합 연산 가능
+- 객체 간의 간계를 표현할 때 좋음
+  - 현재 project중 음식(post)와 재료(tag)로 쌍을 이루는 정보가 있습니다
+  - 여기에 음식 내부에 tag정보를 mapping 시켜주는 것을 작성하게되면 아래와 같이 사용할 수 있습니다
+  - ID가 10인 food 내부에 tag정보가 americano shot coffeee 3개 들어가 있습니다.
+  - 만약 아래 예시에서 5개의 food 가 동일하게 가지고 있는 tag를 확인하고 싶을 경우 `sinter`를 사용할 수 있습니다.
+  - 반대로 tag별로 분류해 놓은 tag:ID:foods로 설정할 경우 tag 1, 2, 5, 77이 가지고 있는 food를 손싶게 조회할 수 있습니다
+
+```
+> sadd food:10:tags americano shot coffeee
+
+> smembers food:10:tags
+1. americano
+2. shot
+3. coffeee
+```
+
+```
+> sadd tag:1:foods 1000 1
+(integer) 1
+> sadd tag:2:foods 1000 2
+(integer) 1
+> sadd tag:5:foods 1000 3
+(integer) 1
+> sadd tag:77:foods 1000 4
+(integer) 1
+> sinter tag:1:projects tag:2:projects tag:5:projects tag:77:projects
+1) 1000
+```
+
+
+### sorted set
+
+- set과 마찬가지로 중복이 없는 집합 이지만 각 value 내부에는 score라는 값이 존재합니다.
+- score(floating point value)에 맞춰서 sort 된 구조를 가집니다
+- 주로 랭킹을 매기는 application에서 사용을 많이 합니다
+- index 접근시 sorted set이 더 빠르게 접근이 됩니다(index 접근시 list보다 sorted set을 사용 권장)
+
+```
+# 추가
+> zadd birthyear (NX) 0 jason # NX를 붙이면 jason이 존재하면 추가하지 않음, XX인 경우 존재하면 update하라는 뜻입니다
+> zrange birthyear 0 -1 # 전체 값 조회
+```
+
+### Expire 기능
+
+- redis는 일정 시간이 지나면 Expire되어서 사라지는 기능 입니다
+- 메모리가 한정적이기 때문에 삭제 시간을 미리 정의하는게 편리합니다
+- 만약 동일한 키가 다시 들어오면 expire date가 다시 설정이 됩니다
+- 처음: 30s, 현재 20s 인 data -> upate 및 생성 -> 30s로 다시 초기화
