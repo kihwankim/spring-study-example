@@ -38,4 +38,11 @@ public class ZoneController {
 
         return ResponseEntity.ok().build();
     }
+
+    @PatchMapping("/zones/{id}")
+    public ResponseEntity<Void> updaetZone(@PathVariable("id") Long id, @RequestParam("name") String name) {
+        zoneService.updateZoneName(id, name);
+
+        return ResponseEntity.ok().build();
+    }
 }
