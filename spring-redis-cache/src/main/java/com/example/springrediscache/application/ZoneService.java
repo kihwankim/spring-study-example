@@ -26,4 +26,10 @@ public class ZoneService {
 
         return ZoneResponse.from(findZone);
     }
+
+    @Transactional
+    public void deleteZone(Long id) {
+        Zone findZone = zoneRepository.findById(id).orElseThrow();
+        zoneRepository.delete(findZone);
+    }
 }

@@ -31,4 +31,11 @@ public class ZoneController {
     public ResponseEntity<ZoneResponse> findZone(@PathVariable("id") Long id) {
         return ResponseEntity.ok(zoneService.readZone(id));
     }
+
+    @DeleteMapping("/zones/{id}")
+    public ResponseEntity<Void> deleteZoneById(@PathVariable("id") Long id) {
+        zoneService.deleteZone(id);
+
+        return ResponseEntity.ok().build();
+    }
 }
