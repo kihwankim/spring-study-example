@@ -17,8 +17,6 @@ import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 import java.time.Duration;
-import java.util.HashMap;
-import java.util.Map;
 
 @Configuration
 @EnableRedisRepositories // Redis Repository 활성화
@@ -50,22 +48,17 @@ public class RedisConfig {
                 .computePrefixWith(CacheKeyPrefix.simple()) // value와 key로 만들어지는 Key값을 ::로 구분
                 .serializeKeysWith( // 직렬화와 역직렬화를 pair로 사용
                         RedisSerializationContext.SerializationPair
-                                .fromSerializer(new StringRedisSerializer()))
-
-                .serializeValuesWith(RedisSerializationContext
-                        .SerializationPair
-                        .fromSerializer(new GenericJackson2JsonRedisSerializer()));
-
-
-        // 캐시키 별 default 유효시간 설정
-        Map<String, RedisCacheConfiguration> cacheConfiguration = new HashMap<>();
-        cacheConfiguration.put(CacheKey.ZONE, RedisCacheConfiguration.defaultCacheConfig()
-                .entryTtl(Duration.ofSeconds(CacheKey.ZONE_EXPIRE_SEC)));
+                                .fromSerializer(new StringRedisSerializer())
+                )
+                .serializeValuesWith(
+                        RedisSerializationContext
+                                .SerializationPair
+                                .fromSerializer(new GenericJackson2JsonRedisSerializer())
+                );
 
         return RedisCacheManager.RedisCacheManagerBuilder
                 .fromConnectionFactory(redisConnectionFactory)
                 .cacheDefaults(configuration)
-                .withInitialCacheConfigurations(cacheConfiguration)
                 .build();
     }
 }
