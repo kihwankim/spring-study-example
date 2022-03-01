@@ -67,7 +67,7 @@ public class JdbcPagingItemReaderJobConfiguration {
 
     private ItemWriter<Pay> jdbcPagingItemWriter() {
         return list -> {
-            for (Pay pay: list) {
+            for (Pay pay : list) {
                 log.info("Current Pay={}", pay);
             }
         };

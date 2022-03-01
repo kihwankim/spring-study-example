@@ -22,7 +22,8 @@ import javax.sql.DataSource;
 @RequiredArgsConstructor
 @Configuration
 @Profile("jdbcBatchItemWirter")
-public class JdbcBatchItemWriterJobConfiguration {
+public class
+JdbcBatchItemWriterJobConfiguration {
     private final JobBuilderFactory jobBuilderFactory;
     private final StepBuilderFactory stepBuilderFactory;
     private final DataSource dataSource; // DataSource DI

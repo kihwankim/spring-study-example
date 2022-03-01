@@ -55,7 +55,7 @@ public class JpaPagingItemReaderJobConfiguration {
 
     private ItemWriter<Pay> jpaPagingItemWriter() {
         return list -> {
-            for (Pay pay: list) {
+            for (Pay pay : list) {
                 log.info("Current Pay={}", pay);
             }
         };
