@@ -158,7 +158,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ComponentScan(execludeFilters = @ComponentScan.Filter(ModuleLayer.Controller.class))
+@ComponentScan(execludeFilters = @ComponentScan.Filter(Controller.class))
 public class AppConfig {
 }
 ```
@@ -170,7 +170,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ComponentScan(useDefaultFilters = false, includeFilters = @ComponentScan.Filter(ModuleLayer.Controller.class))
+@ComponentScan(useDefaultFilters = false, includeFilters = @ComponentScan.Filter(Controller.class))
 public class WebConfig {
 }
 ```
