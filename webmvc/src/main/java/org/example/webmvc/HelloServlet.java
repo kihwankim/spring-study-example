@@ -1,5 +1,8 @@
 package org.example.webmvc;
 
+import org.springframework.context.ApplicationContext;
+import org.springframework.web.context.WebApplicationContext;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -21,10 +24,14 @@ public class HelloServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        ApplicationContext applicationContext = (ApplicationContext)getServletContext().getAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE);
+        HelloService helloService = applicationContext.getBean("helloService", HelloService.class);
         System.out.println("do Get data");
         resp.getWriter().println("<html><body>");
         resp.getWriter().println("<h1>Hello Header</h1>");
-        resp.getWriter().println("input data " + getServletContext().getAttribute("name"));
+        resp.getWriter().println("input data: " + getServletContext().getAttribute("name"));
+        resp.getWriter().println("<br/>bean data: " + helloService.getName());
+
         resp.getWriter().println("</html></body>");
     }
 }

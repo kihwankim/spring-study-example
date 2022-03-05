@@ -8,6 +8,9 @@
     <!--        <param-value>/WEB-INF/applicationContext.xml</param-value>-->
     <!--    </context-param>-->
 
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
 
     <context-param>
         <param-name>contextClass</param-name>
@@ -17,10 +20,6 @@
         <param-name>contextConfigLocation</param-name>
         <param-value>org.example.webmvc.AppConfig</param-value>
     </context-param>
-
-    <listener>
-        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
-    </listener>
 
     <listener>
         <listener-class>org.example.webmvc.MyListener</listener-class>
