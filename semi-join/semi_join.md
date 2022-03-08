@@ -16,7 +16,6 @@ WHERE e.emp_no IN (SELECT de.emp_no FROM dept_emp de WHERE de.dept_no = 'd009')
 
 ### 정의
 - semi join을 하위 query를 inner join으로 변경해서 사용하는 최적화 방식입니다
-- subquery 최적화가 잘 안되어 있는 mysql 5.1~5.6에서 주로 사용 되었습니다
 
 ### Query
 
@@ -76,6 +75,7 @@ from `employees`.`dept_emp` `de
 ### IN-to-Exist 보다 FirstMatch가 더 좋은 장점
 - 동등 조건 전파(Equality popagation)가 subquery에서만 가능하던게 outer table에서도 가능
 - 최적화 방식을 옵티마이저가 선택해서 firtmatch를 사용할지 아님 다른 실행 게획을 실행할지 선택할 수 있습니다
+- cf) IN-to-Exist정의: 옵티마이저가 IN subquery를 exists로 바꾸어 실행하는 것을 의미
 
 ### CF) 동등 전파(Equality popagation)
 - 내부에서 동일한 변수에 대해서 치환할 수 있는 기능
