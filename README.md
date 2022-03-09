@@ -24,3 +24,12 @@
 ## Logging
 
 - <a href="https://github.com/kihwankim/spring-study-example/tree/master/logging-lab">링크</a>
+
+## solid
+
+- <a href="https://github.com/kihwankim/spring-study-example/blob/master/solid/solid.md">링크</a>
+
+
+## semi-join
+
+- <a href="https://github.com/kihwankim/spring-study-example/blob/master/semi-join/semi_join.md">링크</a>
