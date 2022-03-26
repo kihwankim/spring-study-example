@@ -24,6 +24,9 @@ dependencies {
     compileOnly 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     annotationProcessor 'org.projectlombok:lombok'
+    runtimeOnly 'com.h2database:h2'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
     //embedded-redis
     implementation 'it.ozimov:embedded-redis:0.7.2'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
