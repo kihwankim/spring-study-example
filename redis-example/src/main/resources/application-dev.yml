@@ -1,0 +1,12 @@
+spring:
+  cache:
+    type: redis
+  redis:
+    host: localhost
+    port: 26379
+    sentinel:
+      master: master-name
+      nodes:
+        - 127.0.0.1:26379
+        - 127.0.0.1:26380
+        - 127.0.0.1:26381
