@@ -1,7 +1,7 @@
 package com.example.redisexample.repository;
 
-import com.example.redisexample.domain.Point;
+import com.example.redisexample.dto.PointDto;
 import org.springframework.data.repository.CrudRepository;
 
-public interface PointRedisRepository extends CrudRepository<Point, String> {
+public interface PointRedisRepository extends CrudRepository<PointDto, Long> {
 }

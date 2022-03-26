@@ -1,6 +1,6 @@
 package com.example.redisexample;
 
-import com.example.redisexample.domain.Point;
+import com.example.redisexample.dto.PointDto;
 import com.example.redisexample.repository.PointRedisRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -24,20 +24,20 @@ class RedisExampleApplicationTests {
     @Test
     void addPointTest_Success() {
         //given
-        String id = "idData";
+        Long id = 1L;
         LocalDateTime refreshTime = LocalDateTime.of(2021, 11, 22, 0, 0);
-        Point point = Point.builder()
+        PointDto pointDto = PointDto.builder()
                 .id(id)
                 .amount(1000L)
                 .refreshTime(refreshTime)
                 .build();
 
         //when
-        pointRedisRepository.save(point);
+        pointRedisRepository.save(pointDto);
 
         //then
-        Point savedPoint = pointRedisRepository.findById(id).get();
-        assertEquals(1000L, savedPoint.getAmount());
-        assertEquals(refreshTime, savedPoint.getRefreshTime());
+        PointDto savedPointDto = pointRedisRepository.findById(id).get();
+        assertEquals(1000L, savedPointDto.getAmount());
+        assertEquals(refreshTime, savedPointDto.getRefreshTime());
     }
 }
