@@ -4,6 +4,7 @@ import com.example.redisexample.dto.PointDto;
 import com.example.redisexample.repository.PointRedisRepository;
 import com.example.redisexample.repository.PointRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronizationAdapter;
@@ -18,6 +19,7 @@ import java.util.Optional;
 public class PointRedisService {
     private final PointRedisRepository pointRedisRepository;
     private final PointRepository pointRepository;
+    private final RedisTemplate<String, String> redisTemplate;
 
     @Transactional
     public PointDto savePoint(Long id) {
@@ -34,9 +36,9 @@ public class PointRedisService {
         restorePointByDBRollback(savePoint);
 
         pointRepository.save(PointDto.toPoint(savePoint));
-//        throw new RuntimeException();
+        throw new RuntimeException();
 
-        return savePoint;
+//        return savePoint;
     }
 
     private void restorePointByDBRollback(PointDto point) {
