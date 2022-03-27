@@ -13,7 +13,7 @@ services:
     # command: redis-server --requirepass yourpassword
     environment:
       - REDIS_REPLICATION_MODE=master
-      - ALLOW_EMPTY_PASSWORD=yes
+      - REDIS_PASSWORD=root
     ports:
       - 6379:6379
     networks:
@@ -27,7 +27,8 @@ services:
     environment:
       - REDIS_REPLICATION_MODE=slave
       - REDIS_MASTER_HOST=redis-master
-      - ALLOW_EMPTY_PASSWORD=yes
+      - REDIS_PASSWORD=root
+      - REDIS_MASTER_PASSWORD=root
     ports:
       - 6480:6379
     depends_on:
@@ -44,7 +45,8 @@ services:
     environment:
       - REDIS_REPLICATION_MODE=slave
       - REDIS_MASTER_HOST=redis-master
-      - ALLOW_EMPTY_PASSWORD=yes
+      - REDIS_PASSWORD=root
+      - REDIS_MASTER_PASSWORD=root
     ports:
       - 6481:6379
     depends_on:
@@ -64,6 +66,7 @@ services:
       - REDIS_MASTER_PORT_NUMBER=6379
       - REDIS_MASTER_SET=master-name
       - REDIS_SENTINEL_QUORUM=2
+      - REDIS_MASTER_PASSWORD=root
     depends_on:
       - redis-master
       - redis-slave-1
@@ -84,6 +87,7 @@ services:
       - REDIS_MASTER_PORT_NUMBER=6379
       - REDIS_MASTER_SET=master-name
       - REDIS_SENTINEL_QUORUM=2
+      - REDIS_MASTER_PASSWORD=root
     depends_on:
       - redis-master
       - redis-slave-1
@@ -104,6 +108,7 @@ services:
       - REDIS_MASTER_PORT_NUMBER=6379
       - REDIS_MASTER_SET=master-name
       - REDIS_SENTINEL_QUORUM=2
+      - REDIS_MASTER_PASSWORD=root
     depends_on:
       - redis-master
       - redis-slave-1
@@ -112,3 +117,5 @@ services:
       - 26381:26379
     networks:
       - app-tier
+
+# cf) https://hub.docker.com/r/bitnami/redis-sentinel  https://hub.docker.com/r/bitnami/redis/
