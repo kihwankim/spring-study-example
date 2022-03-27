@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.connection.RedisPassword;
 import org.springframework.data.redis.connection.RedisSentinelConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -28,7 +29,7 @@ public class RedisSentinelConfig {
         redisProperties.getSentinel().getNodes().stream()
                 .map(s -> s.split(":"))
                 .forEach(s -> sentinelConfig.sentinel(s[0], Integer.parseInt(s[1])));
-//        sentinelConfig.setPassword(RedisPassword.of(redisProperties.getPassword()));
+        sentinelConfig.setPassword(RedisPassword.of(redisProperties.getPassword()));
 
         return new LettuceConnectionFactory(sentinelConfig);
     }

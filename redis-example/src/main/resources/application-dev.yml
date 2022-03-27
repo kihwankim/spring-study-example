@@ -3,8 +3,10 @@ spring:
     type: redis
   redis:
     host: localhost
-    port: 26379
+    port: 6379
+    password: root
     sentinel:
+      password: root
       master: master-name
       nodes:
         - 127.0.0.1:26379

@@ -2,3 +2,4 @@ spring:
   redis:
     host: localhost
     port: 6374
+    password: root
