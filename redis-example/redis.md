@@ -165,4 +165,97 @@
 - 삭제되는 키가 많으면 fragmentataion 증가
   - 특정 시점에 피크를 찍고 다시 삭제되는 경우
   - TTL로 인해 삭제가 과도하게 많이 발생하는 경우
-- CONFIG SET activedefrag yes 를 잠시 켜두어서 fragmentation을 해결하는게 좋음 -> 공식문서에서는 항상켜두지 말고 잠시 켜뒀다가 끄는게 좋다고 나와있음
+- CONFIG SET activate frag yes 를 잠시 켜두어서 fragmentation을 해결하는게 좋음 -> 공식문서에서는 항상켜두지 말고 잠시 켜뒀다가 끄는게 좋다고 나와있음
+
+# redis 데이터 분산
+
+## Application 레벨 분산
+
+### Consistent Hashing
+
+1. 정의 
+- key값을 해시를 해서 자기 값보다 크지만 가장 가까운 서버로 가는 방식을 의미합니다
+- modular를 사용할 경우 서버가 추가 및 다운될 경우 많은 reblancing이 발생함
+- redis 자체적으로 제공하지 않기 때문에 무조건 Application 단위에서 처리해야합니다
+
+2. 장점
+- 일반 mod한 값보다 rebalancing 양이 줄어들어서 좀 더 효율적
+- 서버가 죽거을 경우 해당 죽은 서버의 key값만 rebalancing하면 됨
+- 서버가 추가될 경우 그 redis hash값 보다 작은 redis에만 영향이 가게 됩니다
+- 1/n만큼의 reblancing이 이뤄짐
+
+
+## Cluster
+
+### 목적
+- 데이터 셋을 여러 노드로 자동 분할하는 기능을 제공합니다
+- 최대 1000대까지 노드로 확장할 수 있도록 하기 위해서 사용하는 것
+- 최소 3대의 master node가 필요합니다
+- 노드 추가, 삭제시 레드스 클러스터 전체를 중지할 필요 없이, key 이동시에만 해당 키에 대해서만 잠시 멈출 수 있습니다
+- 일부 마스터 노드에서 장애가 날경우 일정 부분은 정상 동작하게 사용할 수 있음, 하지만 대부분 master node가 죽으면 중지됨
+
+### 특징
+
+- mater node가 다운될 경우 replica 노드를 승격 시켜주는 기능을 제공
+- fullmash로 모두 연결되어 있기때문에 노드끼리 서로 fail을 감
+- 만약 자원이 좀 여유가 있을 경우 아무 마스터를 replica하는 노드를 추가 하면 좋습니다
+  - 만약 1개의 master노드가 죽으면 여유분 replica node가 죽은 node의 replica가 되어서 죽은 Matser가 다시 살아 날 때까지 안정성을 보장해줄 수 있음
+- 모든 cluster node는 2개의 TCP통신이 이뤄짐
+  - 6379, 16379번을 주로 사용
+  - 16379번 포트는 바이너리 프로토콜을 사용하며, 노드간 통신 채널인 클러스터 버스에 사용됩니다
+  - 노든간 장애 감지, 구성 update, failover 권한 부여등을 이 port에서 이뤄집니다
+- 강력한 일관성을 보장하지 않음(데이터 유실할 수 있음)
+  - 비동기 복제를 사용하기 때문(client -> Mater Redis 요청 -> client ACK -> replica진행)
+    - 진연시간이 증가되는걸 꺼려해서 이렇게 처리 
+  - redis network 통신이 끊긴 경우
+    - A,B,C,(A1,B1,C1: replica) redis 가 존재할 경우 client 가 B node에 데이터전달 과정에서 B Node와 A,C,(A1,B1,C1) node들과 통신 이끊긴 경우 Node B에 전달된 데이터 만큼 누락이 발생할 수 있음
+
+### Hash Slot 방식
+
+1. 정의
+- redis는 slot 단위로 나눠서 처리 하는 샤딩 방식입니다
+- redis 자체적으로 제공하는 기술입니다
+- 16384개의 slot이 cluster 내부의 master redis에 분배됩니다
+- 최대 16384개의 클러스터를 생성할 수 있지만 최대 1000개까지 권장을 합니다
+- HashSlot = CRC16(key) mod 16384 으로 계산 합니다
+
+2. 특징
+- 다운탐이 없이 자유롭게 slot이동 가능
+- 새로운 노드 추가/삭제시 hash slot만 이도하면 되기 때문에 쉽게 scale up down할 수있음
+- 기본적으로는 multiple key를 사용할 수 없습니다 하지만 동일한 slot에 대헛 multiple key를 사용할 수 있습니다
+ 
+### Redis cluster 제한 사항
+
+- 멀티 키 명령어를 수행할 수 없음
+  - ex) MSET key1 value1 key2 value2, SUNION key1 key2, SORT
+- hash tag를 사용하면 multi key  명령어 사용 가능
+  - {}로 감싸는 것을 의미
+  - {user001}.following과, {user001}.followers는 같은 슬롯에 저장
+
+## Redis Failover
+
+### Coordinator 기반
+- Zookeeper, etcd, consul 등 Coordinator 사용
+- health checker가 redis의 health cheking을 하고 있을때 계속 확인하게 됩니다
+- 그리고 master가 장애가나면 health checker coordinator에 알려주고, coordinator가 API server에 current redis ip주소를 전달하는 형태
+- 특정 언어들은 coordinator를 지원하지 않을 수 있음
+
+### VIP/DSN 방법
+- virtual ip 주소를 설정
+- 새로운 VIP를 설정해서 사용, health checker가 vip의 real ip로 변경해줍니다
+- 클라이언트에 추가적인 구현이 없어서 좋음
+- DNS의 real ip를 캐싱을 할 수 있음
+  - java인경우 30초로 되어있지만 나중에 무한데일 경우 큰 장애로 될 수 있음
+  - DNS 캐시 TTL 지정이 필요
+- AWS는 DNS을 사용
+- VIP가 더 안정적임
+
+### 모니터링
+- redis info를 통해서 정보 얻을 수 있는게 있음
+  - rss: 물리 메모리를 얼마나 사용하는지 확인 가능
+  - connection 수: redis connection이 치솟았다가 끊어진 경우가 발생할 수 있음
+  - 초당 처리 요청수
+- system
+  - CPU
+  - DISK
+  - Network 정보: 스위치 packet drop이 발생할 수 있기때문에 대역폭을 많이 사용 될경우 있음
