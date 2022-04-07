@@ -33,3 +33,8 @@
 ## semi-join
 
 - <a href="https://github.com/kihwankim/spring-study-example/blob/master/semi-join/semi_join.md">링크</a>
+
+
+## mysql replica sync 불일치
+
+- <a href="https://github.com/kihwankim/spring-study-example/blob/master/mysql-replica-sync/mysql-replica.md">링크</a>
