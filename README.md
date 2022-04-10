@@ -38,3 +38,7 @@
 ## mysql replica sync 불일치
 
 - <a href="https://github.com/kihwankim/spring-study-example/blob/master/mysql-replica-sync/mysql-replica.md">링크</a>
+
+## Spring Transactional 동작 과정
+
+- <a href="https://github.com/kihwankim/spring-study-example/blob/master/transactional/transactional.md">링크</a>
