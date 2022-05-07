@@ -1,1 +1,10 @@
-
+spring:
+  profiles:
+    active: local
+    default: local
+    include:
+      - rds-dev
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB

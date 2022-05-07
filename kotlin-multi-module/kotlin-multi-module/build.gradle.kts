@@ -14,7 +14,7 @@ buildscript {
 plugins {
     id("org.springframework.boot") version "2.6.7"
     id("io.spring.dependency-management") version "1.0.11.RELEASE"
-//    id("com.ncorti.ktfmt.gradle") version "0.8.0"
+    id("com.ncorti.ktfmt.gradle") version "0.8.0"
 
     kotlin("jvm") version "1.6.21"
     kotlin("plugin.spring") version "1.6.21"
@@ -28,19 +28,6 @@ java.sourceCompatibility = JavaVersion.VERSION_11
 group = "com.example"
 version = "0.0.1-SNAPSHOT"
 
-allprojects {
-    tasks.withType<KotlinCompile> {
-        kotlinOptions {
-            freeCompilerArgs = listOf("-Xjsr305=strict")
-            jvmTarget = "11"
-        }
-    }
-
-    tasks.withType<Test> {
-        useJUnitPlatform()
-    }
-}
-
 subprojects {
     repositories {
         mavenCentral()
@@ -52,7 +39,7 @@ subprojects {
         plugin("org.springframework.boot")
         plugin("io.spring.dependency-management")
         plugin("kotlin-allopen")
-//        plugin("com.ncorti.ktfmt.gradle")
+        plugin("com.ncorti.ktfmt.gradle")
     }
 
     dependencies {
@@ -61,5 +48,18 @@ subprojects {
 
         developmentOnly("org.springframework.boot:spring-boot-devtools")
         testImplementation("org.springframework.boot:spring-boot-starter-test")
+    }
+
+    ktfmt { googleStyle() }
+
+    tasks.withType<KotlinCompile> {
+        kotlinOptions {
+            freeCompilerArgs = listOf("-Xjsr305=strict")
+            jvmTarget = "11"
+        }
+    }
+
+    tasks.withType<Test> {
+        useJUnitPlatform()
     }
 }
