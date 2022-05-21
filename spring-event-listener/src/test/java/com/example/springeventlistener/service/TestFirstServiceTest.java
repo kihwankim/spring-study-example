@@ -14,4 +14,9 @@ class TestFirstServiceTest {
     void runTest() {
         service.run(123L);
     }
+
+    @Test
+    void runNewTest() throws Exception {
+        service.runNew(234L);
+    }
 }

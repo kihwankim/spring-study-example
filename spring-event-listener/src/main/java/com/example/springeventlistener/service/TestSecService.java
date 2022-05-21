@@ -1,6 +1,5 @@
 package com.example.springeventlistener.service;
 
-import com.example.springeventlistener.event.TestEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -10,5 +9,10 @@ public class TestSecService {
 
     public void run(long testId) {
         log.info("class={}, run, id={}", this.getClass(), testId);
+    }
+
+    public void runNew(long testId) {
+        log.info("class={}, run new, id={}", this.getClass(), testId);
+        log.info("class={}, run end, id={}", this.getClass(), testId);
     }
 }
