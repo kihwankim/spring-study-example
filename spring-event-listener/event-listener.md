@@ -1,6 +1,8 @@
 ## EventListener
 
 ### 정의
+- Event 객체를 spring 에서 제공해주는 publiser Bean의 1개의 Api를 호출할 경우 등록된 Event객체를 사용하는 listener의 비즈니스 로직을 모두 호출 하는 기능
+- 비동기 처리 및 결합도가 높은 독립된 비즈니스 로직을 때어낼때 사용합니다
 
 ### 구성
 
