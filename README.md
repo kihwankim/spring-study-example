@@ -42,3 +42,7 @@
 ## Spring Transactional 동작 과정
 
 - <a href="https://github.com/kihwankim/spring-study-example/blob/master/transactional/transactional.md">링크</a>
+
+## Spring EventListener
+
+- <a href="https://github.com/kihwankim/spring-study-example/blob/master/spring-event-listener/event-listener.md">링크</a>
