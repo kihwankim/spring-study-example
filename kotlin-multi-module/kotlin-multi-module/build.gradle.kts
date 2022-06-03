@@ -1,23 +1,14 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-
-    dependencies {
-        classpath("org.jetbrains.kotlin:kotlin-noarg:1.3.71")
-    }
-}
-
 plugins {
-    id("org.springframework.boot") version "2.6.7"
-    id("io.spring.dependency-management") version "1.0.11.RELEASE"
-    id("com.ncorti.ktfmt.gradle") version "0.8.0"
+    val kotlinVersion = "1.6.21"
 
-    kotlin("jvm") version "1.6.21"
-    kotlin("plugin.spring") version "1.6.21"
+    id("org.springframework.boot") version "2.7.0"
+    id("io.spring.dependency-management") version "1.0.11.RELEASE"
+
+    kotlin("jvm") version kotlinVersion
+    kotlin("plugin.spring") version kotlinVersion
+    kotlin("plugin.jpa") version kotlinVersion
 }
 
 repositories {
@@ -25,32 +16,36 @@ repositories {
 }
 
 java.sourceCompatibility = JavaVersion.VERSION_11
-group = "com.example"
-version = "0.0.1-SNAPSHOT"
+
+allprojects {
+    repositories {
+        mavenCentral()
+    }
+}
 
 subprojects {
+    group = "com.example"
+    version = "0.0.1-SNAPSHOT"
+
     repositories {
         mavenCentral()
     }
 
     apply {
-        plugin("kotlin")
-        plugin("kotlin-spring")
         plugin("org.springframework.boot")
         plugin("io.spring.dependency-management")
-        plugin("kotlin-allopen")
-        plugin("com.ncorti.ktfmt.gradle")
+        plugin("java")
+        plugin("kotlin")
+        plugin("kotlin-kapt")
+        plugin("kotlin-jpa")
+        plugin("kotlin-spring")
     }
 
     dependencies {
         implementation("org.jetbrains.kotlin:kotlin-reflect")
         implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-
-        developmentOnly("org.springframework.boot:spring-boot-devtools")
         testImplementation("org.springframework.boot:spring-boot-starter-test")
     }
-
-    ktfmt { googleStyle() }
 
     tasks.withType<KotlinCompile> {
         kotlinOptions {

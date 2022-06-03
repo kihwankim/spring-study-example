@@ -1,19 +1,9 @@
-plugins {
-    kotlin("plugin.jpa")
-}
-
-tasks.getByName<org.springframework.boot.gradle.tasks.bundling.BootJar>("bootJar") {
-    enabled = false
-}
-
-tasks.getByName<Jar>("jar") {
+tasks.jar {
     enabled = true
 }
 
-dependencies {
-    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-    implementation("com.linecorp.kotlin-jdsl:spring-data-kotlin-jdsl-starter:2.0.1.RELEASE")
-    runtimeOnly("com.h2database:h2")
+tasks.bootJar {
+    enabled = false
 }
 
 allOpen {
@@ -22,4 +12,9 @@ allOpen {
     annotation("javax.persistence.Embeddable")
 }
 
-tasks.register("prepareKotlinBuildScriptModel")
+dependencies {
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    implementation("org.hibernate:hibernate-spatial")
+    implementation("com.linecorp.kotlin-jdsl:spring-data-kotlin-jdsl-starter:2.0.1.RELEASE")
+    runtimeOnly("com.h2database:h2")
+}
