@@ -1,6 +1,7 @@
 package com.example.kotlinmultimodule.service
 
 import com.example.kotlinmultimodule.dto.MemberRequest
+import com.example.kotlinmultimodule.dto.MemberResopnse
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -17,10 +18,10 @@ internal class MemberServiceTest {
     @Test
     fun `Member 저장 기능 테스트`() {
         // given
-        val memberRequest: MemberRequest = MemberRequest(name = "kkh")
+        val memberRequest = MemberRequest(name = "kkh")
 
         // when
-        val saveMember = memberService.saveMember(memberRequest)
+        val saveMember: MemberResopnse = memberService.saveMember(memberRequest)
 
         // then
         assertThat(saveMember.member.name).isEqualTo("kkh")

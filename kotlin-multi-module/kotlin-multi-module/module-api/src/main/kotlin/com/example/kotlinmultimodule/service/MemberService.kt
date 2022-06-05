@@ -2,7 +2,7 @@ package com.example.kotlinmultimodule.service
 
 import com.example.kotlinmultimodule.dto.MemberDto
 import com.example.kotlinmultimodule.dto.MemberRequest
-import com.example.kotlinmultimodule.dto.response.MemberResponse
+import com.example.kotlinmultimodule.dto.MemberResopnse
 import com.example.kotlinmultimodule.infra.domain.Member
 import com.example.kotlinmultimodule.infra.repository.MemberQueryRepository
 import com.example.kotlinmultimodule.infra.repository.MemberRepository
@@ -16,7 +16,7 @@ class MemberService(
     private val memberQueryRepository: MemberQueryRepository
 ) {
     @Transactional
-    fun saveMember(memberRequest: MemberRequest): MemberResponse {
+    fun saveMember(memberRequest: MemberRequest): MemberResopnse {
         val saveMember = memberRepository.save(Member().apply {
             this.name = memberRequest.name
         })
@@ -30,6 +30,6 @@ class MemberService(
             throw IllegalArgumentException()
         }
 
-        return MemberResponse(memberDto)
+        return MemberResopnse(memberDto)
     }
 }
