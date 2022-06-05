@@ -1,5 +1,5 @@
 dependencies {
-    api(project(":module-rds"))
+    implementation(project(":module-rds"))
 
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-validation")
