@@ -3,6 +3,7 @@ package com.example.kotlinmultimodule.service
 import com.example.kotlinmultimodule.dto.MemberDto
 import com.example.kotlinmultimodule.dto.MemberRequest
 import com.example.kotlinmultimodule.dto.MemberResopnse
+import com.example.kotlinmultimodule.exception.member.MemberNotFoundException
 import com.example.kotlinmultimodule.infra.domain.Member
 import com.example.kotlinmultimodule.infra.repository.MemberQueryRepository
 import com.example.kotlinmultimodule.infra.repository.MemberRepository
@@ -31,5 +32,14 @@ class MemberService(
         }
 
         return MemberResopnse(memberDto)
+    }
+
+    fun findMember(memberId: Long): MemberResopnse {
+        val member = memberRepository.findById(memberId)
+            .orElseThrow({ MemberNotFoundException })
+
+        return MemberResopnse(member.id?.let { MemberDto(it, member.name) } ?: kotlin.run {
+            throw MemberNotFoundException
+        })
     }
 }
