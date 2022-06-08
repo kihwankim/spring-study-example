@@ -2,7 +2,7 @@ package com.example.kotlinmultimodule.service
 
 import com.example.kotlinmultimodule.dto.MemberRequest
 import com.example.kotlinmultimodule.dto.MemberResopnse
-import com.example.kotlinmultimodule.exception.member.MemberNotFoundException
+import com.example.kotlinmultimodule.exception.MemberNotFoundException
 import com.example.kotlinmultimodule.infra.domain.Member
 import com.example.kotlinmultimodule.infra.repository.MemberRepository
 import org.assertj.core.api.Assertions.assertThat

@@ -4,7 +4,7 @@ import com.example.kotlinmultimodule.dto.MemberDto
 import com.example.kotlinmultimodule.dto.MemberRequest
 import com.example.kotlinmultimodule.dto.MemberResopnse
 import com.example.kotlinmultimodule.dto.MembersResponse
-import com.example.kotlinmultimodule.exception.member.MemberNotFoundException
+import com.example.kotlinmultimodule.exception.MemberNotFoundException
 import com.example.kotlinmultimodule.infra.domain.Member
 import com.example.kotlinmultimodule.infra.repository.MemberQueryRepository
 import com.example.kotlinmultimodule.infra.repository.MemberRepository
