@@ -32,12 +32,35 @@ public class FluxAndMonoGeneratorService {
             digitString[i] = Character.toString(digits[i]);
         }
 
-        return Flux.fromArray(digitString).delayElements(Duration.ofMillis(3000));
+        return Flux.fromArray(digitString);
+    }
+
+    private Flux<String> splitStringWithDelay(String name) {
+        char[] digits = name.toCharArray();
+        String[] digitString = new String[digits.length];
+        for (int i = 0; i < digits.length; i++) {
+            digitString[i] = Character.toString(digits[i]);
+        }
+
+        return Flux.fromArray(digitString)
+                .delayElements(Duration.ofMillis(3000));
     }
 
     public Mono<String> nameMono() {
         return Mono.just("alex")
                 .log();
+    }
+
+    public Mono<List<String>> namesMonoFlatMap(int stringLen) {
+        return Mono.just("alex")
+                .map(String::toUpperCase)
+                .filter(s -> s.length() > stringLen)
+                .flatMap(this::splitStringMono);
+    }
+
+    private Mono<List<String>> splitStringMono(String name) {
+        String[] split = name.split("");
+        return Mono.just(List.of(split));
     }
 
     public static void main(String[] args) {

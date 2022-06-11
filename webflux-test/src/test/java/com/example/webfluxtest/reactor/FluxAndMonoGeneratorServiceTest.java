@@ -3,7 +3,10 @@ package com.example.webfluxtest.reactor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
+
+import java.util.List;
 
 class FluxAndMonoGeneratorServiceTest {
 
@@ -58,6 +61,16 @@ class FluxAndMonoGeneratorServiceTest {
     }
 
     @Test
-    void nameMonoTest() {
+    void nameMonoFlatMapTest() {
+        // given
+        int stringLen = 3;
+
+        // when
+        Mono<List<String>> monoList = fluxAndMonoGeneratorService.namesMonoFlatMap(stringLen);
+
+        // then
+        StepVerifier.create(monoList)
+                .expectNext(List.of("A", "L", "E", "X"))
+                .verifyComplete();
     }
 }
