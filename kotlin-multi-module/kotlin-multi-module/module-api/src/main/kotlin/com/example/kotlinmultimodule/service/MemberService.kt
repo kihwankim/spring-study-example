@@ -23,25 +23,14 @@ class MemberService(
             this.name = memberRequest.name
         })
 
-        val memberDto = saveMember.id?.let {
-            MemberDto(
-                id = it,
-                name = saveMember.name
-            )
-        } ?: kotlin.run {
-            throw IllegalArgumentException()
-        }
-
-        return MemberResopnse(memberDto)
+        return MemberResopnse(MemberDto(id = saveMember.id!!, name = saveMember.name))
     }
 
     fun findMember(memberId: Long): MemberResopnse {
         val member = memberRepository.findById(memberId)
             .orElseThrow({ MemberNotFoundException })
 
-        return MemberResopnse(member.id?.let { MemberDto(it, member.name) } ?: kotlin.run {
-            throw MemberNotFoundException
-        })
+        return MemberResopnse(MemberDto(id = member.id!!, name = member.name))
     }
 
     fun findMembersByName(name: String): MembersResponse {
@@ -49,11 +38,7 @@ class MemberService(
 
         return MembersResponse(
             member.map {
-                it.id?.let { id ->
-                    MemberDto(id, it.name)
-                } ?: kotlin.run {
-                    throw MemberNotFoundException
-                }
+                MemberDto(it.id!!, it.name)
             }
         )
     }
