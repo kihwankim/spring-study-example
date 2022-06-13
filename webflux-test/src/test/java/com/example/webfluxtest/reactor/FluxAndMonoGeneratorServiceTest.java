@@ -73,4 +73,18 @@ class FluxAndMonoGeneratorServiceTest {
                 .expectNext(List.of("A", "L", "E", "X"))
                 .verifyComplete();
     }
+
+    @Test
+    void namesFluxTransformTest() throws Exception {
+        // given
+        int stringLen = 3;
+
+        // when
+        Flux<String> namesFluxTransaformResult = fluxAndMonoGeneratorService.namesFluxTransform(stringLen);
+
+        // then
+        StepVerifier.create(namesFluxTransaformResult)
+                .expectNext("A", "L", "E", "X", "B", "E", "N", "C", "H", "L", "O", "E")
+                .verifyComplete();
+    }
 }
