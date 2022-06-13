@@ -5,6 +5,8 @@ import com.example.kotlinmultimodule.dto.MemberResopnse
 import com.example.kotlinmultimodule.exception.MemberNotFoundException
 import com.example.kotlinmultimodule.infra.domain.Member
 import com.example.kotlinmultimodule.infra.repository.MemberRepository
+import com.example.service.domain.Order
+import com.exaple.service.OrderBuilder
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
@@ -60,5 +62,18 @@ internal class MemberServiceTest {
 
         // then
         assertThatThrownBy { memberService.findMember(memberId = id) }.isInstanceOf(MemberNotFoundException::class.java)
+    }
+
+    @Test
+    fun `order builder 테스트`() {
+        // given
+        val buildOrder: Order = OrderBuilder(description = "abc").build()
+
+        // when
+
+        // then
+        assertThat(buildOrder.id).isEqualTo("")
+        assertThat(buildOrder.amount).isEqualTo(0L)
+        assertThat(buildOrder.description).isEqualTo("abc")
     }
 }
