@@ -87,4 +87,32 @@ class FluxAndMonoGeneratorServiceTest {
                 .expectNext("A", "L", "E", "X", "B", "E", "N", "C", "H", "L", "O", "E")
                 .verifyComplete();
     }
+
+    @Test
+    void namesFluxTransform_2_Test() throws Exception {
+        // given
+        int stringLen = 6;
+
+        // when
+        Flux<String> namesFluxTransaformResult = fluxAndMonoGeneratorService.namesFluxTransform(stringLen);
+
+        // then
+        StepVerifier.create(namesFluxTransaformResult)
+                .expectNext("default")
+                .verifyComplete();
+    }
+
+    @Test
+    void namesFluxTransform_Empty_Test() throws Exception {
+        // given
+        int stringLen = 6;
+
+        // when
+        Flux<String> namesFluxTransaformResult = fluxAndMonoGeneratorService.namesFluxTransformEmpty(stringLen);
+
+        // then
+        StepVerifier.create(namesFluxTransaformResult)
+                .expectNext("D", "E", "F", "A", "U", "L", "T")
+                .verifyComplete();
+    }
 }
