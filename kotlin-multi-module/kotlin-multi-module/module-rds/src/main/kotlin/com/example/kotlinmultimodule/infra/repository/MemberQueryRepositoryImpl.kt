@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository
 
 @Repository
 class MemberQueryRepositoryImpl(
-    val springDataQueryFactory: SpringDataQueryFactory
+    private val springDataQueryFactory: SpringDataQueryFactory
 ) : MemberQueryRepository {
     override fun findByName(name: String): List<Member> =
         springDataQueryFactory.listQuery {
