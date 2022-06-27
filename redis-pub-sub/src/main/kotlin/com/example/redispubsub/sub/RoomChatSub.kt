@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component
 class RoomChatSub : MessageListener {
     override fun onMessage(message: Message, pattern: ByteArray?) {
         val roomChat = fromByteArray(message.body, RoomChat::class.java) // read chatting data
-        print(roomChat)
+        println("data= $roomChat")
     }
-
 }
