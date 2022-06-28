@@ -10,23 +10,10 @@ class RedisRepository(
 ) {
 
     fun setNx(keyVal: String, ttlVal: Long, value: String): Boolean {
-        val isSetVal = redisTemplate.execute { redisConnection ->
-            val redisSerializer = redisTemplate.stringSerializer
-            redisConnection.setNX(redisSerializer.serialize(keyVal)!!, redisSerializer.serialize(value)!!)
-        }!!
-
-        if (isSetVal) {
-            redisTemplate.expire(keyVal, ttlVal, TimeUnit.SECONDS)
-        }
-
-        return isSetVal
+        return redisTemplate.opsForValue().setIfAbsent(keyVal, value, ttlVal, TimeUnit.SECONDS)!!
     }
 
     fun delByKey(deleteKey: String) {
-        redisTemplate.execute { redisConnection ->
-            val redisSerializer = redisTemplate.stringSerializer
-            val key: ByteArray = redisSerializer.serialize(deleteKey)!!
-            redisConnection.del(key)
-        }
+        redisTemplate.delete(deleteKey)
     }
 }
