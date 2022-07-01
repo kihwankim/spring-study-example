@@ -11,6 +11,6 @@ internal class RedissonLockServiceTest {
 
     @Test
     fun `lock 확득 테스트 - 성공`() {
-        redissonLockService.testLock("key")
+        redissonLockService.testLock("key", 1L, 30L)
     }
 }

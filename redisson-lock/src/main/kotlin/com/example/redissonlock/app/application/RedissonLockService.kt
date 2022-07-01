@@ -12,12 +12,12 @@ private val logger = KotlinLogging.logger {}
 class RedissonLockService(
     private val redissonClient: RedissonClient
 ) {
-    fun testLock(key: String) {
+    fun testLock(key: String, wait: Long, redisLockExpireTime: Long) {
         val locakName = "$key:lock"
         val lock: RLock = redissonClient.getLock(locakName)
 
         try {
-            if (!lock.tryLock(1, 30, TimeUnit.SECONDS)) return
+            if (!lock.tryLock(wait, redisLockExpireTime, TimeUnit.SECONDS)) return
             bizLogic(Thread.currentThread().name)
         } catch (e: InterruptedException) {
             e.printStackTrace()
