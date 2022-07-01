@@ -10,6 +10,7 @@ plugins {
 group = "com.example"
 version = "0.0.1-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_11
+val kotlinLoggingVersion = "2.1.20"
 
 repositories {
     mavenCentral()
@@ -22,6 +23,10 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("org.redisson:redisson-spring-boot-starter:3.17.3")
+
+    // kotlin logging
+    implementation("io.github.microutils:kotlin-logging-jvm:${kotlinLoggingVersion}")
+
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
