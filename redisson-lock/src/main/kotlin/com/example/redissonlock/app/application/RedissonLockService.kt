@@ -1,9 +1,12 @@
 package com.example.redissonlock.app.application
 
+import mu.KotlinLogging
 import org.redisson.api.RLock
 import org.redisson.api.RedissonClient
 import org.springframework.stereotype.Service
 import java.util.concurrent.TimeUnit
+
+private val logger = KotlinLogging.logger {}
 
 @Service
 class RedissonLockService(
@@ -24,6 +27,6 @@ class RedissonLockService(
     }
 
     private fun bizLogic(threadName: String) {
-        println("$threadName: biz logic")
+        logger.info("$threadName: biz logic")
     }
 }
