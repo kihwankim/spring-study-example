@@ -1,3 +1,11 @@
+tasks.getByName("bootJar") {
+    enabled = true
+}
+
+tasks.getByName("jar") {
+    enabled = false
+}
+
 dependencies {
     implementation((project(":module-service")))
     implementation(project(":module-rds"))

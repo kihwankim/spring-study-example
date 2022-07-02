@@ -1,11 +1,3 @@
-tasks.jar {
-    enabled = true
-}
-
-tasks.bootJar {
-    enabled = false
-}
-
 plugins {
     `java-test-fixtures`
 }

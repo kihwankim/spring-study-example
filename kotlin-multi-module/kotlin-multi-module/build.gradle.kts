@@ -1,24 +1,21 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    val kotlinVersion = "1.6.21"
-    kotlin("jvm") version kotlinVersion
-    kotlin("plugin.spring") version kotlinVersion apply false
-    id("org.springframework.boot") version "2.7.0" apply false
-    id("io.spring.dependency-management") version "1.0.11.RELEASE" apply false
-    kotlin("plugin.jpa") version kotlinVersion apply false
-}
-
-repositories {
-    mavenCentral()
+    kotlin("jvm")
+    kotlin("plugin.spring") apply false
+    kotlin("plugin.jpa") apply false
+    id("org.springframework.boot") apply false
+    id("io.spring.dependency-management") apply false
 }
 
 java.sourceCompatibility = JavaVersion.VERSION_11
-val kotlinLoggingVersion = "2.1.20"
+val projectGroup: String by project
+val applicationVersion: String by project
+val kotlinLoggingVersion: String by project
 
 allprojects {
-    group = "com.example"
-    version = "0.0.1-SNAPSHOT"
+    group = projectGroup
+    version = applicationVersion
 
     repositories {
         mavenCentral()
@@ -45,6 +42,14 @@ subprojects {
         implementation("io.github.microutils:kotlin-logging-jvm:${kotlinLoggingVersion}")
 
         testImplementation("org.springframework.boot:spring-boot-starter-test")
+    }
+
+    tasks.getByName("bootJar") {
+        enabled = false
+    }
+
+    tasks.getByName("jar") {
+        enabled = true
     }
 
     tasks.withType<KotlinCompile> {
