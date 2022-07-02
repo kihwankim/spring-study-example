@@ -2,13 +2,11 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     val kotlinVersion = "1.6.21"
-
-    id("org.springframework.boot") version "2.7.0"
-    id("io.spring.dependency-management") version "1.0.11.RELEASE"
-
     kotlin("jvm") version kotlinVersion
-    kotlin("plugin.spring") version kotlinVersion
-    kotlin("plugin.jpa") version kotlinVersion
+    kotlin("plugin.spring") version kotlinVersion apply false
+    id("org.springframework.boot") version "2.7.0" apply false
+    id("io.spring.dependency-management") version "1.0.11.RELEASE" apply false
+    kotlin("plugin.jpa") version kotlinVersion apply false
 }
 
 repositories {
@@ -19,19 +17,15 @@ java.sourceCompatibility = JavaVersion.VERSION_11
 val kotlinLoggingVersion = "2.1.20"
 
 allprojects {
-    repositories {
-        mavenCentral()
-    }
-}
-
-subprojects {
     group = "com.example"
     version = "0.0.1-SNAPSHOT"
 
     repositories {
         mavenCentral()
     }
+}
 
+subprojects {
     apply {
         plugin("org.springframework.boot")
         plugin("io.spring.dependency-management")
