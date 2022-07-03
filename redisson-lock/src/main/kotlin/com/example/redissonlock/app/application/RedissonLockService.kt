@@ -27,6 +27,8 @@ class RedissonLockService(
     }
 
     private fun bizLogic(threadName: String) {
-        logger.info("$threadName: biz logic")
+        logger.info("$threadName: biz logic start")
+        Thread.sleep(2000)
+        logger.info("$threadName: biz logic end")
     }
 }
