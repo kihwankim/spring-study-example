@@ -1,6 +1,7 @@
 package com.example.jooq.app.application;
 
-import com.example.jooq.app.adapter.persistence.entity.MemberRepository;
+import com.example.jooq.app.adapter.persistence.entity.Member;
+import com.example.jooq.app.adapter.persistence.entity.MemberJooqRepository;
 import com.example.jooq.app.application.dto.MemberDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -12,11 +13,13 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class MemberService {
-    private final MemberRepository memberRepository;
+    private final MemberJooqRepository memberJooqRepository;
 
     @Transactional(readOnly = true)
     public List<MemberDto> findMembers() {
-        return memberRepository.findAll().stream()
+        List<Member> findedMembers = memberJooqRepository.findAll();
+
+        return findedMembers.stream()
                 .map(MemberDto::from)
                 .collect(Collectors.toList());
     }

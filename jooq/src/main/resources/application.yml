@@ -1,1 +1,26 @@
-
+spring:
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  datasource:
+    hikari:
+      maximum-pool-size: 30
+      max-lifetime: 60000
+      jdbc-url: jdbc:h2:mem:testdb;MODE=MYSQL
+      username: sa
+      password:
+      connection-timeout: 5000
+      pool-name: Spring-HikariPool
+  jpa:
+    database-platform: H2
+    show-sql: true
+    open-in-view: false
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL57Dialect
+        dialect.storage_engine: innodb
+        default_batch_fetch_size: 500
+        format_sql: true
