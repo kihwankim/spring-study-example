@@ -1,7 +1,8 @@
-package com.example.kotlinmultimodule.controller
+package com.example.kotlinmultimodule.presentation.member.controller
 
-import com.example.kotlinmultimodule.dto.MemberRequest
-import com.example.kotlinmultimodule.service.MemberService
+import com.example.kotlinmultimodule.member.domain.port.`in`.MemberCreationUseCase
+import com.example.kotlinmultimodule.member.domain.port.`in`.MemberSearchUseCase
+import com.example.kotlinmultimodule.presentation.member.dto.MemberRequest
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -12,15 +13,16 @@ import javax.validation.Valid
 
 @RestController
 class MemberController(
-    private val memberService: MemberService
+    private val memberCreateUseCase: MemberCreationUseCase,
+    private val memberSearchUseCase: MemberSearchUseCase,
 ) {
     @PostMapping("/api/v1/members")
     fun healthChecker(@Valid @RequestBody memberRequest: MemberRequest): ResponseEntity<URI> {
-        val saveMember = memberService.saveMember(memberRequest)
+        val saveMember = memberCreateUseCase.createMember(memberRequest.toMember())
 
         val userCreateUri: URI = ServletUriComponentsBuilder.fromCurrentRequest()
             .path("/{id}")
-            .buildAndExpand(saveMember.member.id)
+            .buildAndExpand(saveMember.memberId)
             .toUri()
 
         return ResponseEntity.created(userCreateUri).build()
