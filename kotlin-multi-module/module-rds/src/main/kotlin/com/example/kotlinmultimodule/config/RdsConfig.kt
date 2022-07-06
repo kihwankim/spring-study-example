@@ -1,4 +1,4 @@
-package com.example.kotlinmultimodule.infra.config
+package com.example.kotlinmultimodule.config
 
 import org.springframework.context.annotation.Configuration
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing

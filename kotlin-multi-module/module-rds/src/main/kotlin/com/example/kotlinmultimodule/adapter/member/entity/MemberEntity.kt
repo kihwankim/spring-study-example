@@ -1,9 +1,11 @@
-package com.example.kotlinmultimodule.infra.domain
+package com.example.kotlinmultimodule.adapter.member.entity
 
+import com.example.kotlinmultimodule.adapter.common.BaseEntity
 import javax.persistence.*
 
 @Entity
-data class Member(
+@Table(name = "member")
+data class MemberEntity(
     @Id
     @Column(name = "member_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)

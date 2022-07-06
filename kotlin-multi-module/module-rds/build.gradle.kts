@@ -8,6 +8,9 @@ val springDataKotlinJdslVersion: String by project
 
 dependencies {
     implementation(project(":module-common"))
+
+    compileOnly(project(":module-domain"))
+
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.hibernate:hibernate-spatial")
     implementation("com.linecorp.kotlin-jdsl:spring-data-kotlin-jdsl-starter:${springDataKotlinJdslVersion}")

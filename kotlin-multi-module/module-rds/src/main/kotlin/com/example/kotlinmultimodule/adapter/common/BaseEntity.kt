@@ -1,4 +1,4 @@
-package com.example.kotlinmultimodule.infra.domain
+package com.example.kotlinmultimodule.adapter.common
 
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedDate

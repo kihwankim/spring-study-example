@@ -3,5 +3,4 @@ plugins {
 }
 
 dependencies {
-    runtimeOnly(project(":module-rds"))
 }

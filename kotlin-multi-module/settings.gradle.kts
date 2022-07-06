@@ -1,9 +1,11 @@
 rootProject.name = "kotlin-multi-module"
 
-include("module-api")
-include("module-rds")
-include("module-common")
-include("module-service")
+include(
+    "module-api",
+    "module-rds",
+    "module-common",
+    "module-domain"
+)
 
 pluginManagement {
     val kotlinVersion: String by settings

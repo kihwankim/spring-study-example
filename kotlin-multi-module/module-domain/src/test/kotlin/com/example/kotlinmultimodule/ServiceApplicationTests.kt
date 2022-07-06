@@ -1,4 +1,4 @@
-package com.example.service
+package com.example.kotlinmultimodule
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 
