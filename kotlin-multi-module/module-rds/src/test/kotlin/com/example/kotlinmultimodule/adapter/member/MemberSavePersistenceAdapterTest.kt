@@ -51,7 +51,7 @@ internal class MemberSavePersistenceAdapterTest {
         val savedMember = memberRepository.save(entity)
 
         // when
-        val id = savedMember.id!!
+        val id: Long = savedMember.id
 
         // then
         val findMember: Member = memberSavePersistenceAdapter.findMember(id)

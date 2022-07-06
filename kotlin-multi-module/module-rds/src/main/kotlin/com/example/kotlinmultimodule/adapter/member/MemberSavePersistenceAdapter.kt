@@ -21,12 +21,12 @@ class MemberSavePersistenceAdapter(
         val saveCandidateMember = MemberEntity(name = member.name)
         val savedMember = memberRepository.save(saveCandidateMember)
 
-        return Member(savedMember.id!!, savedMember.name)
+        return Member(savedMember.id, savedMember.name)
     }
 
     override fun findMember(memberId: Long): Member {
         val member = memberQueryRepository.findById(memberId)
 
-        return Member(memberId = member.id!!, name = member.name)
+        return Member(memberId = member.id, name = member.name)
     }
 }

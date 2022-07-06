@@ -9,7 +9,7 @@ data class MemberEntity(
     @Id
     @Column(name = "member_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    var id: Long? = null,
+    val id: Long = 0L,
     @Column(name = "name", unique = true)
     var name: String = ""
 ) : BaseEntity()
