@@ -10,6 +10,7 @@ dependencies {
     implementation(project(":module-common"))
 
     compileOnly(project(":module-domain"))
+    testCompileOnly(project(":module-domain"))
 
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.hibernate:hibernate-spatial")

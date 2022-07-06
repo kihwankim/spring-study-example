@@ -10,5 +10,6 @@ data class MemberEntity(
     @Column(name = "member_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long? = null,
+    @Column(name = "name", unique = true)
     var name: String = ""
 ) : BaseEntity()
