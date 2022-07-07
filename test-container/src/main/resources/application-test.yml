@@ -1,0 +1,21 @@
+spring:
+  config:
+    activate:
+      on-profile: test
+  jpa:
+    show-sql: true
+    open-in-view: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL57Dialect
+        dialect.storage_engine: innodb
+        default_batch_fetch_size: 500
+        format_sql: true
+  datasource:
+    url: jdbc:tc:mysql:5.7.34:///dev
+    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
+  sql:
+    init:
+      mode: always
+
+
