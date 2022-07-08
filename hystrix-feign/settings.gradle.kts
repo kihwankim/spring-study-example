@@ -2,7 +2,8 @@ rootProject.name = "hystrix-feign"
 
 include(
     "module-test-api",
-    "module-service-api"
+    "module-service-api",
+    "support:module-logging"
 )
 
 pluginManagement {

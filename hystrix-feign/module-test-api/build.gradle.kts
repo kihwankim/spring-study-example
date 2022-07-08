@@ -7,4 +7,5 @@ tasks.getByName("jar") {
 }
 
 dependencies {
+    implementation(project(":support:module-logging"))
 }
