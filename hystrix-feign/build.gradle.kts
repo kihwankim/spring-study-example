@@ -44,6 +44,8 @@ subprojects {
         implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
         implementation("org.springframework.boot:spring-boot-starter-actuator")
         implementation("io.github.microutils:kotlin-logging-jvm:${kotlinLoggingVersion}")
+        implementation("org.springframework.cloud:spring-cloud-starter-sleuth")
+        implementation("org.springframework.cloud:spring-cloud-sleuth-zipkin")
 
 //        developmentOnly("org.springframework.boot:spring-boot-devtools")
         testImplementation("org.springframework.boot:spring-boot-starter-test")

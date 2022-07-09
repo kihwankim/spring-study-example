@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.GetMapping
 
 @FeignClient(name = "test-api", url = "http://localhost:8081")
 interface CallApiClient {
-    @GetMapping(name = "/called")
+    @GetMapping(value = ["/called"])
     fun calledData()
 
     @GetMapping("/timeout")

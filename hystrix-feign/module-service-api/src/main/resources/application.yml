@@ -17,3 +17,13 @@ feign:
 #        waitDurationInOpenState: 5s # 열림 상태를 유지하는 시간, 해당 시간이후 반열림 상태로 변경된다.
 #        slidingWindowType: COUNT_BASED
 #        #        registerHealthIndicator: true # actuator 정보 노출을 위한 설정 -> 현재 없음
+
+spring:
+  application:
+    name: main-api
+  sleuth:
+    sampler:
+      probability: 1.0
+  zipkin:
+    base-url: http://localhost:9411
+    enabled: true
