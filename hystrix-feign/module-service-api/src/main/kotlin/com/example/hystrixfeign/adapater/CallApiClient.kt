@@ -9,5 +9,8 @@ interface CallApiClient {
     fun calledData()
 
     @GetMapping("/timeout")
-    fun calledTimeOut()
+    fun calledTimeOut(): String
+
+    @GetMapping("/fail")
+    fun callFiled(): String
 }

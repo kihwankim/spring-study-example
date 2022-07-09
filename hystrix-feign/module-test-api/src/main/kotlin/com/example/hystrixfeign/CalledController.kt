@@ -1,6 +1,7 @@
 package com.example.hystrixfeign
 
 import mu.KotlinLogging
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RestController
@@ -18,10 +19,16 @@ class CalledController {
     }
 
     @GetMapping("/timeout")
-    fun calledTimeout(): ResponseEntity<Unit> {
+    fun calledTimeout(): ResponseEntity<String> {
         logger.info { "before sleep 10_000 millis" }
         Thread.sleep(10_000)
         logger.info { "after sleep 10_000 millis" }
-        return ResponseEntity.ok().build()
+        return ResponseEntity.ok("success")
+    }
+
+    @GetMapping("/fail")
+    fun calledFail(): ResponseEntity<String> {
+        logger.info { "fail" }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("not found")
     }
 }
