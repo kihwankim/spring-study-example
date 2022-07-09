@@ -1,2 +1,9 @@
 server:
   port: 8080
+
+feign:
+  client:
+    config:
+      test-api:
+        connect-timeout: 3000
+        read-timeout: 4000
