@@ -19,7 +19,13 @@ class EndPointController(
 
     @GetMapping("/timeout")
     fun callTimeOutServer(): ResponseEntity<String> {
-        return ResponseEntity.ok(callApiClient.calledTimeOut())
+        return ResponseEntity.ok(
+            circuitBreakerFactory.create("break").run({ callApiClient.calledTimeOut() }, { handleTimeOut() })
+        )
+    }
+
+    fun handleTimeOut(): String {
+        return "Timeout Handle"
     }
 
     @GetMapping("/fail")
