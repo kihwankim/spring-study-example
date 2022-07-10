@@ -17,7 +17,7 @@ class AnnotationBaseCircuitService(
         callApiClient.calledData()
     }
 
-    fun handleNormal(t: Throwable) {
+    private fun handleNormal(t: Throwable) {
         logger.info { "handle normal" }
     }
 
@@ -27,7 +27,7 @@ class AnnotationBaseCircuitService(
 
     }
 
-    fun handleTimeout(t: Throwable): String {
+    private fun handleTimeout(t: Throwable): String {
         logger.info { "Timeout Handle" }
         return "Timeout Handle"
     }
@@ -37,7 +37,7 @@ class AnnotationBaseCircuitService(
         return callApiClient.callFiled()
     }
 
-    fun handleNotFound(t: Throwable): String {
+    private fun handleNotFound(t: Throwable): String {
         logger.info { "recover not found" }
         return "recover not found"
     }
