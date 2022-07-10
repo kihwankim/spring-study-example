@@ -27,3 +27,9 @@ spring:
   zipkin:
     base-url: http://localhost:9411
     enabled: true
+resilience4j:
+  bulkhead:
+    configs:
+      default:
+        max-concurrent-calls: 2
+        max-wait-duration: 0

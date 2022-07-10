@@ -14,6 +14,7 @@ class CalledController {
     @GetMapping("/called")
     fun called(headers: ServletRequest): ResponseEntity<Unit> {
         logger.info { "called" }
+        Thread.sleep(1000)
         logger.info { headers.getAttribute("headerval") }
         return ResponseEntity.ok().build()
     }

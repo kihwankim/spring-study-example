@@ -1,6 +1,7 @@
 package com.example.hystrixfeign.application
 
 import com.example.hystrixfeign.adapater.CallApiClient
+import io.github.resilience4j.bulkhead.annotation.Bulkhead
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker
 import mu.KotlinLogging
 import org.springframework.stereotype.Component
@@ -13,12 +14,18 @@ class AnnotationBaseCircuitService(
 ) : ApiService {
 
     @CircuitBreaker(name = CIRCUIT_NAME, fallbackMethod = "handleNormal")
+    @Bulkhead(name = CIRCUIT_NAME, type = Bulkhead.Type.SEMAPHORE)
     override fun callNoraml() {
         callApiClient.calledData()
+        logger.info { "run success" }
     }
 
     private fun handleNormal(t: Throwable) {
         logger.info { "handle normal" }
+    }
+
+    private fun bulkheadNormalFallback(t: Throwable) {
+        logger.info { "recover bulkhead" }
     }
 
     @CircuitBreaker(name = CIRCUIT_NAME, fallbackMethod = "handleTimeout")
@@ -33,6 +40,7 @@ class AnnotationBaseCircuitService(
     }
 
     @CircuitBreaker(name = CIRCUIT_NAME, fallbackMethod = "handleNotFound")
+    @Bulkhead(name = CIRCUIT_NAME, fallbackMethod = "bulkheadNotFoundFallback")
     override fun callNotFound(): String {
         return callApiClient.callFiled()
     }
@@ -40,5 +48,10 @@ class AnnotationBaseCircuitService(
     private fun handleNotFound(t: Throwable): String {
         logger.info { "recover not found" }
         return "recover not found"
+    }
+
+    private fun bulkheadNotFoundFallback(t: Throwable): String {
+        logger.info { "recover bulkhead" }
+        return "bulkhead"
     }
 }
