@@ -33,3 +33,10 @@ resilience4j:
       default:
         max-concurrent-calls: 2
         max-wait-duration: 0
+
+  ratelimiter:
+    instances:
+      default:
+        limit-for-period: 5
+        limit-refresh-period: 1s
+        timeout-duration: 5
