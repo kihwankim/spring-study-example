@@ -36,7 +36,7 @@ resilience4j:
 
   ratelimiter:
     instances:
-      default:
+      test:
         limit-for-period: 5
         limit-refresh-period: 1s
         timeout-duration: 5

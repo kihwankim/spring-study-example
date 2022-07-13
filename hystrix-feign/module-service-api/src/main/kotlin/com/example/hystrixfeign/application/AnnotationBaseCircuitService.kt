@@ -3,6 +3,7 @@ package com.example.hystrixfeign.application
 import com.example.hystrixfeign.adapater.CallApiClient
 import io.github.resilience4j.bulkhead.annotation.Bulkhead
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter
 import mu.KotlinLogging
 import org.springframework.stereotype.Component
 
@@ -53,5 +54,14 @@ class AnnotationBaseCircuitService(
     private fun bulkheadNotFoundFallback(t: Throwable): String {
         logger.info { "recover bulkhead" }
         return "bulkhead"
+    }
+
+    @RateLimiter(name = "test", fallbackMethod = "rateLimiterFallback")
+    fun callRateLimit(): String {
+        return "1234"
+    }
+
+    private fun rateLimiterFallback(t: Throwable): String {
+        return "handle"
     }
 }
