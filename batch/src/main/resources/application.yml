@@ -1,20 +1,27 @@
 spring:
   profiles:
-    active: mysql
-
-logging.level.org.springframework.batch: DEBUG
-
+    active: local
+  batch:
+    job:
+      names: ${job.name:NONE}
+    jdbc:
+      initialize-schema: always
 ---
 spring:
   config:
     activate:
       on-profile: local
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
   datasource:
     hikari:
-      jdbc-url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+      jdbc-url: jdbc:h2:mem:test_db;MODE=MYSQL
       username: sa
       password:
       driver-class-name: org.h2.Driver
+      maximumPoolSize: 10
 ---
 spring:
   config:
