@@ -1,6 +1,7 @@
-package com.example.batch.jobparameter;
+package com.example.batch.example.paramjob;
 
 import com.example.batch.entity.product.Product;
+import com.example.batch.jobparameter.CreateDateJobParameter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
@@ -21,10 +22,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Slf4j
-@RequiredArgsConstructor
 @Configuration
-public class JobParameterExtendsConfiguration {
-    public static final String JOB_NAME = "jobParameterExtendsBatch";
+@RequiredArgsConstructor
+public class JobProductConfiguration {
+    public static final String JOB_NAME = "jobParamProductJob";
 
     @Value("${chunkSize:1000}")
     private int chunkSize;

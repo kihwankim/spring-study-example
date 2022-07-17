@@ -1,9 +1,10 @@
-package com.example.batch.jobparameter;
+package com.example.batch.example.paramjob;
 
 import com.example.batch.TestBatchConfig;
 import com.example.batch.entity.product.Product;
 import com.example.batch.entity.product.ProductRepository;
 import com.example.batch.entity.product.ProductStatus;
+import com.example.batch.example.paramjob.JobParameterExtendsConfiguration;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;

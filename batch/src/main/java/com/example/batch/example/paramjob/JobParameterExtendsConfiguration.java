@@ -22,10 +22,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Slf4j
-@Configuration
 @RequiredArgsConstructor
-public class JobParamProductConfiguration {
-    public static final String JOB_NAME = "jobParamProductJob";
+@Configuration
+public class JobParameterExtendsConfiguration {
+    public static final String JOB_NAME = "jobParameterExtendsBatch";
 
     @Value("${chunkSize:1000}")
     private int chunkSize;
