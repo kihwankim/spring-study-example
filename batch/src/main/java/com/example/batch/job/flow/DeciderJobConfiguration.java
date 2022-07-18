@@ -86,9 +86,9 @@ public class DeciderJobConfiguration {
 
             if (randomNumber % 2 == 0) {
                 return new FlowExecutionStatus("EVEN");
-            } else {
-                return new FlowExecutionStatus("ODD");
             }
+
+            return new FlowExecutionStatus("ODD");
         }
     }
 
