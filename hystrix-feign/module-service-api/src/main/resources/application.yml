@@ -38,5 +38,5 @@ resilience4j:
     instances:
       test:
         limit-for-period: 5
-        limit-refresh-period: 1s
-        timeout-duration: 5
+        limit-refresh-period: 4s
+        timeout-duration: 10s
