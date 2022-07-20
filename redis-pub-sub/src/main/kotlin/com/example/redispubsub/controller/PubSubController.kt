@@ -13,9 +13,9 @@ class PubSubController(
 ) {
 
     @PostMapping("/message")
-    fun pubMessage(@RequestBody roomChat: RoomChat): ResponseEntity<Unit> {
+    fun pubMessage(@RequestBody roomChat: RoomChat): ResponseEntity<String> {
         roomChatPub.publish(roomChat)
 
-        return ResponseEntity.ok().build()
+        return ResponseEntity.ok(roomChat.chat)
     }
 }
