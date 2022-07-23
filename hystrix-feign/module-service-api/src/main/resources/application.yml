@@ -33,7 +33,13 @@ resilience4j:
       default:
         max-concurrent-calls: 2
         max-wait-duration: 0
-
+  thread-pool-bulkhead:
+    configs:
+      default:
+        max-thread-pool-size: 2
+        core-thread-pool-size: 2
+        queue-capacity: 2
+        keep-alive-duration: 20ms
   ratelimiter:
     instances:
       test:

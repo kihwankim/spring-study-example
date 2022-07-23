@@ -41,7 +41,7 @@ class AnnotationBaseCircuitService(
     }
 
     @CircuitBreaker(name = CIRCUIT_NAME, fallbackMethod = "handleNotFound")
-    @Bulkhead(name = CIRCUIT_NAME, fallbackMethod = "bulkheadNotFoundFallback")
+    @Bulkhead(name = CIRCUIT_NAME, fallbackMethod = "bulkheadNotFoundFallback", type = Bulkhead.Type.THREADPOOL)
     override fun callNotFound(): String {
         return callApiClient.callFiled()
     }
