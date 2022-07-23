@@ -1,7 +1,10 @@
 package com.example.hystrixfeign.config
 
 import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig
+import io.github.resilience4j.ratelimiter.RateLimiter
+import io.github.resilience4j.ratelimiter.RateLimiterRegistry
 import io.github.resilience4j.timelimiter.TimeLimiterConfig
+import mu.KotlinLogging
 import org.springframework.cloud.circuitbreaker.resilience4j.Resilience4JCircuitBreakerFactory
 import org.springframework.cloud.circuitbreaker.resilience4j.Resilience4JConfigBuilder
 import org.springframework.cloud.client.circuitbreaker.Customizer
@@ -9,6 +12,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import java.time.Duration
 
+val log = KotlinLogging.logger { }
 
 @Configuration
 class Resilience4JConfig {
@@ -33,5 +37,21 @@ class Resilience4JConfig {
                     .build()
             }
         }
+    }
+
+    @Bean
+    fun rateLimiterRegistry(): RateLimiterRegistry {
+        val rateLimiterRegistry = RateLimiterRegistry.ofDefaults()
+        rateLimiterRegistry.eventPublisher
+            .onEntryAdded { entryAddedEvent ->
+                val addedRatelimiter: RateLimiter = entryAddedEvent.addedEntry
+                log.info("RateLimiter {} added", addedRatelimiter.name)
+            }
+            .onEntryRemoved { entryRemovedEvent ->
+                val addedRatelimiter: RateLimiter = entryRemovedEvent.removedEntry
+                log.info("RateLimiter {} removed", addedRatelimiter.name)
+            }
+
+        return rateLimiterRegistry
     }
 }

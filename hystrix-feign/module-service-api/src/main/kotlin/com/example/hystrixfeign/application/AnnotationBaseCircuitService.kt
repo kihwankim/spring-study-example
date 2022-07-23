@@ -3,16 +3,26 @@ package com.example.hystrixfeign.application
 import com.example.hystrixfeign.adapater.CallApiClient
 import io.github.resilience4j.bulkhead.annotation.Bulkhead
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker
+import io.github.resilience4j.ratelimiter.RateLimiterRegistry
 import io.github.resilience4j.ratelimiter.annotation.RateLimiter
 import mu.KotlinLogging
 import org.springframework.stereotype.Component
+import javax.annotation.PostConstruct
 
 private val logger = KotlinLogging.logger { }
 
 @Component
 class AnnotationBaseCircuitService(
     private val callApiClient: CallApiClient,
+    private val rateLimiterRegistry: RateLimiterRegistry,
 ) : ApiService {
+
+    @PostConstruct
+    private fun setUp() {
+        rateLimiterRegistry.rateLimiter("test").eventPublisher
+            .onSuccess { successEvent -> logger.info { "success: ${successEvent.rateLimiterName} ${successEvent.eventType}" } }
+            .onFailure { failedEvent -> logger.info { "failed: ${failedEvent.rateLimiterName} ${failedEvent.eventType}" } }
+    }
 
     @CircuitBreaker(name = CIRCUIT_NAME, fallbackMethod = "handleNormal")
     @Bulkhead(name = CIRCUIT_NAME, type = Bulkhead.Type.SEMAPHORE)

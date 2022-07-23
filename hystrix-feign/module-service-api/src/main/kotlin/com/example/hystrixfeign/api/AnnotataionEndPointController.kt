@@ -30,6 +30,7 @@ class AnnotataionEndPointController(
 
     @GetMapping("/rate-limit")
     fun callRateLimit(): ResponseEntity<String> {
-        return ResponseEntity.ok(annotationBaseCircuitService.callRateLimit())
+        val callRateLimit = annotationBaseCircuitService.callRateLimit()
+        return ResponseEntity.ok(callRateLimit)
     }
 }
