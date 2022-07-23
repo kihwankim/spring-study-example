@@ -177,10 +177,61 @@ resilience4j:
 ### RateLimit 정의
 
 - 일정 시간동안 target application/method호출 요청 횟수를 제한하는데 기능을 의미 합니다
+- AtomicRateLimiter와 SemaphoreRateLimiter 방식 2가지가 있고 AtomicRateLimiter가 default 입니다
+
+```java
+public interface RateLimit {
+    // .. code
+    static <T> CheckedFunction0<T> decorateCheckedSupplier(RateLimiter rateLimiter, int permits,
+                                                           CheckedFunction0<T> supplier) {
+        return () -> {
+            waitForPermission(rateLimiter, permits); // limit-for-period 내부에 쓰레드 개수에 들기 위해서 권한을 획득하는 과정
+            try {
+                T result = supplier.apply(); // 사용자 api 호출 
+                rateLimiter.onResult(result); // 결과 전달(자식 class 로직 실행)
+                return result; // 결과 반환
+            } catch (Exception exception) {
+                rateLimiter.onError(exception);
+                throw exception;
+            }
+        };
+    }
+    // .. code
+}
+```
 
 ### RateLimit 특징
 
 - 클라이언트가 설정된 rate limit을 초과 한 경우 추가 요청을 거부하거나, 나중에 처리하거나(Queue 적제), 더 적은 양의 리소스를 할당할 수 있다
+- client가 처음 rate limit이 걸려있는 code를 호출할 때 lazy하게 rate limit 객체가 생성됩니다
+    - 만약 rate limit 객체를 바로 생성하고, rate limit이 에러 없이 처리되거나 실패가 났을때 event를 추가하고 싶을 경우 아래와 같이 설정할 수 있습니다
+    - 그러면 `callRateLimit`에서 test RateLimit 객체가 생성되지 않고 `AnnotationBaseCircuitService` 객체가 생성될때 test RateLimit이 생성되게 되고, Evnet도 등록할 수 있습니다.
+
+```kotlin
+@Component
+class AnnotationBaseCircuitService(
+    private val callApiClient: CallApiClient,
+    private val rateLimiterRegistry: RateLimiterRegistry,
+) : ApiService {
+
+    @PostConstruct
+    private fun setUp() {
+        rateLimiterRegistry.rateLimiter("test").eventPublisher
+            .onSuccess { successEvent -> logger.info { "success: ${successEvent.rateLimiterName} ${successEvent.eventType}" } }
+            .onFailure { failedEvent -> logger.info { "failed: ${failedEvent.rateLimiterName} ${failedEvent.eventType}" } }
+    }
+
+    @RateLimiter(name = "test", fallbackMethod = "rateLimiterFallback")
+    fun callRateLimit(): String {
+        return "1234"
+    }
+
+    private fun rateLimiterFallback(t: Throwable): String {
+        return "handle"
+    }
+}
+```
+
 - 파라미터 종류
     - limit-for-period: 5
     - limit-refresh-period: 4s
@@ -195,8 +246,96 @@ resilience4j:
         - limit-refresh-period: 4s
         - timeout-duration: 10s
 
-### RateLimit 종류
+### AtomicRateLimiter
 
+```java
+public class AtomicRateLimiter implements RateLimiter {
+    @Override
+    public boolean acquirePermission(final int permits) {
+        long timeoutInNanos = state.get().config.getTimeoutDuration().toNanos();
+        State modifiedState = updateStateWithBackOff(permits, timeoutInNanos);
+        boolean result = waitForPermissionIfNecessary(timeoutInNanos, modifiedState.nanosToWait);
+        publishRateLimiterAcquisitionEvent(result, permits);
+        return result;
+    }
+
+    private State updateStateWithBackOff(final int permits, final long timeoutInNanos) {
+        AtomicRateLimiter.State prev;
+        AtomicRateLimiter.State next;
+        do {
+            prev = state.get();
+            next = calculateNextState(permits, timeoutInNanos, prev); // 다음 state 값을 생성
+        } while (!compareAndSet(prev, next));
+        return next;
+    }
+}
+```
+
+- RateLimiter가 생성된 시점부터 nanosec cycle단위로 나눕니다
+- RateLimit에 API를 호출하게 되면 각 요청 별로 State값을 저장합니다 그리고 Cycle동안의 state 값은 불변 값을 유지 합니다
+- 새로운 State가 생성되면 state값이 이전값과 차이가 있을 경우 `VarHandle` 의 `comparaAndSet(...)` native method를 통해서 atomic하게 변경을 해주게 됩니다.
+    - 새로운 state를 통해서 일정 기간동안의 가용 가능한 thread개수 및 nano time정보를 확인할 수 있습니다
+- State 파라미터
+    - ActiveCycle: 마지막 호출에서 사용된 싸이클 번호(cycle 식별자)
+    - ActivePermissions: 마지막 호출 후 가용된 허용 수 -> limit-for-period 을 기준으로 얼마나 더 호출 할 수 있는지 나타 냅니다
+    - NanoToWait: 마지막 호출 후 허용을 기다릴 nano 시간
+- ratelimit에서 refresh 시간(limit-refresh-period)동안 가용한 허용 수(limit-for-period) 보다 많이 적게 이용되고 있을 경우 refresh를 하지 않는 최적화 방식을 상용합니다
+  ![atomic 방식](pic/ratelimit_atomic_logic.png)
+    - 위 사전에서 refresh부분의 앞 epoc(limit-refresh-period)을 보시면 permission(limit-for-period) 개수가 0개 이기때문에 다음 epoc에서 refresh를 진행합니다
+    - 하지만 다음 epoc에서는 permission(limit-for-period) 개수가 1개가 남기 때문에 굳이 refresh를 하지 않고 다음 epoc으로 이전합니다
+    - state를 계속해서 변경을 해주다 보면 성능 이슈가 발생하기 때문에 다음과 같이 변경어 없이 다음 epoc을 진행하고 있습니다
+
+### SemaphoreRateLimiter
+
+```java
+public class SemaphoreBasedRateLimiter implements RateLimiter {
+    public SemaphoreBasedRateLimiter(String name, RateLimiterConfig rateLimiterConfig,
+                                     @Nullable ScheduledExecutorService scheduler, Map<String, String> tags) {
+
+        this.scheduler = Option.of(scheduler).getOrElse(this::configureScheduler);
+
+        this.semaphore = new Semaphore(this.rateLimiterConfig.get().getLimitForPeriod(), true); // 현재 clock cycle동안의 세마포어 개수 설정
+        this.metrics = this.new SemaphoreBasedRateLimiterMetrics();
+
+        scheduleLimitRefresh();
+    }
+
+    @Override
+    public boolean acquirePermission(int permits) {
+        try {
+            boolean success = semaphore
+                    .tryAcquire(permits, rateLimiterConfig.get().getTimeoutDuration().toNanos(),
+                            TimeUnit.NANOSECONDS);
+            publishRateLimiterAcquisitionEvent(success, permits);
+            return success;
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            publishRateLimiterAcquisitionEvent(false, permits);
+            return false;
+        }
+    }
+
+    private void scheduleLimitRefresh() {
+        scheduler.scheduleAtFixedRate(
+                this::refreshLimit,
+                this.rateLimiterConfig.get().getLimitRefreshPeriod().toNanos(),
+                this.rateLimiterConfig.get().getLimitRefreshPeriod().toNanos(),
+                TimeUnit.NANOSECONDS
+        );
+    }
+
+    void refreshLimit() {
+        int permissionsToRelease =
+                this.rateLimiterConfig.get().getLimitForPeriod() - semaphore.availablePermits();
+        semaphore.release(permissionsToRelease);
+    }
+}
+```
+
+- 처음 RateLimit 객체를 생성하게 되면 세마포어 정보 설정과 `scheduleLimitRefresh` method 호출해서 clock cycle동안 Demon Thread로 백그라운드로 동작 하게 됩니다.
+- `scheduleLimitRefresh` method는 `limit-for-period` 간격으로 client thread가 할당 받은 semaphore를 다시 반환 받도록 해줍니다
+- 사용자 Thread는 `acquirePermission` method에서 `tryAcquire` 통해서 세마포어를 획득 하게 됩니다.
+- 그리고 `RateLimit` interface에 정의된 `decorateCheckedSupplier` method를 통해 개발자가 작성한 비즈니스 로직호출해 처리하게 됩니다
 
 ## RateLimiter VS BulkHead
 
@@ -239,3 +378,4 @@ resilience4j:
 - https://resilience4j.readme.io/docs
 - https://docs.spring.io/spring-cloud-circuitbreaker/docs/current/reference/html/
 - https://github.com/Netflix/Hystrix/wiki/How-it-Works
+- https://godekdls.github.io/Resilience4j/latelimiter/
