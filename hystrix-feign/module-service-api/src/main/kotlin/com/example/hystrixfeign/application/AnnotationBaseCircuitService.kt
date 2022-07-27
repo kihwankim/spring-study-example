@@ -5,6 +5,7 @@ import io.github.resilience4j.bulkhead.annotation.Bulkhead
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker
 import io.github.resilience4j.ratelimiter.RateLimiterRegistry
 import io.github.resilience4j.ratelimiter.annotation.RateLimiter
+import io.github.resilience4j.retry.annotation.Retry
 import mu.KotlinLogging
 import org.springframework.stereotype.Component
 import javax.annotation.PostConstruct
@@ -73,5 +74,16 @@ class AnnotationBaseCircuitService(
 
     private fun rateLimiterFallback(t: Throwable): String {
         return "handle"
+    }
+
+    @Retry(name = "retry-test", fallbackMethod = "retryFallback")
+    fun callRetry(): String {
+        logger.info("retry")
+        throw Exception("exp")
+        return "retry"
+    }
+
+    private fun retryFallback(t: Throwable): String {
+        return "retry fallback"
     }
 }

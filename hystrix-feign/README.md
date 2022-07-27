@@ -14,6 +14,51 @@
 - 현재 Hystrix는 더이상 관리되지 않기 때문에 Hystrix를 대체 하기 위해서 Resilience4J 를 사용하게 되었습니다
 - 현재 Resilience4J는 계속해서 update가 되고 있습니다
 
+## Fallback
+
+```java
+public class FallbackDecorators {
+    public CheckedFunction0<Object> decorate(FallbackMethod fallbackMethod,
+                                             CheckedFunction0<Object> supplier) {
+        return get(fallbackMethod.getReturnType())
+                .decorate(fallbackMethod, supplier); // supplier가 functional interface, biz logic
+    } // resilience4J 내부에서는 모두 위임 형태로 가지고 있습니다. 그리고 fallback String값으로 획득한 method를 Fallback Decorator에 전달해서
+
+    private FallbackDecorator get(Class<?> returnType) { // fallback 객체 검색
+        return fallbackDecorators.stream().filter(it -> it.supports(returnType))
+                .findFirst()
+                .orElse(defaultFallbackDecorator);
+    }
+}
+
+public class DefaultFallbackDecorator implements FallbackDecorator { // 검색된 fallback 객체
+
+    @Override
+    public boolean supports(Class<?> target) {
+        return true;
+    }
+
+    @Override
+    public CheckedFunction0<Object> decorate(FallbackMethod fallbackMethod,
+                                             CheckedFunction0<Object> supplier) {
+        return () -> {
+            try {
+                return supplier.apply(); // retry, bulk head, ratelimit, circuitbreaker
+            } catch (IllegalReturnTypeException e) {
+                throw e;
+            } catch (Throwable throwable) {
+                return fallbackMethod.fallback(throwable); // fallback method 호출
+            }
+        };
+    }
+}
+```
+
+- 모든 resilience4J는 `FallbackDecorators`를 가지고 있습니다.
+- `FallbackDecorators`는 등록한 Fallback Method를 `FallbackDecorator`객체로 가지고 있습니다
+- 그리고 `CheckedFunction0<Object> supplier` 는 functional interface를 통해서 circuitbreaker, bulkhead ..etc annotation이 선언된 method를 호출 합니다
+- 마지막으로 에러가 발생할 경우 fallback decorator를 찾아서 fallback method를 호출하게 됩니다.
+
 ## Thread isolation(Hystrix)과 BulkHead(resilience4J)
 
 ### Hystrix 간단한 설명
@@ -379,3 +424,65 @@ public class SemaphoreBasedRateLimiter implements RateLimiter {
 - https://docs.spring.io/spring-cloud-circuitbreaker/docs/current/reference/html/
 - https://github.com/Netflix/Hystrix/wiki/How-it-Works
 - https://godekdls.github.io/Resilience4j/latelimiter/
+
+## Retry
+
+### 정의
+
+- 처음 API를 호출 후 네트워크 이상과 같은 실패가 났을때 재시도하는 역할을 하는 기능 입니다
+- 재시도 횟수와 간격을 지정할 수 있는 것 입니다
+
+### 매게변수 정의
+
+- max-retry-attempts(max-attempts): 재시도 횟수
+- wait-duration: 재시도 하기 위해서 다기 시간(간격)
+- retry-exception: 재시도를 할 수 있는 예외 에러 케이스
+
+### Retry 예시와 코드 설명
+
+```kotlin
+class TestService {
+    @Retry(name = "retry-test", fallbackMethod = "retryFallback")
+    fun callRetry(): String {
+        logger.info("retry")
+        throw Exception("exp")
+        return "retry"
+    }
+
+    private fun retryFallback(t: Throwable): String {
+        return "retry fallback"
+    }
+}
+```
+
+- @Retry 에서 name설정과 fallback을 진행합니다
+- 최대 max-attempts 횟수까지만 retry가 가능 하고 그 후에는 fallback으로 처리 합니다
+
+```java
+public interface Retry {
+    // ... codes
+    static <T> CheckedFunction0<T> decorateCheckedSupplier(Retry retry,
+                                                           CheckedFunction0<T> supplier) {
+        return () -> {
+            Retry.Context<T> context = retry.context();
+            do {
+                try {
+                    T result = supplier.apply(); // 사용자가 정의한 비즈니스 로직
+                    final boolean validationOfResult = context.onResult(result);
+                    if (!validationOfResult) {
+                        context.onComplete();
+                        return result;
+                    }
+                } catch (Exception exception) {
+                    context.onError(exception);
+                }
+            } while (true);
+        };
+    }
+    // ... codes
+}
+```
+
+- retry 로직은 위와 같이 do while 형태로 진행하며
+- context(RetryImpl.class)에서 onError에서 retry 횟수보다 아래일 경우 exception을 띄우지 않고 만약 retry 횟수를 넘길 경우 exception을 띄우게 됩니다
+- exception이 발생하게 되면 fallback이 호출 됩니다

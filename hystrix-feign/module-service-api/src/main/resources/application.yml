@@ -46,3 +46,8 @@ resilience4j:
         limit-for-period: 5
         limit-refresh-period: 4s
         timeout-duration: 10s
+  retry:
+    configs:
+      default:
+        max-attempts: 2 # 2회
+        wait-duration: 1000 # 1초

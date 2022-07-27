@@ -33,4 +33,11 @@ class AnnotataionEndPointController(
         val callRateLimit = annotationBaseCircuitService.callRateLimit()
         return ResponseEntity.ok(callRateLimit)
     }
+
+    @GetMapping("/retry")
+    fun callRetry(): ResponseEntity<String> {
+        val callRetryResult = annotationBaseCircuitService.callRetry()
+
+        return ResponseEntity.ok(callRetryResult)
+    }
 }
