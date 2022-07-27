@@ -416,15 +416,6 @@ public class SemaphoreBasedRateLimiter implements RateLimiter {
 - 하지만 B서비스의 API는 A service 말고 C,D,E서비스 에게도 API를 제공하고 있습니다
 - 위와 같이 여러 의존성이 발생할 수 있으므로 Thread pool 개수와, Semaphore 개수를 각 서비스 마다 할당해서 한 곳에서 독점적으로 자원을 사용하지 않도록 방지 하는 형태를 가지고 있습니다.
 
-### 참고자료
-
-- https://sabarada.tistory.com/206
-- https://dlsrb6342.github.io/2019/06/03/Resilience4j%EB%9E%80/
-- https://resilience4j.readme.io/docs
-- https://docs.spring.io/spring-cloud-circuitbreaker/docs/current/reference/html/
-- https://github.com/Netflix/Hystrix/wiki/How-it-Works
-- https://godekdls.github.io/Resilience4j/latelimiter/
-
 ## Retry
 
 ### 정의
@@ -486,3 +477,13 @@ public interface Retry {
 - retry 로직은 위와 같이 do while 형태로 진행하며
 - context(RetryImpl.class)에서 onError에서 retry 횟수보다 아래일 경우 exception을 띄우지 않고 만약 retry 횟수를 넘길 경우 exception을 띄우게 됩니다
 - exception이 발생하게 되면 fallback이 호출 됩니다
+
+
+## 참고자료
+
+- https://sabarada.tistory.com/206
+- https://dlsrb6342.github.io/2019/06/03/Resilience4j%EB%9E%80/
+- https://resilience4j.readme.io/docs
+- https://docs.spring.io/spring-cloud-circuitbreaker/docs/current/reference/html/
+- https://github.com/Netflix/Hystrix/wiki/How-it-Works
+- https://godekdls.github.io/Resilience4j/latelimiter/
