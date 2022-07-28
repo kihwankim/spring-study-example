@@ -478,6 +478,56 @@ public interface Retry {
 - context(RetryImpl.class)에서 onError에서 retry 횟수보다 아래일 경우 exception을 띄우지 않고 만약 retry 횟수를 넘길 경우 exception을 띄우게 됩니다
 - exception이 발생하게 되면 fallback이 호출 됩니다
 
+## 회로 차단기(CircuitBreaker)
+
+### 정의
+
+- 회로 차단기는 지금 현재 전선에 많은 전류가 흐를 경우 문제를 감지하여 연결을 끊는 것입니다
+- 애플리케이션에서도 원격 호출을 모니터링하고, 서비스를 장기간 기다리지 않게 하는 것입니다.
+
+### 회로 차단가 상태
+
+![circuitbreaker.png](pic/circuitbreaker-state.png)
+
+- 처음 시작 후 circuit breaker는 닫힌 상태에서 시작하게 됩니다. 그리고 클라이언트의 요청을 기다리게 됩니다.
+- 닫힌 상태는 `링 비트버퍼`를 사용하여 요청의 결과와 실패 상태 정보를 저장합니다.
+
+![ringbit.png](pic/circuitbreaker-ringbit.png)
+
+- 만약 client의 요청이 성공할 경우 링 비트 버퍼에 0을 저장합니다.
+- 응답을 받지 못하면 1비트를 저장합니다
+- 링비트 실패률을 계산하려면 모든 윈도우에 bit 값이 체워져야 합니다 만약 모두 체워진 상태면 평가를 진행합니다
+- 평가 과정에서 개발자가 설정한 실패률 보다 높을 경우에는 circuit breaker를 열린 상태로 state값을 변경 시킵니다.
+- 열린 상태에서는 모든 요청에대해서 `CallNotPermittedException`을 띄우게 됩니다. 그러므로 만약 fallback을 등록할 경우 해당 fallback으로 모든 요청이 이동하게 됩니다.
+- circuit breaker가 열린 상태로 유지 되다가 일정 시간이 지나게 되면 반열림 상태로 변경됩니다.
+- 반열림 상태로 변경이 될 경우 circuit breaker가 관리하고 있는 `다른 링비트`를 사용해서 실패율을 추가로 평가 하게 됩니다.
+- 실패율이 임계치보다 높을 경우 다시 회로를 열린 상태로 변경하고 아닐 경우 닫힌 상태로 변경하고 외부 API를 호출하게 됩니다.
+
+### 매게변수 정의
+
+- register-health-indicator: actuator를 통해서 circuit breaker상태를 확인하기 위해서 사용하는 설정
+- sliding-window-size: circuit breaker가 닫힌 상태에서 링비트 버퍼의 크기를 설정하는 값입니다 default: 100
+- ring-buffer-size-in-closed-state: 닫힌 상태에서의 링비트 버퍼의 크기를 설정, default: 100 -> 현재는 sliding-window-size로 대체 되었습니다
+- ring-buffer-size-in-half-open-state: 반열림 상태에서의 링비트 버퍼의 크기 설정: default: 10
+- wait-duration-in-open-state: 열림 상태를 유지하는 시간, 해당 시간이후 반열림 상태로 변경된다.
+- failure-rate-threshold: 실패한 호출에 대한 임계값(백분율 %)으로 이 값을 초과하면 서킷이 열린다
+- sliding-window-type: COUNT_BASED/TIME_BASED -> sliding windows 처리 방식
+- automatic-transition-from-open-to-half-open-enabled: default-> false
+    - `wait-duration-in-open-state` 시간이 지난 후 자동으로 half open 상태로 상태 변의를 할지를 결정하는 파라미터
+    - 만약 false일 경우 `wait-duration-in-open-state` 지난후 새로운 요청이 들어올 경우 half open 형태로 변경이 됩니다
+    - true일 경우 `wait-duration-in-open-state` 시간이 후 thread를 생성해서 자동으로 변경하도록 유도를 합니다 하지만 새로운 스레드를 생성하고 관리해야하는 서버 부담이 커집니다
+    - 하지만 false인 경우 새로운 쓰레드를 생성할 필요 없으므로 관리 포인트가 줄어드는 장점이 있습니다.
+
+### COUNT_BASED
+
+- N개의 circular(환형) 배열을 생성 합니다
+- 환형 구조이기 때문에 만약 모든 배열이 꽉차있을 경우 새로운 API호출 결과(0 or 1)이 들어올 경우 가장 오래된 데이터를 지워 버리고 거기에 새로운 결과를 작성 합니다
+
+### TIME_BASED
+
+- N개의 버킷이 들어있는 환형 구조입니다
+- 10초라고 가정할 경우 10개의 버킷이 생성됩니다
+- 각 epoc 시간동안 호출의 결과에 대한 합의 값을 저장하게 됩니다.
 
 ## 참고자료
 
