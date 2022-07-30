@@ -5,7 +5,7 @@ import javax.persistence.*
 
 @Entity
 @Table(name = "member")
-data class MemberEntity(
+internal data class MemberEntity(
     @Id
     @Column(name = "member_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)

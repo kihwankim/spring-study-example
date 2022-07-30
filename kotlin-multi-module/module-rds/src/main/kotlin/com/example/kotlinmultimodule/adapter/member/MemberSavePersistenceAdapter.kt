@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional
 
 @Service
 @Transactional(readOnly = true)
-class MemberSavePersistenceAdapter(
+internal class MemberSavePersistenceAdapter(
     private val memberRepository: MemberRepository,
     private val memberQueryRepository: MemberQueryRepository
 ) : MemberSavePort, MemberSearchPort {

@@ -9,7 +9,7 @@ import com.linecorp.kotlinjdsl.spring.data.singleQuery
 import org.springframework.stereotype.Repository
 
 @Repository
-class MemberQueryRepositoryImpl(
+internal class MemberQueryRepositoryImpl(
     private val springDataQueryFactory: SpringDataQueryFactory
 ) : MemberQueryRepository {
     override fun findByName(name: String): List<MemberEntity> =
