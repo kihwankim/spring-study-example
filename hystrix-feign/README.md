@@ -518,10 +518,121 @@ public interface Retry {
     - true일 경우 `wait-duration-in-open-state` 시간이 후 thread를 생성해서 자동으로 변경하도록 유도를 합니다 하지만 새로운 스레드를 생성하고 관리해야하는 서버 부담이 커집니다
     - 하지만 false인 경우 새로운 쓰레드를 생성할 필요 없으므로 관리 포인트가 줄어드는 장점이 있습니다.
 
+### 회로 차단기 상태
+
+- `CircuitBreakerState`라는 interface를 구현하는 객체 입니다
+
+1. ClosedState
+
+- 처음 시작 시점 및 외부 API를 호출하는 interface가 정상인 상태를 의미 합니다
+- ring buffer를 통해서 API 호출 후 에러 rate를 검증하는 상태 입니다
+- 일반적으로 외부 시스템이 장애 없이 정상인 상태라고 인지하는 상태 입니다
+
+2. OpenState
+
+- CircuitBraker가 열린 상태이며, interface에서 에러가 계속 발생하기 때문에 문제가 있다고 인지한 케이스 입니다
+- 일정 시간동안 fallback을 호출하여 에러를 처리 하는 상태 입니다
+- 외부 시스템에 장애가 났기 때문에 추가 API호출 없이 에러를 처리하는 상태를 의미 합니다
+
+3. HalfOpenState
+
+- CircuitBraker가 닫힌 상태로 변경하기 전에 한번더 검증을 하는 상태 입니다.
+- OPEN상태에서 일부 시간이 지난 후, 외부 API를 호출 하는 interface를 호출 해서 결과를 저장합니다 만약 metric값을 수집했을때 에러라고 판단이 되면 다시 open 상태로 바뀝니다
+- Hystric에서는 HalfOpen상태에서 1번의 API호출 후 에러가 발생할 경우 다시 Open상태로 변경합니다
+- Resilience4J인 경우 Close상태에서 쓰는 Ring Buffer 말고 새로운 Ring Buffer 를 이용합니다
+    - close상태에서는 `sliding-window-size` 값으로 buffer 사이즈를 설정하고, half open일 경우 `ring-buffer-size-in-half-open-state`를 이용해서 buffer 사이즈를 설정 합니다
+    - 버퍼 사이즈를 별개로 분리했기 때문에 half open 상태에서 open 및 close로 전의 속도를 조절할 수 있습니다
+
+4. DisabledState
+
+- 항상 외부 API를 호출하는 interface를 호출할 수 있는 상태 입니다
+- 특수항 state로서 이벤트가 발생할 경우 메트릭 값을 저장하지 않습니다
+- 상태를 종료 및 변경이 필요한 경우 상태 전환 트리거를
+
+5. MetricsOnlyState
+
+- 위 DisabledState 와 동일하게 동작합니다
+- 차이점은 metric 접로르 수집합니다
+
+6. ForcedOpenState: 항상 open의 상태로
+
+- 항상 Circuit breaker가 open된상태 입니다
+- 특수항 state로서 이벤트가 발생할 경우 메트릭 값을 저장하지 않습니다
+
+7. DisabledState, ForcedOpenState
+
+- 특수한 state라고 하며, 만약 다시 Close 상태로 변경이 필요할 경우 아래와 같이 `CircuitBreakerEndpoint.updateCircuitBreakerState`를 통해서만 상태 변경이 가능합니다
+
+```java
+
+@Endpoint(id = "circuitbreakers")
+public class CircuitBreakerEndpoint {
+    @WriteOperation
+    public CircuitBreakerUpdateStateResponse updateCircuitBreakerState(@Selector String name, UpdateState updateState) {
+        final CircuitBreaker circuitBreaker = circuitBreakerRegistry.circuitBreaker(name);
+        final String message = "%s state has been changed successfully";
+        switch (updateState) {
+            case CLOSE:
+                circuitBreaker.transitionToClosedState();
+                return createCircuitBreakerUpdateStateResponse(name, circuitBreaker.getState().toString(), String.format(message, name));
+            case FORCE_OPEN:
+                circuitBreaker.transitionToForcedOpenState();
+                return createCircuitBreakerUpdateStateResponse(name, circuitBreaker.getState().toString(), String.format(message, name));
+            case DISABLE:
+                circuitBreaker.transitionToDisabledState();
+                return createCircuitBreakerUpdateStateResponse(name, circuitBreaker.getState().toString(), String.format(message, name));
+            default:
+                return createCircuitBreakerUpdateStateResponse(name, circuitBreaker.getState().toString(), "State change value is not supported please use only " + Arrays.toString(UpdateState.values()));
+        }
+
+    }
+}
+```
+
 ### COUNT_BASED
 
 - N개의 circular(환형) 배열을 생성 합니다
 - 환형 구조이기 때문에 만약 모든 배열이 꽉차있을 경우 새로운 API호출 결과(0 or 1)이 들어올 경우 가장 오래된 데이터를 지워 버리고 거기에 새로운 결과를 작성 합니다
+- circuit breaker는 각 state객체 마다 metric이라는 값을 가지고 있습니다. 그리고 그 metric이라는 객체 내부에 아래의 객체인 `FixedSizeSlidingWindowMetrics` 라는 값을 가지게 됩니다.
+    - 만약 TIME_BASE일 경우 metric 내부에 `SlidingTimeWindowMetrics`라는 값을 가게 됩니다
+
+```java
+public class FixedSizeSlidingWindowMetrics implements Metrics {
+
+    private final int windowSize;
+    private final TotalAggregation totalAggregation;
+    private final Measurement[] measurements;
+    int headIndex;
+
+    /**
+     * Creates a new {@link FixedSizeSlidingWindowMetrics} with the given window size.
+     *
+     * @param windowSize the window size
+     */
+    public FixedSizeSlidingWindowMetrics(int windowSize) {
+        this.windowSize = windowSize;
+        this.measurements = new Measurement[this.windowSize];
+        this.headIndex = 0;
+        for (int i = 0; i < this.windowSize; i++) {
+            measurements[i] = new Measurement();
+        }
+        this.totalAggregation = new TotalAggregation();
+    }
+
+    @Override
+    public synchronized Snapshot record(long duration, TimeUnit durationUnit, Outcome outcome) {
+        totalAggregation.record(duration, durationUnit, outcome);
+        moveWindowByOne().record(duration, durationUnit, outcome);
+        return new SnapshotImpl(totalAggregation);
+    }
+
+    // codes...
+}
+```
+
+- State라는 객체는 `Metrics`라는 객체를 가지고 있기 떄문에 위 코드의 record라는 method를 호출해서 sliding window에 실패 및 성공 정보를 저장 하게 됩니다.
+- Metric배열에 결과를 저장하고, Snapshot 이라는 객체에 현재 state에서 발생한 결과를 담아서 전달하게 됩니다.
+- 그리고 error 비율 검사와 다음 state를 변경 여부를 결정하는 방식으로 구현이 되어있습니다
 
 ### TIME_BASED
 

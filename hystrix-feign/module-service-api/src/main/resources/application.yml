@@ -47,7 +47,7 @@ resilience4j:
         register-health-indicator: true
         sliding-window-size: 10
         ring-buffer-size-in-closed-state: 20 # 닫힌 상태에서의 링비트 버퍼의 크기를 설정, default: 100
-        ring-buffer-size-in-half-open-state: : 10 # 반열림 상태에서의 링비트 버퍼의 크기 설정: default: 10
+        ring-buffer-size-in-half-open-state: 10 # 반열림 상태에서의 링비트 버퍼의 크기 설정: default: 10
         wait-duration-in-open-state: 5s # 열림 상태를 유지하는 시간, 해당 시간이후 반열림 상태로 변경된다.
         failure-rate-threshold: 80 # 실패한 호출에 대한 임계값(백분율 %)으로 이 값을 초과하면 서킷이 열린다
         sliding-window-type: COUNT_BASED

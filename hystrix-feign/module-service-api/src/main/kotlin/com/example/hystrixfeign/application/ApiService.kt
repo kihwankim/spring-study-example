@@ -1,6 +1,6 @@
 package com.example.hystrixfeign.application
 
-const val CIRCUIT_NAME = "circuit"
+const val CIRCUIT_NAME = "other"
 
 interface ApiService {
 
