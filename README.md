@@ -46,3 +46,7 @@
 ## Spring EventListener
 
 - <a href="https://github.com/kihwankim/spring-study-example/blob/master/spring-event-listener/event-listener.md">링크</a>
+
+## Resilience4j
+
+- <a href="https://github.com/kihwankim/spring-study-example/blob/master/hystrix-feign/README.md">링크</a>
