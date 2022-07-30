@@ -327,7 +327,7 @@ public class AtomicRateLimiter implements RateLimiter {
 - ratelimit에서 refresh 시간(limit-refresh-period)동안 가용한 허용 수(limit-for-period) 보다 많이 적게 이용되고 있을 경우 refresh를 하지 않는 최적화 방식을 상용합니다
   ![atomic 방식](pic/ratelimit_atomic_logic.png)
     - 위 사전에서 refresh부분의 앞 epoc(limit-refresh-period)을 보시면 permission(limit-for-period) 개수가 0개 이기때문에 다음 epoc에서 refresh를 진행합니다
-    - 하지만 다음 epoc에서는 permission(limit-for-period) 개수가 1개가 남기 때문에 굳이 refresh를 하지 않고 다음 epoc으로 이전합니다
+    - 하지만 다음 epoc에서는 permission(limit-for-period) 개수가 1개가 남기 때문에 굳이 refresh를 하지 않아도 됩니다. 그러므로 다음 epoc으로 이전합니다
     - state를 계속해서 변경을 해주다 보면 성능 이슈가 발생하기 때문에 다음과 같이 변경어 없이 다음 epoc을 진행하고 있습니다
 
 ### SemaphoreRateLimiter
