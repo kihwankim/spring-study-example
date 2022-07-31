@@ -2,6 +2,7 @@ package com.example.springelexpression
 
 import com.example.springelexpression.application.domain.SpelTestService
 import com.example.springelexpression.application.dto.Hello
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.context.expression.MethodBasedEvaluationContext
@@ -39,7 +40,7 @@ class SpelExpressionTest {
         val id = parser.parseExpression("helloId")
             .getValue(context) as Long
 
-        print(id)
+        assertThat(id).isEqualTo(1L)
     }
 
     @Test
@@ -52,6 +53,19 @@ class SpelExpressionTest {
         val key = parser.parseExpression("#hello.helloId")
             .getValue(evaluationContext)
             .toString()
-        print(key)
+        assertThat(key).isEqualTo("1")
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun `parameter name discovery 2가지 이상 테스트`() {
+        val hello = Hello(1L, "contentdata")
+        val nameDiscoverer: ParameterNameDiscoverer = DefaultParameterNameDiscoverer()
+        val runWithOneSpelEpxressionMethod: Method = SpelTestService::class.java.getMethod("runWithOneSpelEpxression", Hello::class.java)
+        val evaluationContext: EvaluationContext = MethodBasedEvaluationContext(hello, runWithOneSpelEpxressionMethod, arrayOf(hello), nameDiscoverer)
+        val key = parser.parseExpression("#hello.helloId + ':' + #hello.content")
+            .getValue(evaluationContext)
+            .toString()
+        assertThat(key).isEqualTo("1:contentdata")
     }
 }
