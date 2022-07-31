@@ -1,4 +1,4 @@
-package com.example.redissonlock.app.presentation.dto
+package com.example.redissonlock.adapter.presentation.dto
 
 import javax.validation.constraints.NotEmpty
 

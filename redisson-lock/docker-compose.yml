@@ -3,7 +3,7 @@ services:
   mysql:
     image: mysql
     environment:
-      MYSQL_DATABASE: test_db
+      MYSQL_DATABASE: dev
       MYSQL_ROOT_PASSWORD: root
       MYSQL_ROOT_HOST: root
     ports:

@@ -1,7 +1,7 @@
-package com.example.redissonlock.app.presentation.api
+package com.example.redissonlock.adapter.presentation.api
 
 import com.example.redissonlock.app.application.RedissonLockService
-import com.example.redissonlock.app.presentation.dto.LockRequest
+import com.example.redissonlock.adapter.presentation.dto.LockRequest
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RestController
