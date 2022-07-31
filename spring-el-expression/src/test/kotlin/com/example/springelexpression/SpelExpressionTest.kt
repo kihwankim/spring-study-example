@@ -14,6 +14,15 @@ import org.springframework.expression.spel.standard.SpelExpressionParser
 import org.springframework.expression.spel.support.StandardEvaluationContext
 import java.lang.reflect.Method
 
+data class ExpressionRootObject(
+    val method: Method,
+    val args: Array<Any>,
+    val target: Any,
+    val targetClass: Class<*>
+) {
+    val methodName: String
+        get() = method.name
+}
 
 class SpelExpressionTest {
 
@@ -49,7 +58,13 @@ class SpelExpressionTest {
         val hello = Hello(1L, "contentdata")
         val nameDiscoverer: ParameterNameDiscoverer = DefaultParameterNameDiscoverer()
         val runWithOneSpelEpxressionMethod: Method = SpelTestService::class.java.getMethod("runWithOneSpelEpxression", Hello::class.java)
-        val evaluationContext: EvaluationContext = MethodBasedEvaluationContext(hello, runWithOneSpelEpxressionMethod, arrayOf(hello), nameDiscoverer)
+        val root = ExpressionRootObject(
+            method = runWithOneSpelEpxressionMethod,
+            args = arrayOf(hello),
+            target = Object(),
+            targetClass = SpelTestService::class.java
+        )
+        val evaluationContext: EvaluationContext = MethodBasedEvaluationContext(root, runWithOneSpelEpxressionMethod, arrayOf(hello), nameDiscoverer)
         val key = parser.parseExpression("#hello.helloId")
             .getValue(evaluationContext)
             .toString()
@@ -62,10 +77,18 @@ class SpelExpressionTest {
         val hello = Hello(1L, "contentdata")
         val nameDiscoverer: ParameterNameDiscoverer = DefaultParameterNameDiscoverer()
         val runWithOneSpelEpxressionMethod: Method = SpelTestService::class.java.getMethod("runWithOneSpelEpxression", Hello::class.java)
-        val evaluationContext: EvaluationContext = MethodBasedEvaluationContext(hello, runWithOneSpelEpxressionMethod, arrayOf(hello), nameDiscoverer)
+
+        val root = ExpressionRootObject(
+            method = runWithOneSpelEpxressionMethod,
+            args = arrayOf(hello),
+            target = Object(),
+            targetClass = SpelTestService::class.java
+        )
+        val evaluationContext: EvaluationContext = MethodBasedEvaluationContext(root, runWithOneSpelEpxressionMethod, arrayOf(hello), nameDiscoverer)
         val key = parser.parseExpression("#hello.helloId + ':' + #hello.content")
             .getValue(evaluationContext)
             .toString()
         assertThat(key).isEqualTo("1:contentdata")
     }
 }
+

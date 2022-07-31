@@ -10,7 +10,7 @@ val log = KotlinLogging.logger {}
 @Service
 class SpelTestService {
 
-    @SpelAnnotation(prefix = "hello", spelKey = "#hello.helloId")
+    @SpelAnnotation(prefix = "hello", spelKey = "#hello.helloId + ':' + #hello.content")
     fun runWithOneSpelEpxression(hello: Hello): Hello {
         log.info("method 호출")
 
