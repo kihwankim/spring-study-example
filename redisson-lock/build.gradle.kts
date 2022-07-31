@@ -24,6 +24,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("org.redisson:redisson-spring-boot-starter:3.17.3")
     implementation("org.springframework.boot:spring-boot-starter-validation")
+    implementation("org.springframework.boot:spring-boot-starter-jdbc")
 
     // kotlin logging
     implementation("io.github.microutils:kotlin-logging-jvm:${kotlinLoggingVersion}")
