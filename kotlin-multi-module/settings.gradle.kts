@@ -2,6 +2,7 @@ rootProject.name = "kotlin-multi-module"
 
 include(
     "module-api",
+    "module-batch",
     "module-rds",
     "module-common",
     "module-domain"
