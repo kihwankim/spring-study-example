@@ -9,6 +9,13 @@ include(
     "pay-service:module-infra:module-kafka"
 )
 
+include(
+    "order-service:module-api",
+    "order-service:module-domain",
+    "order-service:module-infra:module-rds",
+    "order-service:module-infra:module-kafka"
+)
+
 pluginManagement {
     val kotlinVersion: String by settings
     val springBootVersion: String by settings
