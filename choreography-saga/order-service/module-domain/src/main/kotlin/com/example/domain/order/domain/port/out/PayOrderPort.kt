@@ -1,0 +1,8 @@
+package com.example.domain.order.domain.port.out
+
+import com.example.domain.order.domain.dto.OrderPurchase
+
+interface PayOrderPort {
+
+    fun payProductsProcessor(orderPurchase: OrderPurchase)
+}
