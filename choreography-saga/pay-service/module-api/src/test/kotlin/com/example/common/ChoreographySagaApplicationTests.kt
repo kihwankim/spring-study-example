@@ -1,4 +1,4 @@
-package com.example.choreographysaga
+package com.example.common
 
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest

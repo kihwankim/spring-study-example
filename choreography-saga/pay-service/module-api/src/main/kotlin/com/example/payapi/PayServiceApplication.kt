@@ -1,11 +1,11 @@
-package com.example.choreographysaga
+package com.example.payapi
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 
 @SpringBootApplication
-class ChoreographySagaApplication
+class PayServiceApplication
 
 fun main(args: Array<String>) {
-    runApplication<ChoreographySagaApplication>(*args)
+    runApplication<PayServiceApplication>(*args)
 }
