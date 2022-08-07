@@ -30,3 +30,7 @@ spring:
         dialect.storage_engine: innodb
         default_batch_fetch_size: 500
         format_sql: true
+
+logging:
+  level:
+    org.springframework.jdbc.core.JdbcTemplate: debug
