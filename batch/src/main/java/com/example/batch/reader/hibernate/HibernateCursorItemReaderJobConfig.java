@@ -16,11 +16,9 @@ import org.springframework.batch.item.database.builder.HibernateCursorItemReader
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 
 @Slf4j
 @Configuration
-@Profile("hibernateCursor")
 @RequiredArgsConstructor
 public class HibernateCursorItemReaderJobConfig {
     public static final String JOB_NAME = "hibernateCursorItemReaderJob";

@@ -1,7 +1,7 @@
 package com.example.batch;
 
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
-import org.springframework.batch.test.JobLauncherTestUtils;
+import org.springframework.batch.test.JobRepositoryTestUtils;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableBatchProcessing
 public class TestBatchLegacyConfig {
     @Bean
-    public JobLauncherTestUtils jobLauncherTestUtils() {
-        return new JobLauncherTestUtils();
+    public JobRepositoryTestUtils jobRepositoryTestUtils() {
+        return new JobRepositoryTestUtils();
     }
 }

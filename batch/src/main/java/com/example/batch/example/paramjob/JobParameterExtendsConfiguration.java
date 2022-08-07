@@ -35,12 +35,6 @@ public class JobParameterExtendsConfiguration {
     private final EntityManagerFactory entityManagerFactory;
     private final CreateDateJobParameter jobParameter;
 
-    @Bean(JOB_NAME + "jobParameter")
-    @JobScope
-    public CreateDateJobParameter jobParameter() {
-        return new CreateDateJobParameter();
-    }
-
     @Bean(name = JOB_NAME)
     public Job job() {
         return jobBuilderFactory.get(JOB_NAME)

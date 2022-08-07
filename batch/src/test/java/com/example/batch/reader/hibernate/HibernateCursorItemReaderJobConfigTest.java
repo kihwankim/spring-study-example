@@ -1,12 +1,11 @@
-package com.example.batch.example.paramjob;
+package com.example.batch.reader.hibernate;
 
 import com.example.batch.common.MockBatchTest;
-import com.example.batch.entity.product.Product;
-import com.example.batch.entity.product.ProductRepository;
 import com.example.batch.entity.product.ProductStatus;
+import com.example.batch.entity.student.TeacherRepository;
+import com.example.batch.fixture.InitProcessor;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.JobExecution;
@@ -20,49 +19,46 @@ import java.time.LocalDate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-
 @SpringBootTest
-class JobParamProductConfigurationTest extends MockBatchTest {
+class HibernateCursorItemReaderJobConfigTest extends MockBatchTest {
+    @Autowired
+    TeacherRepository teacherRepository;
 
     @Autowired
-    ProductRepository productRepository;
+    InitProcessor initProcessor;
 
     @Autowired
-    JobProductConfiguration jobProductConfiguration;
+    HibernateCursorItemReaderJobConfig hibernateCursorItemReaderJob;
 
     @BeforeEach
     void setUp() {
         jobLauncherTestUtils = new JobLauncherTestUtils();
         jobLauncherTestUtils.setJobLauncher(jobLauncher);
         jobLauncherTestUtils.setJobRepository(jobRepository);
-        jobLauncherTestUtils.setJob(jobProductConfiguration.job());
+        jobLauncherTestUtils.setJob(hibernateCursorItemReaderJob.job());
     }
 
     @AfterEach
     void tearDown() {
-        productRepository.deleteAll();
+        teacherRepository.deleteAll();
+        jobRepositoryTestUtils.removeJobExecutions();
     }
 
-    @Test
-    @DisplayName("test")
-    void jobParamTestConfigTest() throws Exception {
-        // given
-        LocalDate createDate = LocalDate.of(2020, 9, 26);
-        long price = 2000L;
-        ProductStatus status = ProductStatus.APPROVE;
-        productRepository.save(Product.builder()
-                .price(price)
-                .createDate(createDate)
-                .status(status)
-                .build());
 
+    @Test
+    void jobTest() {
+        // given
+        initProcessor.saveTeacher();
+        LocalDate localDate = LocalDate.of(2022, 1, 1);
+
+        ProductStatus status = ProductStatus.APPROVE;
         JobParameters jobParameters = new JobParametersBuilder(jobLauncherTestUtils.getUniqueJobParameters())
-                .addString("createDate", createDate.toString())
+                .addString("createDate", localDate.toString())
                 .addString("status", status.name())
                 .toJobParameters();
 
         // when
-        JobExecution jobExecution = jobLauncherTestUtils.launchJob(jobParameters);
+        JobExecution jobExecution = jobLauncherTestUtils.launchStep(HibernateCursorItemReaderJobConfig.JOB_NAME + "_step", jobParameters);
 
         // then
         assertThat(jobExecution.getStatus()).isEqualTo(BatchStatus.COMPLETED);
