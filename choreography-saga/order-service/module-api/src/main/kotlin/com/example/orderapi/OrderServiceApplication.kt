@@ -1,4 +1,4 @@
-package com.example.payapi
+package com.example.orderapi
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
