@@ -8,4 +8,8 @@ import javax.persistence.OneToMany
 internal data class OrderEvents(
     @OneToMany(mappedBy = "orders", cascade = [CascadeType.PERSIST], orphanRemoval = true)
     val orderEvents: MutableList<OrderEventEntity> = ArrayList()
-)
+) {
+    fun addEvent(event: OrderEventEntity) {
+        orderEvents.add(event)
+    }
+}
