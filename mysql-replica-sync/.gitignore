@@ -37,9 +37,4 @@ out/
 
 ### VS Code ###
 .vscode/
-foods
-
-logs
-lib/
-
-target
+application-slack.yml

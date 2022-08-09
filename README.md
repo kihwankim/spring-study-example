@@ -27,26 +27,26 @@
 
 ## solid
 
-- <a href="https://github.com/kihwankim/spring-study-example/blob/master/solid/solid.md">링크</a>
+- <a href="https://github.com/kihwankim/spring-study-example/blob/master/solid">링크</a>
 
 
 ## semi-join
 
-- <a href="https://github.com/kihwankim/spring-study-example/blob/master/semi-join/semi_join.md">링크</a>
+- <a href="https://github.com/kihwankim/spring-study-example/blob/master/semi-join">링크</a>
 
 
 ## mysql replica sync 불일치
 
-- <a href="https://github.com/kihwankim/spring-study-example/blob/master/mysql-replica-sync/mysql-replica.md">링크</a>
+- <a href="https://github.com/kihwankim/spring-study-example/blob/master/mysql-replica-sync">링크</a>
 
 ## Spring Transactional 동작 과정
 
-- <a href="https://github.com/kihwankim/spring-study-example/blob/master/transactional/transactional.md">링크</a>
+- <a href="https://github.com/kihwankim/spring-study-example/blob/master/transactional">링크</a>
 
 ## Spring EventListener
 
-- <a href="https://github.com/kihwankim/spring-study-example/blob/master/spring-event-listener/event-listener.md">링크</a>
+- <a href="https://github.com/kihwankim/spring-study-example/blob/master/spring-event-listener">링크</a>
 
 ## Resilience4j
 
-- <a href="https://github.com/kihwankim/spring-study-example/blob/master/hystrix-feign/README.md">링크</a>
+- <a href="https://github.com/kihwankim/spring-study-example/blob/master/hystrix-feign">링크</a>
