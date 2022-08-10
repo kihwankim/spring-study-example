@@ -14,8 +14,4 @@ dependencies {
     runtimeOnly("com.h2database:h2")
 
     implementation(project(":module-common"))
-    implementation(project(":order-service:module-infra:module-infra-common"))
-
-    compileOnly(project(":order-service:module-domain"))
-    testCompileOnly(project(":order-service:module-domain"))
 }

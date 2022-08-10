@@ -13,7 +13,8 @@ include(
     "order-service:module-api",
     "order-service:module-domain",
     "order-service:module-infra:module-rds",
-    "order-service:module-infra:module-kafka"
+    "order-service:module-infra:module-kafka",
+    "order-service:module-infra:module-infra-common",
 )
 
 pluginManagement {
