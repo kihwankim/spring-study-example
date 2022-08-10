@@ -4,5 +4,5 @@ import com.example.orderapi.order.domain.dto.Order
 import com.example.orderapi.order.domain.dto.OrderPurchase
 
 interface OrderPort {
-    fun purchageProductByOrder(order: Order): OrderPurchase
+    fun purchaceProductByOrder(order: Order): OrderPurchase
 }

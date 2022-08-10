@@ -11,7 +11,7 @@ class OrderService(
     private val payOrderPort: PayOrderPort,
 ) : PurchaseOrderUseCase {
     override fun purchaseOrder(order: Order): OrderPurchase {
-        val purchageProductByOrder = orderPort.purchageProductByOrder(order)
+        val purchageProductByOrder = orderPort.purchaceProductByOrder(order)
         payOrderPort.payProductsProcessor(purchageProductByOrder)
 
         return purchageProductByOrder

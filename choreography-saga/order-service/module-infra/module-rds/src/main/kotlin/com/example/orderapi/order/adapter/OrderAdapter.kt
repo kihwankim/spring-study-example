@@ -10,6 +10,9 @@ import com.example.orderapi.order.entity.ItemUpdateLockStatus
 import com.example.orderapi.order.entity.OrderEntity
 import com.example.orderapi.order.repository.ItemQueryRepository
 import com.example.orderapi.order.repository.OrderRepository
+import com.example.orderapi.outbox.entity.ExternalEventType
+import com.example.orderapi.outbox.entity.OrderOutBoxEntity
+import com.example.orderapi.outbox.repository.OrderOutBoxRepository
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 
@@ -17,9 +20,10 @@ import org.springframework.transaction.annotation.Transactional
 internal class OrderAdapter(
     private val orderRepository: OrderRepository,
     private val itemQueryRepository: ItemQueryRepository,
+    private val orderOutBoxRepository: OrderOutBoxRepository,
 ) : OrderPort {
     @Transactional
-    override fun purchageProductByOrder(order: Order): OrderPurchase {
+    override fun purchaceProductByOrder(order: Order): OrderPurchase {
         // item 조회
         val productMapById = createProductMap(order.products)
         val productIds = order.products.map { it.productId }
@@ -41,11 +45,18 @@ internal class OrderAdapter(
 
         itemQueryRepository.updateStatus(ItemUpdateLockStatus.STABLE, productIds)
 
+        savePurchaceOutBox(savedOrderEntity.orderKey)
+
         return OrderPurchase(
             orderId = savedOrderEntity.id,
-            orderStatus = OrderStatus.CREATED
+            orderStatus = OrderStatus.CREATED,
+            orderHashKey = savedOrderEntity.orderKey
         )
     }
 
     private fun createProductMap(product: List<Product>): Map<Long, Product> = product.associateBy { it.productId }
+
+    private fun savePurchaceOutBox(hasKey: String) {
+        orderOutBoxRepository.save(OrderOutBoxEntity(eventType = ExternalEventType.PURCHASE, identityHashKey = hasKey))
+    }
 }
