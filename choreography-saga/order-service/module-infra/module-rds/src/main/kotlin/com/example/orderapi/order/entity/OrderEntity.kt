@@ -16,6 +16,7 @@ internal data class OrderEntity(
     val id: Long = 0L,
     val orderKey: String,
     var totalPrice: BigDecimal = BigDecimal.ZERO,
+    val userId: Long,
     @Enumerated(EnumType.STRING)
     var status: OrderStatus,
     @Embedded
@@ -26,13 +27,12 @@ internal data class OrderEntity(
     companion object {
         private const val KEY_PREFIX = "order"
 
-        fun createOrder(status: OrderStatus, orderItems: List<ItemEntity>): OrderEntity {
+        fun createOrder(userId: Long): OrderEntity {
             val newOrder = OrderEntity(
+                userId = userId,
                 orderKey = keyGenerate(KEY_PREFIX),
-                status = status
+                status = OrderStatus.CREATED
             )
-
-            newOrder.registerItems(orderItems)
 
             newOrder.orderEvents.addEvent(
                 OrderEventEntity(
@@ -45,10 +45,8 @@ internal data class OrderEntity(
         }
     }
 
-    fun registerItems(inputItems: List<ItemEntity>) {
-        inputItems.forEach { item ->
-            orderItems.orderItems.add(OrderItemEntity(order = this, item = item))
-        }
-        this.totalPrice = orderItems.calculateTotalPrice()
+    fun registerItem(inputItem: ItemEntity, numberOfQuantity: Int) {
+        inputItem.removeQuantity(numberOfQuantity)
+        orderItems.orderItems.add(OrderItemEntity(order = this, item = inputItem, itemCount = numberOfQuantity))
     }
 }

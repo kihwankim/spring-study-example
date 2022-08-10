@@ -3,22 +3,49 @@ package com.example.orderapi.order.adapter
 import com.example.orderapi.order.domain.dto.Order
 import com.example.orderapi.order.domain.dto.OrderPurchase
 import com.example.orderapi.order.domain.dto.OrderStatus
+import com.example.orderapi.order.domain.dto.Product
 import com.example.orderapi.order.domain.port.out.OrderPort
+import com.example.orderapi.order.entity.ItemEntity
+import com.example.orderapi.order.entity.ItemUpdateLockStatus
+import com.example.orderapi.order.entity.OrderEntity
+import com.example.orderapi.order.repository.ItemQueryRepository
 import com.example.orderapi.order.repository.OrderRepository
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 
 @Component
 internal class OrderAdapter(
-    private val orderRepository: OrderRepository
+    private val orderRepository: OrderRepository,
+    private val itemQueryRepository: ItemQueryRepository,
 ) : OrderPort {
     @Transactional
     override fun purchageProductByOrder(order: Order): OrderPurchase {
-        val orderEntity = orderRepository.findById(order.orderId).orElseThrow { IllegalStateException() }
+        // item 조회
+        val productMapById = createProductMap(order.products)
+        val productIds = order.products.map { it.productId }
+
+        // getting lock in db
+        itemQueryRepository.updateStatus(ItemUpdateLockStatus.UPDATE, productIds)
+        val foundItems: List<ItemEntity> = itemQueryRepository.findByItemIdIn(productIds)
+
+        val createOrderEntity = OrderEntity.createOrder(order.userId)
+
+        // order entity 에 order item 저장 및 quantity 줄이기 작업 진행
+        for (itemEntity: ItemEntity in foundItems) {
+            productMapById[itemEntity.id]?.let {
+                createOrderEntity.registerItem(itemEntity, it.quantity)
+            } ?: throw IllegalStateException("item 조회 실패")
+        }
+
+        val savedOrderEntity = orderRepository.save(createOrderEntity)
+
+        itemQueryRepository.updateStatus(ItemUpdateLockStatus.STABLE, productIds)
 
         return OrderPurchase(
-            orderId = 1L,
-            orderStatus = OrderStatus.COMPLETED
+            orderId = savedOrderEntity.id,
+            orderStatus = OrderStatus.CREATED
         )
     }
+
+    private fun createProductMap(product: List<Product>): Map<Long, Product> = product.associateBy { it.productId }
 }

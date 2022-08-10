@@ -10,5 +10,12 @@ data class ItemEntity(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0L,
     val price: BigDecimal,
-    var productName: String
-)
+    var productName: String,
+    val quantity: Int,
+    @Enumerated(EnumType.STRING)
+    val status: ItemUpdateLockStatus
+) {
+    fun removeQuantity(numberOfQuantity: Int) {
+        quantity - numberOfQuantity
+    }
+}

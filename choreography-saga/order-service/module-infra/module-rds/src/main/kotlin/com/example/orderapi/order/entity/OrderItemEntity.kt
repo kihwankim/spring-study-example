@@ -15,4 +15,5 @@ internal data class OrderItemEntity(
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "item_id", nullable = false)
     val item: ItemEntity,
+    val itemCount: Int
 ) : BaseEntity()
