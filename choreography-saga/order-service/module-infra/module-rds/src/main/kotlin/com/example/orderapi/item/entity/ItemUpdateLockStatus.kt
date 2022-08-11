@@ -1,4 +1,4 @@
-package com.example.orderapi.order.entity
+package com.example.orderapi.item.entity
 
 enum class ItemUpdateLockStatus {
     STABLE, UPDATE

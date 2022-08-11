@@ -3,6 +3,7 @@ package com.example.orderapi.order.entity
 
 import com.example.common.event.keyGenerate
 import com.example.orderapi.common.entity.BaseEntity
+import com.example.orderapi.item.entity.ItemEntity
 import com.example.orderapi.order.domain.dto.OrderStatus
 import java.math.BigDecimal
 import javax.persistence.*
@@ -48,5 +49,6 @@ internal data class OrderEntity(
     fun registerItem(inputItem: ItemEntity, numberOfQuantity: Int) {
         inputItem.removeQuantity(numberOfQuantity)
         orderItems.orderItems.add(OrderItemEntity(order = this, item = inputItem, itemCount = numberOfQuantity))
+        this.totalPrice = orderItems.calculateTotalPrice()
     }
 }

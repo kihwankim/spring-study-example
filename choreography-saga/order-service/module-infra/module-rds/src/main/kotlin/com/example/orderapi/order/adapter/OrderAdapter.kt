@@ -5,10 +5,10 @@ import com.example.orderapi.order.domain.dto.OrderPurchase
 import com.example.orderapi.order.domain.dto.OrderStatus
 import com.example.orderapi.order.domain.dto.Product
 import com.example.orderapi.order.domain.port.out.OrderPort
-import com.example.orderapi.order.entity.ItemEntity
-import com.example.orderapi.order.entity.ItemUpdateLockStatus
+import com.example.orderapi.item.entity.ItemEntity
+import com.example.orderapi.item.entity.ItemUpdateLockStatus
 import com.example.orderapi.order.entity.OrderEntity
-import com.example.orderapi.order.repository.ItemQueryRepository
+import com.example.orderapi.item.repository.ItemQueryRepository
 import com.example.orderapi.order.repository.OrderRepository
 import com.example.orderapi.outbox.entity.ExternalEventType
 import com.example.orderapi.outbox.entity.OrderOutBoxEntity

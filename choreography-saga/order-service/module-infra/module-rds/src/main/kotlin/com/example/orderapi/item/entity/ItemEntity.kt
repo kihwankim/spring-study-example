@@ -1,4 +1,4 @@
-package com.example.orderapi.order.entity
+package com.example.orderapi.item.entity
 
 import java.math.BigDecimal
 import javax.persistence.*

@@ -15,5 +15,4 @@ internal data class OrderItems(
             .map { it.item.price }
             .reduce { prevResult, nextVal -> prevResult.add(nextVal) }
     }
-
 }

@@ -1,7 +1,7 @@
-package com.example.orderapi.order.repository
+package com.example.orderapi.item.repository
 
-import com.example.orderapi.order.entity.ItemEntity
-import com.example.orderapi.order.entity.ItemUpdateLockStatus
+import com.example.orderapi.item.entity.ItemEntity
+import com.example.orderapi.item.entity.ItemUpdateLockStatus
 import com.linecorp.kotlinjdsl.query.spec.expression.EntitySpec
 import com.linecorp.kotlinjdsl.querydsl.expression.col
 import com.linecorp.kotlinjdsl.spring.data.SpringDataQueryFactory
