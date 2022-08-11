@@ -16,6 +16,14 @@ data class ItemEntity(
     val status: ItemUpdateLockStatus
 ) {
     fun removeQuantity(numberOfQuantity: Int) {
+        validateQuantity(numberOfQuantity)
+
         quantity - numberOfQuantity
+    }
+
+    private fun validateQuantity(numberOfOrderQuantity: Int) {
+        if (quantity < numberOfOrderQuantity) {
+            throw IllegalStateException("quantity is less exception Now Left Quantity: $quantity")
+        }
     }
 }

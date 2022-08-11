@@ -14,5 +14,5 @@ dependencies {
     implementation(project(":order-service:module-domain"))
 
     runtimeOnly(project(":order-service:module-infra:module-rds"))
-    runtimeOnly(project(":order-service:module-infra:module-kafka"))
+    runtimeOnly(project(":order-service:module-infra:module-event-producer"))
 }

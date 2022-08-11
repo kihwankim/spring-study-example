@@ -12,6 +12,6 @@ data class OrderOutBoxEntity(
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     val eventType: ExternalEventType,
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     val identityHashKey: String,
 ) : BaseEntity()
