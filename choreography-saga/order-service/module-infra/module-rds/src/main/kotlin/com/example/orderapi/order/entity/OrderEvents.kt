@@ -12,4 +12,11 @@ internal data class OrderEvents(
     fun addEvent(event: OrderEventEntity) {
         orderEvents.add(event)
     }
+
+    fun getLastEvent(): OrderEventEntity {
+        if (orderEvents.isEmpty()) {
+            throw IllegalStateException("event not exsit")
+        }
+        return orderEvents.last()
+    }
 }

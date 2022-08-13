@@ -1,7 +1,7 @@
 package com.example.orderapi.order.entity
 
-import com.example.orderapi.order.domain.dto.OrderStatus
 import com.example.orderapi.common.entity.BaseEntity
+import com.example.orderapi.order.domain.dto.OrderStatus
 import javax.persistence.*
 
 @Entity
@@ -12,6 +12,7 @@ internal data class OrderEventEntity(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0L,
     var orderStatus: OrderStatus,
+    val orderKey: String,
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "orders_id", nullable = false)
     var order: OrderEntity

@@ -1,5 +1,6 @@
 package com.example.orderapi.order.entity
 
+import com.example.orderapi.order.domain.dto.OrderProductItem
 import java.math.BigDecimal
 import javax.persistence.CascadeType
 import javax.persistence.Embeddable
@@ -14,5 +15,9 @@ internal data class OrderItems(
         return orderItems.asSequence()
             .map { it.item.price }
             .reduce { prevResult, nextVal -> prevResult.add(nextVal) }
+    }
+
+    fun toOrderProductItems(): List<OrderProductItem> {
+        return orderItems.map { it.toOrderProductItem() }
     }
 }

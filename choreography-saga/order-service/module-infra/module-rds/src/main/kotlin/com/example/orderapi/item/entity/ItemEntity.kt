@@ -1,29 +1,44 @@
 package com.example.orderapi.item.entity
 
+import com.example.orderapi.common.entity.BaseEntity
+import com.example.orderapi.order.domain.dto.Product
 import java.math.BigDecimal
 import javax.persistence.*
 
 @Entity
 @Table(name = "item")
-data class ItemEntity(
+internal data class ItemEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0L,
     val price: BigDecimal,
     var productName: String,
-    val quantity: Int,
+    val inventory: Int,
+    var description: String,
     @Enumerated(EnumType.STRING)
     val status: ItemUpdateLockStatus
-) {
+) : BaseEntity() {
     fun removeQuantity(numberOfQuantity: Int) {
         validateQuantity(numberOfQuantity)
 
-        quantity - numberOfQuantity
+        inventory - numberOfQuantity
     }
 
     private fun validateQuantity(numberOfOrderQuantity: Int) {
-        if (quantity < numberOfOrderQuantity) {
-            throw IllegalStateException("quantity is less exception Now Left Quantity: $quantity")
+        if (inventory < numberOfOrderQuantity) {
+            throw IllegalStateException("quantity is less exception Now Left Quantity: $inventory")
         }
+    }
+
+    fun toProduct(): Product {
+        return Product(
+            productId = this.id,
+            name = this.productName,
+            price = this.price,
+            inventory = this.inventory,
+            description = this.description,
+            createTime = this.createdTime,
+            updateTime = this.updateTime
+        )
     }
 }

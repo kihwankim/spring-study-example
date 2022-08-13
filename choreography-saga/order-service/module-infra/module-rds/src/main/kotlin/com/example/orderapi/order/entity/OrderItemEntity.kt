@@ -2,6 +2,7 @@ package com.example.orderapi.order.entity
 
 import com.example.orderapi.common.entity.BaseEntity
 import com.example.orderapi.item.entity.ItemEntity
+import com.example.orderapi.order.domain.dto.OrderProductItem
 import javax.persistence.*
 
 @Entity
@@ -16,5 +17,12 @@ internal data class OrderItemEntity(
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "item_id", nullable = false)
     val item: ItemEntity,
-    val itemCount: Int
-) : BaseEntity()
+    val quantity: Int
+) : BaseEntity() {
+    fun toOrderProductItem(): OrderProductItem {
+        return OrderProductItem(
+            product = item.toProduct(),
+            quantity = quantity
+        )
+    }
+}

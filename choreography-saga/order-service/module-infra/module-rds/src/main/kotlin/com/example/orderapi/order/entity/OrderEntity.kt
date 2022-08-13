@@ -4,6 +4,7 @@ package com.example.orderapi.order.entity
 import com.example.common.event.keyGenerate
 import com.example.orderapi.common.entity.BaseEntity
 import com.example.orderapi.item.entity.ItemEntity
+import com.example.orderapi.order.domain.dto.Order
 import com.example.orderapi.order.domain.dto.OrderStatus
 import java.math.BigDecimal
 import javax.persistence.*
@@ -15,13 +16,19 @@ internal data class OrderEntity(
     @Column(name = "orders_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0L,
-    val orderKey: String,
-    var totalPrice: BigDecimal = BigDecimal.ZERO,
+    @Version
+    val version: Long = 0L,
+
     val userId: Long,
+
     @Enumerated(EnumType.STRING)
     var status: OrderStatus,
+
+    var totalPrice: BigDecimal = BigDecimal.ZERO,
+
     @Embedded
     val orderEvents: OrderEvents = OrderEvents(),
+
     @Embedded
     val orderItems: OrderItems = OrderItems(),
 ) : BaseEntity() {
@@ -31,13 +38,13 @@ internal data class OrderEntity(
         fun createOrder(userId: Long): OrderEntity {
             val newOrder = OrderEntity(
                 userId = userId,
-                orderKey = keyGenerate(KEY_PREFIX),
                 status = OrderStatus.CREATED
             )
 
             newOrder.orderEvents.addEvent(
                 OrderEventEntity(
                     orderStatus = OrderStatus.CREATED,
+                    orderKey = keyGenerate(KEY_PREFIX),
                     order = newOrder
                 )
             )
@@ -46,9 +53,24 @@ internal data class OrderEntity(
         }
     }
 
+    private fun getLastEvent(): OrderEventEntity {
+        return orderEvents.getLastEvent()
+    }
+
     fun registerItem(inputItem: ItemEntity, numberOfQuantity: Int) {
         inputItem.removeQuantity(numberOfQuantity)
-        orderItems.orderItems.add(OrderItemEntity(order = this, item = inputItem, itemCount = numberOfQuantity))
+        orderItems.orderItems.add(OrderItemEntity(order = this, item = inputItem, quantity = numberOfQuantity))
         this.totalPrice = orderItems.calculateTotalPrice()
+    }
+
+    fun toOrder(): Order {
+        val lastEvent = this.getLastEvent()
+        return Order(
+            orderId = this.id,
+            userId = this.userId,
+            orderStatus = this.status,
+            nowEventKey = lastEvent.orderKey,
+            orderProductItems = this.orderItems.toOrderProductItems()
+        )
     }
 }

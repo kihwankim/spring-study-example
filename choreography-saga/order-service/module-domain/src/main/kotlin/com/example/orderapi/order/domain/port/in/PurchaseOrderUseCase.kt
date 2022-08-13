@@ -1,8 +1,7 @@
 package com.example.orderapi.order.domain.port.`in`
 
-import com.example.orderapi.order.domain.dto.Order
-import com.example.orderapi.order.domain.dto.OrderPurchase
+import com.example.orderapi.order.domain.command.OrderCreateCommand
 
 interface PurchaseOrderUseCase {
-    fun purchaseOrder(order: Order): OrderPurchase
+    fun purchaseOrder(orderCreateCommand: OrderCreateCommand)
 }

@@ -19,7 +19,7 @@ internal class PayOrderAdapter(
     private val orderOutBoxQueryRepository: OrderOutBoxQueryRepository,
 ) : PayOrderPort {
     companion object {
-        private const val ORDER_CREATE_TOPIC = "order-creation"
+        private const val ORDER_EVENT_TOPIC = "order-event-topic"
         private val mapper: ObjectMapper = ObjectMapper()
     }
 
@@ -27,7 +27,7 @@ internal class PayOrderAdapter(
     override fun payProductsProcessor(orderPurchase: OrderPurchase) {
         val foundOrderOutBox = orderOutBoxQueryRepository.findByIdentityHashKey(orderPurchase.orderHashKey)
         val payMessage = PayMessage.from(orderPurchase)
-        kafkaProducerTemplate.send(ORDER_CREATE_TOPIC, mapper.writeValueAsString(payMessage))
+        kafkaProducerTemplate.send(ORDER_EVENT_TOPIC, mapper.writeValueAsString(payMessage))
             .addCallback(
                 { success -> orderOutBoxRepository.delete(foundOrderOutBox) },
                 { err -> throw PayServiceCallException() }
