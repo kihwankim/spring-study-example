@@ -1,6 +1,6 @@
 package com.example.springeventlistener.event;
 
-import com.example.springeventlistener.service.TestSecService;
+import com.example.springeventlistener.service.TestNewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -8,10 +8,10 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class SecondServiceNewEventHandler {
-    private final TestSecService testSecService;
+    private final TestNewService testNewService;
 
     @EventListener
     public void handlerFirst(TestNewEvent event) {
-        testSecService.runNew(event.getId());
+        testNewService.runNew(event.getId());
     }
 }

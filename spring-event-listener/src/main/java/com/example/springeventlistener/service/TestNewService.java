@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
-public class TestSecService {
+public class TestNewService {
 
     public void run(long testId) {
         log.info("class={}, run, id={}", this.getClass(), testId);

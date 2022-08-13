@@ -1,6 +1,6 @@
 package com.example.springeventlistener.event;
 
-import com.example.springeventlistener.service.TestSecService;
+import com.example.springeventlistener.service.TestNewService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationListener;
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class SecondServiceEventHandler implements ApplicationListener<TestEvent> {
-    private final TestSecService service;
+    private final TestNewService service;
 
     @Override
     public void onApplicationEvent(TestEvent event) {
