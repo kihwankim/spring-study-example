@@ -70,7 +70,6 @@ internal data class OrderEntity(
             orderStatus = this.status,
             nowEventKey = this.getLastEvent().orderKey,
             totalPrice = this.totalPrice,
-            version = this.version,
             orderProductItems = this.orderItems.toOrderProductItems()
         )
     }

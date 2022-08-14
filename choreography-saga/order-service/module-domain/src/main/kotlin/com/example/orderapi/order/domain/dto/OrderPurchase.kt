@@ -7,6 +7,5 @@ data class OrderPurchase(
     val totalPrice: BigDecimal,
     val orderStatus: OrderStatus,
     val orderHashKey: String,
-    val version: Long,
     val orderProductItems: List<OrderProductItem>,
 )

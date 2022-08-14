@@ -8,6 +8,5 @@ data class Order(
     val orderStatus: OrderStatus, // 현재 order 상태
     val totalPrice: BigDecimal,
     val nowEventKey: String,
-    val version: Long,
     val orderProductItems: List<OrderProductItem>, // 구메할 데이터
 )
