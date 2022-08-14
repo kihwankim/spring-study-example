@@ -1,7 +1,7 @@
 package com.example.orderapi.order.entity
 
 import com.example.orderapi.common.entity.BaseEntity
-import com.example.orderapi.order.domain.dto.OrderStatus
+import com.example.orderapi.order.domain.model.OrderStatus
 import javax.persistence.*
 
 @Entity

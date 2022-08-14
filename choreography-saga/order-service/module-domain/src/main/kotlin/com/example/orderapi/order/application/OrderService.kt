@@ -1,7 +1,7 @@
 package com.example.orderapi.order.application
 
 import com.example.orderapi.order.domain.command.OrderCreateCommand
-import com.example.orderapi.order.domain.dto.OrderPurchase
+import com.example.orderapi.order.domain.model.OrderPurchase
 import com.example.orderapi.order.domain.port.`in`.PurchaseOrderUseCase
 import com.example.orderapi.order.domain.port.out.OrderPort
 import com.example.orderapi.order.domain.port.out.PayOrderPort

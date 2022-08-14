@@ -1,6 +1,6 @@
 package com.example.orderapi.order.domain.port.out
 
-import com.example.orderapi.order.domain.dto.OrderPurchase
+import com.example.orderapi.order.domain.model.OrderPurchase
 
 interface PayOrderPort {
 

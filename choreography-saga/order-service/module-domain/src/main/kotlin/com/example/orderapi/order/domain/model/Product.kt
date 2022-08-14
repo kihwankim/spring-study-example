@@ -1,5 +1,6 @@
-package com.example.orderapi.order.domain.dto
+package com.example.orderapi.order.domain.model
 
+import com.example.orderapi.common.model.DomainModel
 import java.math.BigDecimal
 import java.time.LocalDateTime
 
@@ -11,4 +12,6 @@ data class Product(
     val description: String, // 상품 설명
     val createTime: LocalDateTime, // 생성 날짜
     val updateTime: LocalDateTime, // 수정 날짜
-)
+) : DomainModel<Product, Long> {
+    override fun getId(): Long = productId
+}

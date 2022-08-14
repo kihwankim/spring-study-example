@@ -4,8 +4,8 @@ package com.example.orderapi.order.entity
 import com.example.common.event.keyGenerate
 import com.example.orderapi.common.entity.BaseEntity
 import com.example.orderapi.item.entity.ItemEntity
-import com.example.orderapi.order.domain.dto.Order
-import com.example.orderapi.order.domain.dto.OrderStatus
+import com.example.orderapi.order.domain.model.Order
+import com.example.orderapi.order.domain.model.OrderStatus
 import java.math.BigDecimal
 import javax.persistence.*
 

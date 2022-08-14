@@ -5,7 +5,7 @@ import com.example.orderapi.item.entity.ItemUpdateLockStatus
 import com.example.orderapi.item.repository.ItemQueryRepository
 import com.example.orderapi.order.domain.command.OrderCreateCommand
 import com.example.orderapi.order.domain.command.PurchaseProduct
-import com.example.orderapi.order.domain.dto.Order
+import com.example.orderapi.order.domain.model.Order
 import com.example.orderapi.order.domain.port.out.OrderPort
 import com.example.orderapi.order.entity.OrderEntity
 import com.example.orderapi.order.repository.OrderRepository

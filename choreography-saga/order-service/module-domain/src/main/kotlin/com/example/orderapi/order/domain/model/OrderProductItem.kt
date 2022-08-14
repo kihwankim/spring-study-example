@@ -1,4 +1,4 @@
-package com.example.orderapi.order.domain.dto
+package com.example.orderapi.order.domain.model
 
 data class OrderProductItem(
     val product: Product,

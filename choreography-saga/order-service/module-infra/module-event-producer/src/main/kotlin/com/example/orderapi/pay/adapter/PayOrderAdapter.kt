@@ -1,7 +1,7 @@
 package com.example.orderapi.pay.adapter
 
 import com.example.common.exception.PayServiceCallException
-import com.example.orderapi.order.domain.dto.OrderPurchase
+import com.example.orderapi.order.domain.model.OrderPurchase
 import com.example.orderapi.order.domain.port.out.PayOrderPort
 import com.example.orderapi.outbox.repository.OrderOutBoxQueryRepository
 import com.example.orderapi.outbox.repository.OrderOutBoxRepository

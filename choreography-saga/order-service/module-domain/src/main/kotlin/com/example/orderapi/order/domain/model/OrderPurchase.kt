@@ -1,4 +1,4 @@
-package com.example.orderapi.order.domain.dto
+package com.example.orderapi.order.domain.model
 
 import java.math.BigDecimal
 

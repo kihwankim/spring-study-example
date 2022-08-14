@@ -1,7 +1,7 @@
 package com.example.orderapi.item.entity
 
 import com.example.orderapi.common.entity.BaseEntity
-import com.example.orderapi.order.domain.dto.Product
+import com.example.orderapi.order.domain.model.Product
 import java.math.BigDecimal
 import javax.persistence.*
 

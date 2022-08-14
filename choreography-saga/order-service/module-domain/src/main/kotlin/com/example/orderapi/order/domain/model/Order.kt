@@ -1,5 +1,6 @@
-package com.example.orderapi.order.domain.dto
+package com.example.orderapi.order.domain.model
 
+import com.example.orderapi.common.model.DomainModel
 import java.math.BigDecimal
 
 data class Order(
@@ -9,4 +10,6 @@ data class Order(
     val totalPrice: BigDecimal,
     val nowEventKey: String,
     val orderProductItems: List<OrderProductItem>, // 구메할 데이터
-)
+) : DomainModel<Order, Long> {
+    override fun getId(): Long = orderId
+}

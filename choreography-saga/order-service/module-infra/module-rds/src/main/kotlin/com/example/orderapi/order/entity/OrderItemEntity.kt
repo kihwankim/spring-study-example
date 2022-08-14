@@ -2,7 +2,7 @@ package com.example.orderapi.order.entity
 
 import com.example.orderapi.common.entity.BaseEntity
 import com.example.orderapi.item.entity.ItemEntity
-import com.example.orderapi.order.domain.dto.OrderProductItem
+import com.example.orderapi.order.domain.model.OrderProductItem
 import javax.persistence.*
 
 @Entity
