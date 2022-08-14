@@ -5,8 +5,6 @@ interface RawMessage<ID> {
 
     fun getType(): String
 
-    fun getVersion(): Long
-
     fun getPayload(): String
 
     fun hashKey(): String

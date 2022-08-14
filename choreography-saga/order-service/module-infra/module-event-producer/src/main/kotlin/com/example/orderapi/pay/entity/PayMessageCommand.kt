@@ -8,7 +8,6 @@ internal data class PayMessageCommand(
     private val orderId: Long,
     private val orderHashKey: String,
     private val type: String,
-    private val version: Long,
     private val payload: String,
 ) : RawMessage<Long> {
     companion object {
@@ -20,7 +19,6 @@ internal data class PayMessageCommand(
             return PayMessageCommand(
                 orderId = purchase.orderId,
                 orderHashKey = purchase.orderHashKey,
-                version = purchase.version,
                 type = purchase.javaClass.name,
                 payload = payload
             )
@@ -33,10 +31,6 @@ internal data class PayMessageCommand(
 
     override fun getType(): String {
         return type
-    }
-
-    override fun getVersion(): Long {
-        return version
     }
 
     override fun getPayload(): String {
