@@ -11,6 +11,8 @@ internal data class ItemEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0L,
+    @Version
+    val version: Long = 0L,
     val price: BigDecimal,
     var productName: String,
     val inventory: Int,
