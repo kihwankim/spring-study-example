@@ -14,9 +14,12 @@ class OrderService(
         val saveOrder = orderPort.purchaceProductByOrder(orderCreateCommand)
         val orderPurchase = OrderPurchase(
             orderId = saveOrder.orderId,
+            totalPrice = saveOrder.totalPrice,
             orderStatus = saveOrder.orderStatus,
             orderHashKey = saveOrder.nowEventKey,
+            orderProductItems = saveOrder.orderProductItems
         )
+
         payOrderPort.payProductsProcessor(orderPurchase)
     }
 }

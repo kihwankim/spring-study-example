@@ -64,12 +64,13 @@ internal data class OrderEntity(
     }
 
     fun toOrder(): Order {
-        val lastEvent = this.getLastEvent()
         return Order(
             orderId = this.id,
             userId = this.userId,
             orderStatus = this.status,
-            nowEventKey = lastEvent.orderKey,
+            nowEventKey = this.getLastEvent().orderKey,
+            totalPrice = this.totalPrice,
+            version = this.version,
             orderProductItems = this.orderItems.toOrderProductItems()
         )
     }
