@@ -14,5 +14,5 @@ dependencies {
     implementation(project(":pay-service:module-domain"))
 
     runtimeOnly(project(":pay-service:module-infra:module-rds"))
-    runtimeOnly(project(":pay-service:module-infra:module-kafka"))
+    runtimeOnly(project(":pay-service:module-infra:module-event-comsumer"))
 }

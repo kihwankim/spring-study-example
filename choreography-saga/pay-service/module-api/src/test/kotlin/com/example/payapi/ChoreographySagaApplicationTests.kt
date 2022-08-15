@@ -1,4 +1,4 @@
-package com.example.orderapi
+package com.example.payapi
 
 import org.springframework.boot.test.context.SpringBootTest
 
