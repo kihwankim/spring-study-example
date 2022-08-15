@@ -4,9 +4,9 @@ import com.example.orderapi.item.entity.ItemEntity
 import com.example.orderapi.item.entity.ItemUpdateLockStatus
 import com.example.orderapi.item.repository.ItemQueryRepository
 import com.example.orderapi.order.domain.command.OrderCreateCommand
-import com.example.orderapi.order.domain.command.PurchaseProduct
 import com.example.orderapi.order.domain.model.Order
 import com.example.orderapi.order.domain.port.out.OrderPort
+import com.example.orderapi.order.dto.OrderItemDto
 import com.example.orderapi.order.entity.OrderEntity
 import com.example.orderapi.order.repository.OrderRepository
 import com.example.orderapi.outbox.entity.ExternalEventType
@@ -24,24 +24,17 @@ internal class OrderAdapter(
     @Transactional
     override fun purchaceProductByOrder(orderCreateCommand: OrderCreateCommand): Order {
         // item 조회
-        val productMapById = createProductMap(orderCreateCommand.purchaseProducts)
         val productIds = orderCreateCommand.purchaseProducts.map { it.productId }
 
         // getting lock in db
         itemQueryRepository.updateStatus(ItemUpdateLockStatus.UPDATE, productIds)
         val foundItems: List<ItemEntity> = itemQueryRepository.findByItemIdIn(productIds)
+        val orderItemDtos = OrderItemDto.toListFromEntities(foundItems, orderCreateCommand.purchaseProducts)
 
-        val createOrderEntity = OrderEntity.createOrder(orderCreateCommand.userId)
+        // save order entity
+        val savedOrderEntity = orderRepository.save(OrderEntity.createOrder(orderCreateCommand.userId, orderItemDtos))
 
-        // order entity 에 order item 저장 및 quantity 줄이기 작업 진행
-        for (itemEntity: ItemEntity in foundItems) {
-            productMapById[itemEntity.id]?.let {
-                createOrderEntity.registerItem(itemEntity, it.productQuantity)
-            } ?: throw IllegalStateException("item 조회 실패")
-        }
-
-        val savedOrderEntity = orderRepository.save(createOrderEntity)
-
+        // change status
         itemQueryRepository.updateStatus(ItemUpdateLockStatus.STABLE, productIds)
 
         val savedOrder = savedOrderEntity.toOrder()
@@ -50,8 +43,6 @@ internal class OrderAdapter(
 
         return savedOrder
     }
-
-    private fun createProductMap(product: List<PurchaseProduct>): Map<Long, PurchaseProduct> = product.associateBy { it.productId }
 
     private fun savePurchaceOutBox(hasKey: String) {
         orderOutBoxRepository.save(OrderOutBoxEntity(eventType = ExternalEventType.PURCHASE, identityHashKey = hasKey))

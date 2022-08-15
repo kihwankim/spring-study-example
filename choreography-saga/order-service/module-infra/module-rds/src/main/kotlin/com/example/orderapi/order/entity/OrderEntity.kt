@@ -6,6 +6,7 @@ import com.example.orderapi.common.entity.BaseEntity
 import com.example.orderapi.item.entity.ItemEntity
 import com.example.orderapi.order.domain.model.Order
 import com.example.orderapi.order.domain.model.OrderStatus
+import com.example.orderapi.order.dto.OrderItemDto
 import java.math.BigDecimal
 import javax.persistence.*
 
@@ -35,7 +36,7 @@ internal data class OrderEntity(
     companion object {
         private const val KEY_PREFIX = "order"
 
-        fun createOrder(userId: Long): OrderEntity {
+        fun createOrder(userId: Long, orderItemDtos: List<OrderItemDto>): OrderEntity {
             val newOrder = OrderEntity(
                 userId = userId,
                 status = OrderStatus.CREATED
@@ -48,6 +49,10 @@ internal data class OrderEntity(
                     order = newOrder
                 )
             )
+
+            for (orderItemDto in orderItemDtos) {
+                newOrder.registerItem(orderItemDto.item, orderItemDto.quantity)
+            }
 
             return newOrder
         }
