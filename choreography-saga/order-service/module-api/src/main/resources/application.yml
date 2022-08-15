@@ -1,7 +1,9 @@
 spring:
   profiles:
     include:
+      - common
       - domain
       - message
+      - producer
+      - consumer
       - rds
-      - common
