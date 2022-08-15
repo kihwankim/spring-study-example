@@ -25,19 +25,11 @@ internal data class PayMessageCommand(
         }
     }
 
-    override fun getId(): Long {
-        return orderId
-    }
+    override fun getId(): Long = orderId
 
-    override fun getType(): String {
-        return type
-    }
+    override fun getType(): String = type
 
-    override fun getPayload(): String {
-        return payload
-    }
+    override fun getPayload(): String = payload
 
-    override fun hashKey(): String {
-        return orderHashKey
-    }
+    override fun hashKey(): String = orderHashKey
 }
