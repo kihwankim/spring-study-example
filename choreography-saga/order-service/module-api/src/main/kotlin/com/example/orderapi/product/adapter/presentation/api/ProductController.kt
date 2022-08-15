@@ -23,6 +23,6 @@ class ProductController(
             .buildAndExpand(productId)
             .toUri()
 
-        return ResponseEntity.ok(productRegisterUri)
+        return ResponseEntity.created(productRegisterUri).build()
     }
 }
