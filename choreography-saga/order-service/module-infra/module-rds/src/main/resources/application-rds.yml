@@ -1,4 +1,8 @@
 spring:
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
   config:
     activate:
       on-profile: local

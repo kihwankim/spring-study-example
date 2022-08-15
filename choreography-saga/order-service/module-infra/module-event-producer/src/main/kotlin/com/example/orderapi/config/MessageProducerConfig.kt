@@ -12,8 +12,7 @@ import org.springframework.kafka.core.KafkaTemplate
 @EnableKafka
 @Configuration
 internal class MessageProducerConfig(
-    @Value("\${spring.kafka.bootstrap-servers}")
-    private val producerServer: String,
+    @Value("\${spring.kafka.servers}") private val producerServer: String,
 ) {
     @Bean
     fun kafkaProducerTemplate(): KafkaTemplate<String, String> = KafkaTemplate(

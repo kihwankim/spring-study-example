@@ -12,7 +12,7 @@ import org.springframework.kafka.core.DefaultKafkaConsumerFactory
 @EnableKafka
 @Configuration
 class MessageConsumerConfig(
-    @Value("\${spring.kafka.bootstrap-servers}")
+    @Value("\${spring.kafka.servers}")
     private val consumerServer: String,
 ) {
 
