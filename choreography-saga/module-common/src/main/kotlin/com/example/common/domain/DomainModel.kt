@@ -1,4 +1,4 @@
-package com.example.orderapi.common.model
+package com.example.common.domain
 
 interface DomainModel<T, I> {
     fun getId(): I

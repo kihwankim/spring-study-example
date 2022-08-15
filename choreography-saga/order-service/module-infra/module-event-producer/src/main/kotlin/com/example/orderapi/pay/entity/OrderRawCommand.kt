@@ -4,7 +4,7 @@ import com.example.common.event.RawMessage
 import com.example.orderapi.order.domain.model.OrderPurchase
 import com.fasterxml.jackson.databind.ObjectMapper
 
-internal data class PayMessageCommand(
+internal data class OrderRawCommand(
     private val orderId: Long,
     private val orderHashKey: String,
     private val type: String,
@@ -13,10 +13,10 @@ internal data class PayMessageCommand(
     companion object {
         private val objectMapper = ObjectMapper()
 
-        fun from(purchase: OrderPurchase): PayMessageCommand {
+        fun from(purchase: OrderPurchase): OrderRawCommand {
             val payload = objectMapper.writeValueAsString(purchase)
 
-            return PayMessageCommand(
+            return OrderRawCommand(
                 orderId = purchase.orderId,
                 orderHashKey = purchase.orderHashKey,
                 type = purchase.javaClass.name,

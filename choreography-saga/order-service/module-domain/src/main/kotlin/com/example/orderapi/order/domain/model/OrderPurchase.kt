@@ -4,6 +4,7 @@ import java.math.BigDecimal
 
 data class OrderPurchase(
     val orderId: Long,
+    val userId: Long,
     val totalPrice: BigDecimal,
     val orderStatus: OrderStatus,
     val orderHashKey: String,

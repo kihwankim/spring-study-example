@@ -1,6 +1,6 @@
 package com.example.orderapi.order.domain.model
 
-import com.example.orderapi.common.model.DomainModel
+import com.example.common.domain.DomainModel
 import java.math.BigDecimal
 
 data class Order(

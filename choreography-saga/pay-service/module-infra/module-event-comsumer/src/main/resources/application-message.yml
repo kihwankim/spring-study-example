@@ -1,1 +1,6 @@
-
+spring:
+  config:
+    activate:
+      on-profile: local
+  kafka:
+    bootstrap-servers: localhost:9091

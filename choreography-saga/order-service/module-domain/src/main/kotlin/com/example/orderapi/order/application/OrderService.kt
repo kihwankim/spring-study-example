@@ -14,6 +14,7 @@ class OrderService(
         val saveOrder = orderPort.purchaceProductByOrder(orderCreateCommand)
         val orderPurchase = OrderPurchase(
             orderId = saveOrder.orderId,
+            userId = saveOrder.userId,
             totalPrice = saveOrder.totalPrice,
             orderStatus = saveOrder.orderStatus,
             orderHashKey = saveOrder.nowEventKey,
