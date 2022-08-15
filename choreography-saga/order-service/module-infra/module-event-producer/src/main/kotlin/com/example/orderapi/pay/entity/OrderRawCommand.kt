@@ -3,6 +3,7 @@ package com.example.orderapi.pay.entity
 import com.example.common.event.RawMessage
 import com.example.orderapi.order.domain.model.OrderPurchase
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 
 internal data class OrderRawCommand(
     private val orderId: Long,
@@ -12,6 +13,7 @@ internal data class OrderRawCommand(
 ) : RawMessage<Long> {
     companion object {
         private val objectMapper = ObjectMapper()
+            .registerModule(JavaTimeModule())
 
         fun from(purchase: OrderPurchase): OrderRawCommand {
             val payload = objectMapper.writeValueAsString(purchase)

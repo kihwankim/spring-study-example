@@ -3,4 +3,4 @@ spring:
     activate:
       on-profile: local
   kafka:
-    servers: localhost:9091
+    servers: localhost:9092
