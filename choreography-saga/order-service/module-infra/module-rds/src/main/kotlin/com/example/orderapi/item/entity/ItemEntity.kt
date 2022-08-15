@@ -1,7 +1,7 @@
 package com.example.orderapi.item.entity
 
 import com.example.orderapi.common.entity.BaseEntity
-import com.example.orderapi.order.domain.model.Product
+import com.example.orderapi.product.domain.model.Product
 import java.math.BigDecimal
 import javax.persistence.*
 
@@ -13,6 +13,7 @@ internal data class ItemEntity(
     val id: Long = 0L,
     @Version
     val version: Long = 0L,
+    val registeredUserId: Long,
     val price: BigDecimal,
     var productName: String,
     val inventory: Int,
