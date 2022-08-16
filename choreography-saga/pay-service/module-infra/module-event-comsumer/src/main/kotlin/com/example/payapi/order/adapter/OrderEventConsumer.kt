@@ -1,7 +1,7 @@
 package com.example.payapi.order.adapter
 
+import com.example.common.domain.objectMapper
 import com.example.common.event.DomainEvent
-import com.example.payapi.common.objectMapper
 import com.example.payapi.order.entity.OrderEventMessageType
 import com.example.payapi.order.entity.OrderRawCommand
 import mu.KotlinLogging

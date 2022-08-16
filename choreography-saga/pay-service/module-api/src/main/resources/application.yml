@@ -5,3 +5,6 @@ spring:
       - domain
       - consumer
       - rds
+    active: local
+server:
+  port: 20001
