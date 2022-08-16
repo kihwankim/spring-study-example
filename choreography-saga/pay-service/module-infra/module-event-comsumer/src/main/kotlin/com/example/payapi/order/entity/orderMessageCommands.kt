@@ -25,7 +25,7 @@ data class OrderPurchase(
     val totalPrice: BigDecimal,
     val orderStatus: OrderStatus,
     val orderHashKey: String,
-    val orderProductItems: List<OrderProductItem>,
+    val orderProductItems: MutableList<OrderProductItem>,
 ) : DomainEvent<Long> {
     override fun getId(): Long = orderId
 

@@ -1,11 +1,11 @@
 package com.example.common.event
 
 interface RawMessage<ID> {
-    fun getId(): ID
+    fun eventIdentifier(): ID
 
-    fun getType(): String
+    fun eventType(): String
 
-    fun getPayload(): String
+    fun eventRawMessagePayload(): String
 
-    fun hashKey(): String
+    fun eventHashKeyValue(): String
 }

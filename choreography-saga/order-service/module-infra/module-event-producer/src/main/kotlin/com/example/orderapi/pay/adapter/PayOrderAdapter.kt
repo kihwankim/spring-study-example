@@ -7,10 +7,12 @@ import com.example.orderapi.order.domain.port.out.PayOrderPort
 import com.example.orderapi.outbox.repository.OrderOutBoxQueryRepository
 import com.example.orderapi.outbox.repository.OrderOutBoxRepository
 import com.example.orderapi.pay.entity.OrderRawCommand
+import mu.KotlinLogging
 import org.springframework.kafka.core.KafkaTemplate
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 
+private val logger = KotlinLogging.logger { }
 
 @Component
 internal class PayOrderAdapter(
@@ -26,7 +28,10 @@ internal class PayOrderAdapter(
     override fun payProductsProcessor(orderPurchase: OrderPurchase) {
         val foundOrderOutBox = orderOutBoxQueryRepository.findByIdentityHashKey(orderPurchase.orderHashKey)
         val orderRawCommand = OrderRawCommand.from(orderPurchase)
-        kafkaProducerTemplate.send(ORDER_EVENT_TOPIC, objectMapper.writeValueAsString(orderRawCommand))
+        val commandMessage = objectMapper.writeValueAsString(orderRawCommand)
+        logger.info("send payload: $commandMessage")
+
+        kafkaProducerTemplate.send(ORDER_EVENT_TOPIC, commandMessage)
             .addCallback(
                 { success -> orderOutBoxRepository.delete(foundOrderOutBox) },
                 { err -> throw PayServiceCallException() }

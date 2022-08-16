@@ -3,14 +3,12 @@ package com.example.orderapi.pay.entity
 import com.example.common.domain.objectMapper
 import com.example.common.event.RawMessage
 import com.example.orderapi.order.domain.model.OrderPurchase
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 
 internal data class OrderRawCommand(
-    private val orderId: Long,
-    private val orderHashKey: String,
-    private val type: String,
-    private val payload: String,
+    val orderId: Long,
+    val orderHashKey: String,
+    val type: String,
+    val payload: String,
 ) : RawMessage<Long> {
     companion object {
         fun from(purchase: OrderPurchase): OrderRawCommand {
@@ -19,17 +17,17 @@ internal data class OrderRawCommand(
             return OrderRawCommand(
                 orderId = purchase.orderId,
                 orderHashKey = purchase.orderHashKey,
-                type = purchase.javaClass.name,
+                type = purchase::class.java.simpleName,
                 payload = payload
             )
         }
     }
 
-    override fun getId(): Long = orderId
+    override fun eventIdentifier(): Long = orderId
 
-    override fun getType(): String = type
+    override fun eventType(): String = type
 
-    override fun getPayload(): String = payload
+    override fun eventRawMessagePayload(): String = payload
 
-    override fun hashKey(): String = orderHashKey
+    override fun eventHashKeyValue(): String = orderHashKey
 }

@@ -11,5 +11,5 @@ data class Order(
     val nowEventKey: String,
     val orderProductItems: List<OrderProductItem>, // 구메할 데이터
 ) : DomainModel<Order, Long> {
-    override fun getId(): Long = orderId
+    override fun domainModelId(): Long = orderId
 }

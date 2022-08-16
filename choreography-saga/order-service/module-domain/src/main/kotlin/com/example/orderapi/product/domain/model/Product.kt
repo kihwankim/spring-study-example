@@ -13,5 +13,5 @@ data class Product(
     val createTime: LocalDateTime, // 생성 날짜
     val updateTime: LocalDateTime, // 수정 날짜
 ) : DomainModel<Product, Long> {
-    override fun getId(): Long = productId
+    override fun domainModelId(): Long = productId
 }

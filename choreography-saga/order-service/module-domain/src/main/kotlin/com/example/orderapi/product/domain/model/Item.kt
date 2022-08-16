@@ -8,5 +8,5 @@ data class Item(
     val quantity: Int,
     val price: BigDecimal,
 ) : DomainModel<Item, Long> {
-    override fun getId(): Long = this.itemId
+    override fun domainModelId(): Long = this.itemId
 }

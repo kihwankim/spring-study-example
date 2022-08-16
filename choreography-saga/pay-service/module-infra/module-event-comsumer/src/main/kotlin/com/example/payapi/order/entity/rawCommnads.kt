@@ -3,17 +3,17 @@ package com.example.payapi.order.entity
 import com.example.common.event.RawMessage
 
 internal data class OrderRawCommand(
-    private val orderId: Long,
-    private val orderHashKey: String,
-    private val type: String,
-    private val payload: String,
+    val orderId: Long,
+    val orderHashKey: String,
+    val type: String,
+    val payload: String,
 ) : RawMessage<Long> {
 
-    override fun getId(): Long = orderId
+    override fun eventIdentifier(): Long = orderId
 
-    override fun getType(): String = type
+    override fun eventType(): String = type
 
-    override fun getPayload(): String = payload
+    override fun eventRawMessagePayload(): String = payload
 
-    override fun hashKey(): String = orderHashKey
+    override fun eventHashKeyValue(): String = orderHashKey
 }
