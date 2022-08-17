@@ -23,11 +23,11 @@ internal data class OrderRawCommand(
         }
     }
 
-    override fun eventIdentifier(): Long = orderId
+    override fun getEventIdentifier(): Long = orderId
 
-    override fun eventType(): String = type
+    override fun getEventType(): String = type
 
-    override fun eventRawMessagePayload(): String = payload
+    override fun getEventPayload(): String = payload
 
-    override fun eventHashKeyValue(): String = orderHashKey
+    override fun geteventHashKey(): String = orderHashKey
 }

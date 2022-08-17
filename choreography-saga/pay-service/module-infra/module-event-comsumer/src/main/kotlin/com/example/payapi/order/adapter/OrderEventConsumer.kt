@@ -22,8 +22,8 @@ class OrderEventConsumer(
 
         try {
             val orderRawCommand = objectMapper.readValue(message, OrderRawCommand::class.java)
-            val classVal = OrderEventMessageType.findBySimepleType(orderRawCommand.eventType())
-            val rawEvent = objectMapper.readValue(orderRawCommand.eventRawMessagePayload(), classVal.classType.java) as DomainEvent<*> // OrderPurchase
+            val classVal = OrderEventMessageType.findBySimepleType(orderRawCommand.getEventType())
+            val rawEvent = objectMapper.readValue(orderRawCommand.getEventPayload(), classVal.classType.java) as DomainEvent<*> // OrderPurchase
 
             applicationEventPublisher.publishEvent(rawEvent)
         } catch (e: Exception) {
