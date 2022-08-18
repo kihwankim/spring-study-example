@@ -13,5 +13,5 @@ interface RawMessage<ID> {
     fun getEventPayload(): String
 
     @JsonIgnore
-    fun geteventHashKey(): String
+    fun getEventHashKey(): String
 }

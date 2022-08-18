@@ -29,5 +29,5 @@ internal data class OrderRawCommand(
 
     override fun getEventPayload(): String = payload
 
-    override fun geteventHashKey(): String = orderHashKey
+    override fun getEventHashKey(): String = orderHashKey
 }
