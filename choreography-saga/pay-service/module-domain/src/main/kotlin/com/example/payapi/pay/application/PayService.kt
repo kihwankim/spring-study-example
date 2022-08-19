@@ -20,8 +20,8 @@ class PayService(
     }
 
     private fun handleFailure(it: ErrorResponse, payCommand: PayCommand) {
+        logger.info("pay error")
         paymentFailHandlerPort.sendPaymentRecover(payCommand)
-
         it.throwError()
     }
 }

@@ -15,4 +15,5 @@ dependencies {
 
     runtimeOnly(project(":pay-service:module-infra:module-rds"))
     runtimeOnly(project(":pay-service:module-infra:module-event-comsumer"))
+    runtimeOnly(project(":pay-service:module-infra:module-event-producer"))
 }
