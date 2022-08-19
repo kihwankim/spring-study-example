@@ -1,4 +1,4 @@
-package com.example.orderapi.config
+package com.example.payapi.config
 
 import org.apache.kafka.clients.producer.ProducerConfig
 import org.apache.kafka.common.serialization.StringSerializer
