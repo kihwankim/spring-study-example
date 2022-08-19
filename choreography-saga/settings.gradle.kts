@@ -6,7 +6,8 @@ include(
     "pay-service:module-api",
     "pay-service:module-domain",
     "pay-service:module-infra:module-rds",
-    "pay-service:module-infra:module-event-comsumer"
+    "pay-service:module-infra:module-event-comsumer",
+    "pay-service:module-infra:module-event-producer"
 )
 
 include(

@@ -15,7 +15,6 @@ class OrderEventListner(
 
     @EventListener
     fun purchaseEventHandler(orderPurchase: OrderPurchase) {
-        print(orderPurchase)
         logger.info("handle order purchase event")
         payMoneyUseCase.payMoney(orderPurchase.toPayCommand())
     }

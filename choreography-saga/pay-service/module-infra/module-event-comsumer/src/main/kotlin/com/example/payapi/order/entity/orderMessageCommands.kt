@@ -29,5 +29,5 @@ data class OrderPurchase(
 ) : DomainEvent<Long> {
     override fun getId(): Long = orderId
 
-    fun toPayCommand() = PayCommand(userId = this.userId, totalPrice = this.totalPrice)
+    fun toPayCommand() = PayCommand(userId = this.userId, orderId = this.orderId, totalPrice = this.totalPrice)
 }
