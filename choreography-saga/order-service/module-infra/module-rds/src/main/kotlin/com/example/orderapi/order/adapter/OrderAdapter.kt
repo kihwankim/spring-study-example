@@ -51,6 +51,12 @@ internal class OrderAdapter(
         foundOrder.paySuccess()
     }
 
+    @Transactional
+    override fun markFail(orderPayEvent: OrderPayEvent) {
+        val foundOrder = orderRepository.findById(orderPayEvent.orderId).orElseThrow()
+        foundOrder.cancel()
+    }
+
     private fun savePurchaceOutBox(hasKey: String) {
         orderOutBoxRepository.save(OrderOutBoxEntity(eventType = ExternalEventType.PURCHASE, identityHashKey = hasKey))
     }

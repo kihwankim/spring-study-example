@@ -80,6 +80,19 @@ internal data class OrderEntity(
         this.status = status
     }
 
+    fun cancel() {
+        val newStatus = OrderStatus.CANCELED
+        status = newStatus
+        orderItems.orderItems.forEach { orderItemEntity -> orderItemEntity.recoverQuantityByCancel() }
+        this.orderEvents.addEvent(
+            OrderEventEntity(
+                orderStatus = newStatus,
+                orderKey = keyGenerate(KEY_PREFIX),
+                order = this
+            )
+        )
+    }
+
     fun toOrder(): Order {
         return Order(
             orderId = this.id,

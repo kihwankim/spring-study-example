@@ -25,4 +25,8 @@ internal data class OrderItemEntity(
             quantity = quantity
         )
     }
+
+    fun recoverQuantityByCancel() {
+        item.recoverQuantity(quantity)
+    }
 }

@@ -8,4 +8,6 @@ interface OrderPort {
     fun purchaceProductByOrder(orderCreateCommand: OrderCreateCommand): Order
 
     fun markPaySuccess(orderPayEvent: OrderPayEvent)
+
+    fun markFail(orderPayEvent: OrderPayEvent)
 }

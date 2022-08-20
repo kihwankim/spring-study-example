@@ -4,4 +4,6 @@ import com.example.orderapi.order.domain.command.OrderPayEvent
 
 interface PayEventHandleUseCase {
     fun markPaySuccess(orderPayEvent: OrderPayEvent)
+
+    fun markFail(orderPayEvent: OrderPayEvent)
 }

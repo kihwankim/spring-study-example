@@ -27,6 +27,10 @@ internal data class ItemEntity(
         inventory -= numberOfQuantity
     }
 
+    fun recoverQuantity(numberOfQuantity: Int) {
+        inventory += numberOfQuantity
+    }
+
     private fun validateQuantity(numberOfOrderQuantity: Int) {
         if (inventory < numberOfOrderQuantity) {
             throw IllegalStateException("quantity is less exception Now Left Quantity: $inventory")

@@ -29,4 +29,8 @@ class OrderService(
     override fun markPaySuccess(orderPayEvent: OrderPayEvent) {
         orderPort.markPaySuccess(orderPayEvent)
     }
+
+    override fun markFail(orderPayEvent: OrderPayEvent) {
+        orderPort.markFail(orderPayEvent)
+    }
 }

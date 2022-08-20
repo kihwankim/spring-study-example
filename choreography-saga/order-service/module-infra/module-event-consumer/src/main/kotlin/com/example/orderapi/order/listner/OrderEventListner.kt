@@ -16,6 +16,7 @@ class OrderEventListner(
     @EventListener
     fun handleOrderPayFailEvent(orderPayFailEvent: OrderPayFailEvent) {
         logger.info("handle payment fail about order ${orderPayFailEvent.orderId}")
+        payEventHandleUseCase.markFail(orderPayFailEvent.toOrderPayEvent())
     }
 
     @EventListener
