@@ -1,6 +1,5 @@
 package com.example.payapi.pay.adapter
 
-import com.example.common.domain.ActResult
 import com.example.payapi.pay.domain.command.PayCommand
 import com.example.payapi.pay.domain.model.PaymentType
 import com.example.payapi.pay.entity.PaymentEntity
@@ -17,10 +16,10 @@ internal class PaymentAdapter(
 ) : PaymentPort {
 
     @Transactional
-    override fun pay(payCommand: PayCommand): ActResult<Long> {
+    override fun pay(payCommand: PayCommand): Long {
         val paymentEntity = PaymentEntity(paymentType = PaymentType.CARD, userId = payCommand.userId, orderId = payCommand.orderId, price = payCommand.totalPrice)
         val savedPayment = paymentRepository.save(paymentEntity)
 
-        return ActResult.success(savedPayment.id)
+        return savedPayment.id
     }
 }

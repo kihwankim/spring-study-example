@@ -10,3 +10,12 @@ data class OrderPayFailEvent(
 ) : DomainEvent<Long> {
     override fun getId(): Long = orderId
 }
+
+data class OrderPaySuccessEvent(
+    val orderId: Long,
+    val payId: Long,
+    val userId: Long,
+    val totalPrice: BigDecimal,
+) : DomainEvent<Long> {
+    override fun getId(): Long = orderId
+}
