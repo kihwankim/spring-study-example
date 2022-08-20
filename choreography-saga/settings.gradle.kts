@@ -6,7 +6,7 @@ include(
     "pay-service:module-api",
     "pay-service:module-domain",
     "pay-service:module-infra:module-rds",
-    "pay-service:module-infra:module-event-comsumer",
+    "pay-service:module-infra:module-event-consumer",
     "pay-service:module-infra:module-event-producer"
 )
 
@@ -15,7 +15,7 @@ include(
     "order-service:module-domain",
     "order-service:module-infra:module-rds",
     "order-service:module-infra:module-event-producer",
-    "order-service:module-infra:module-event-comsumer",
+    "order-service:module-infra:module-event-consumer",
     "order-service:module-infra:module-infra-common",
 )
 

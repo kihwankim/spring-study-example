@@ -15,4 +15,5 @@ dependencies {
 
     runtimeOnly(project(":order-service:module-infra:module-rds"))
     runtimeOnly(project(":order-service:module-infra:module-event-producer"))
+    runtimeOnly(project(":order-service:module-infra:module-event-consumer"))
 }
