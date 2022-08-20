@@ -4,6 +4,7 @@ spring:
       - common
       - domain
       - consumer
+      - producer
       - rds
     active: local
 server:
