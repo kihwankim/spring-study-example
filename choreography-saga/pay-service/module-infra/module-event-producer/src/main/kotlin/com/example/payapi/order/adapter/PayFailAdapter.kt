@@ -1,5 +1,7 @@
 package com.example.payapi.order.adapter
 
+import com.example.common.domain.objectMapper
+import com.example.payapi.order.entity.OrderFailRawCommand
 import com.example.payapi.pay.domain.command.PayCommand
 import com.example.payapi.pay.port.out.PaymentFailHandlerPort
 import mu.KotlinLogging
@@ -18,5 +20,8 @@ internal class PayFailAdapter(
 
     override fun sendPaymentRecover(payCommand: PayCommand) {
         logger.info("call recover handler order Id: {}, pay topic: {}", payCommand.orderId, PAY_EVENT_TOPIC)
+        val orderFailCommand = OrderFailRawCommand.from(payCommand)
+
+        kafkaProducerTemplate.send(PAY_EVENT_TOPIC, objectMapper.writeValueAsString(orderFailCommand))
     }
 }
