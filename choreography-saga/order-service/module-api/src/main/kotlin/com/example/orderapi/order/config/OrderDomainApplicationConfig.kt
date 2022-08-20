@@ -1,7 +1,6 @@
 package com.example.orderapi.order.config
 
 import com.example.orderapi.order.application.OrderService
-import com.example.orderapi.order.domain.port.`in`.PurchaseOrderUseCase
 import com.example.orderapi.order.domain.port.out.OrderPort
 import com.example.orderapi.order.domain.port.out.PayOrderPort
 import org.springframework.context.annotation.Bean
@@ -11,10 +10,10 @@ import org.springframework.context.annotation.Configuration
 class OrderDomainApplicationConfig {
 
     @Bean
-    fun purchaseOrderUseCase(
+    fun orderService(
         orderPort: OrderPort,
         payOrderPort: PayOrderPort
-    ): PurchaseOrderUseCase {
+    ): OrderService {
         return OrderService(orderPort, payOrderPort)
     }
 }

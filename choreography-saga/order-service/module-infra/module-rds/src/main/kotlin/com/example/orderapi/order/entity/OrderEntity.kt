@@ -68,6 +68,18 @@ internal data class OrderEntity(
         this.totalPrice = orderItems.calculateTotalPrice()
     }
 
+    fun paySuccess() {
+        val status = OrderStatus.COMPLETED
+        this.orderEvents.addEvent(
+            OrderEventEntity(
+                orderStatus = status,
+                orderKey = keyGenerate(KEY_PREFIX),
+                order = this
+            )
+        )
+        this.status = status
+    }
+
     fun toOrder(): Order {
         return Order(
             orderId = this.id,

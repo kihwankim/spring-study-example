@@ -1,6 +1,8 @@
 package com.example.orderapi.order.entity
 
 import com.example.common.event.DomainEvent
+import com.example.orderapi.order.domain.command.OrderPayEvent
+import com.example.orderapi.order.domain.model.OrderStatus
 import java.math.BigDecimal
 import kotlin.reflect.KClass
 
@@ -24,6 +26,13 @@ data class OrderPayFailEvent(
     val totalPrice: BigDecimal,
 ) : DomainEvent<Long> {
     override fun getId(): Long = orderId
+
+    fun toOrderPayEvent(): OrderPayEvent {
+        return OrderPayEvent(
+            orderId = orderId,
+            orderStatus = OrderStatus.CANCELED
+        )
+    }
 }
 
 data class OrderPaySuccessEvent(
@@ -33,4 +42,11 @@ data class OrderPaySuccessEvent(
     val totalPrice: BigDecimal,
 ) : DomainEvent<Long> {
     override fun getId(): Long = orderId
+
+    fun toOrderPayEvent(): OrderPayEvent {
+        return OrderPayEvent(
+            orderId = orderId,
+            orderStatus = OrderStatus.COMPLETED
+        )
+    }
 }

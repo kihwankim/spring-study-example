@@ -4,6 +4,7 @@ import com.example.orderapi.item.entity.ItemEntity
 import com.example.orderapi.item.entity.ItemUpdateLockStatus
 import com.example.orderapi.item.repository.ItemQueryRepository
 import com.example.orderapi.order.domain.command.OrderCreateCommand
+import com.example.orderapi.order.domain.command.OrderPayEvent
 import com.example.orderapi.order.domain.model.Order
 import com.example.orderapi.order.domain.port.out.OrderPort
 import com.example.orderapi.order.dto.OrderItemDto
@@ -42,6 +43,12 @@ internal class OrderAdapter(
         savePurchaceOutBox(savedOrder.nowEventKey)
 
         return savedOrder
+    }
+
+    @Transactional
+    override fun markPaySuccess(orderPayEvent: OrderPayEvent) {
+        val foundOrder = orderRepository.findById(orderPayEvent.orderId).orElseThrow()
+        foundOrder.paySuccess()
     }
 
     private fun savePurchaceOutBox(hasKey: String) {
