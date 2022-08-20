@@ -1,6 +1,7 @@
 package com.example.orderapi.order.listner
 
 import com.example.orderapi.order.entity.OrderPayFailEvent
+import com.example.orderapi.order.entity.OrderPaySuccessEvent
 import mu.KotlinLogging
 import org.springframework.context.event.EventListener
 import org.springframework.stereotype.Component
@@ -10,7 +11,12 @@ val logger = KotlinLogging.logger { }
 @Component
 class OrderEventListner {
     @EventListener
-    fun handleOrderFailEvent(orderPayFailEvent: OrderPayFailEvent) {
+    fun handleOrderPayFailEvent(orderPayFailEvent: OrderPayFailEvent) {
         logger.info("handle payment fail about order ${orderPayFailEvent.orderId}")
+    }
+
+    @EventListener
+    fun handleOrderPaySucessEvent(orderPaySuccessEvent: OrderPaySuccessEvent) {
+        logger.info("handle payment success about order ${orderPaySuccessEvent.orderId}")
     }
 }
