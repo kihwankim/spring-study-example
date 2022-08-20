@@ -3,6 +3,7 @@ package com.example.payapi.pay.application
 import com.example.common.domain.ActResult
 import com.example.common.domain.ErrorResponse
 import com.example.payapi.pay.domain.command.PayCommand
+import com.example.payapi.pay.domain.event.OrderPayFailEvent
 import com.example.payapi.pay.port.`in`.PayMoneyUseCase
 import com.example.payapi.pay.port.out.PaymentFailHandlerPort
 import com.example.payapi.pay.port.out.PaymentPort
@@ -21,7 +22,8 @@ class PayService(
 
     private fun handleFailure(it: ErrorResponse, payCommand: PayCommand) {
         logger.info("pay error")
-        paymentFailHandlerPort.sendPaymentRecover(payCommand)
+
+        paymentFailHandlerPort.sendOrderPaymentRecover(OrderPayFailEvent(userId = payCommand.userId, orderId = payCommand.orderId, totalPrice = payCommand.totalPrice))
         it.throwError()
     }
 }

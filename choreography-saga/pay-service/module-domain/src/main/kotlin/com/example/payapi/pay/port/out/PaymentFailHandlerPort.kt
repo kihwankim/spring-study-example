@@ -1,7 +1,7 @@
 package com.example.payapi.pay.port.out
 
-import com.example.payapi.pay.domain.command.PayCommand
+import com.example.payapi.pay.domain.command.PayFailHandleEvent
 
 interface PaymentFailHandlerPort {
-    fun sendPaymentRecover(payCommand: PayCommand)
+    fun sendOrderPaymentRecover(payFailHandleEvent: PayFailHandleEvent)
 }
