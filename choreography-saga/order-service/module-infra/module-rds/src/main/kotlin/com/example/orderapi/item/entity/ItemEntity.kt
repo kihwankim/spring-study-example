@@ -24,7 +24,7 @@ internal data class ItemEntity(
     fun removeQuantity(numberOfQuantity: Int) {
         validateQuantity(numberOfQuantity)
 
-        inventory - numberOfQuantity
+        inventory -= numberOfQuantity
     }
 
     private fun validateQuantity(numberOfOrderQuantity: Int) {
