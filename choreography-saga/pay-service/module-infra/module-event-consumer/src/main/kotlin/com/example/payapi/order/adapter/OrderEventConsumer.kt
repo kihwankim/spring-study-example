@@ -16,7 +16,7 @@ class OrderEventConsumer(
     private val applicationEventPublisher: ApplicationEventPublisher,
 ) {
 
-    @KafkaListener(id = "order-consumer-group", topics = ["order-event-topic"])
+    @KafkaListener(id = "order-consumer-group", topics = ["order-command-topic"])
     fun orderEventListener(message: String) {
         logger.info("receive message from order: $message")
 

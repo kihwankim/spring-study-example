@@ -21,7 +21,7 @@ internal class PayOrderAdapter(
     private val orderOutBoxQueryRepository: OrderOutBoxQueryRepository,
 ) : PayOrderPort {
     companion object {
-        private const val ORDER_EVENT_TOPIC = "order-event-topic"
+        private const val ORDER_EVENT_TOPIC = "order-command-topic"
     }
 
     @Transactional
