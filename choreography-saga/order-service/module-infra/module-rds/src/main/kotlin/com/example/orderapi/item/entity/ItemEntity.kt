@@ -16,7 +16,7 @@ internal data class ItemEntity(
     val registeredUserId: Long,
     val price: BigDecimal,
     var productName: String,
-    val inventory: Int,
+    var inventory: Int,
     var description: String,
     @Enumerated(EnumType.STRING)
     val status: ItemUpdateLockStatus
