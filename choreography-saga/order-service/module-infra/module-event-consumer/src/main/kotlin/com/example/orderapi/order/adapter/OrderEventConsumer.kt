@@ -1,7 +1,7 @@
 package com.example.orderapi.order.adapter
 
 import com.example.common.domain.objectMapper
-import com.example.common.event.DomainEvent
+import com.example.common.event.DomainPayload
 import com.example.orderapi.order.entity.OrderEventType
 import com.example.orderapi.order.entity.OrderRawEvent
 import mu.KotlinLogging
@@ -22,7 +22,7 @@ class OrderEventConsumer(
         try {
             val orderRawEvent = objectMapper.readValue(message, OrderRawEvent::class.java)
             val classVal = OrderEventType.findBySimepleType(orderRawEvent.getEventType())
-            val rawEvent = objectMapper.readValue(orderRawEvent.getEventPayload(), classVal.classType.java) as DomainEvent<*>
+            val rawEvent = objectMapper.readValue(orderRawEvent.getEventPayload(), classVal.classType.java) as DomainPayload<*>
 
             applicationEventPublisher.publishEvent(rawEvent)
         } catch (e: Exception) {

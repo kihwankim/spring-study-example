@@ -1,6 +1,6 @@
 package com.example.payapi.order.entity
 
-import com.example.common.event.DomainEvent
+import com.example.common.event.DomainPayload
 import com.example.payapi.order.domain.model.OrderProductItem
 import com.example.payapi.order.domain.model.OrderStatus
 import com.example.payapi.pay.domain.command.PayCommand
@@ -26,7 +26,7 @@ data class OrderPurchase(
     val orderStatus: OrderStatus,
     val orderHashKey: String,
     val orderProductItems: MutableList<OrderProductItem>,
-) : DomainEvent<Long> {
+) : DomainPayload<Long> {
     override fun getId(): Long = orderId
 
     fun toPayCommand() = PayCommand(userId = this.userId, orderId = this.orderId, totalPrice = this.totalPrice)

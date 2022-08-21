@@ -1,7 +1,7 @@
 package com.example.payapi.order.entity
 
 import com.example.common.domain.objectMapper
-import com.example.common.event.DomainEvent
+import com.example.common.event.DomainPayload
 import com.example.common.event.RawMessage
 import com.example.common.event.keyGenerate
 
@@ -15,13 +15,13 @@ internal data class OrderRawEvent(
     companion object {
         private const val KEY_PREFIX = "order"
 
-        fun from(domainEvent: DomainEvent<Long>): OrderRawEvent {
-            val payload = objectMapper.writeValueAsString(domainEvent)
+        fun from(domainPayload: DomainPayload<Long>): OrderRawEvent {
+            val payload = objectMapper.writeValueAsString(domainPayload)
 
             return OrderRawEvent(
-                orderId = domainEvent.getId(),
+                orderId = domainPayload.getId(),
                 orderHashKey = keyGenerate(KEY_PREFIX),
-                type = domainEvent::class.java.simpleName,
+                type = domainPayload::class.java.simpleName,
                 payload = payload
             )
         }

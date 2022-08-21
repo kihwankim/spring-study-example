@@ -1,6 +1,6 @@
 package com.example.orderapi.order.entity
 
-import com.example.common.event.DomainEvent
+import com.example.common.event.DomainPayload
 import com.example.orderapi.order.domain.command.OrderPayEvent
 import com.example.orderapi.order.domain.model.OrderStatus
 import java.math.BigDecimal
@@ -24,7 +24,7 @@ data class OrderPayFailEvent(
     val orderId: Long,
     val userId: Long,
     val totalPrice: BigDecimal,
-) : DomainEvent<Long> {
+) : DomainPayload<Long> {
     override fun getId(): Long = orderId
 
     fun toOrderPayEvent(): OrderPayEvent {
@@ -40,7 +40,7 @@ data class OrderPaySuccessEvent(
     val payId: Long,
     val userId: Long,
     val totalPrice: BigDecimal,
-) : DomainEvent<Long> {
+) : DomainPayload<Long> {
     override fun getId(): Long = orderId
 
     fun toOrderPayEvent(): OrderPayEvent {
