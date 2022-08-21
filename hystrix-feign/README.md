@@ -54,14 +54,27 @@ public class DefaultFallbackDecorator implements FallbackDecorator { // 검색�
 }
 ```
 
-- 모든 resilience4J는 `FallbackDecorators`를 가지고 있습니다.
-- `FallbackDecorators`는 등록한 Fallback Method를 `FallbackDecorator`객체로 가지고 있습니다
-- 그리고 `CheckedFunction0<Object> supplier` 는 functional interface를 통해서 circuitbreaker, bulkhead ..etc annotation이 선언된 method를 호출 합니다
+### 정의
+
+- 간단히 말해서 error handler라고 생각하시면 편합니다
+- `resilience4J`에서 제공해주는 API에서 에러(Exception)가 발생할 경우 `fallback`에 등록된 method를 호출하도록 해주는 error handler 입니다
+- 모든 `resilience4J`는 fallback기능을 제공해주고 있으며, 필요에 따라 사용하지 않아도 됩니다
+- 나중에 아래 예시에서 사용법이 각각 제시되므로 여기서는 사용법을 언급하지 않겠습니다
+
+### 특징
+
+- 모든 `resilience4J`는 `FallbackDecorators`를 가지고 있습니다.
+- `FallbackDecorators`는 등록한 Fallback Method를 `FallbackDecorator`객체에 등록이 됩니다(String값 -> 나중에 `reflection`으로 해당 Method class를 가져오도록 구현됩)
+- 그리고 위 Code에서 `CheckedFunction0<Object> supplier` 는 functional interface를 통해서 circuitbreaker, bulkhead ..etc annotation이 선언된 method를 호출 합니다
 - 마지막으로 에러가 발생할 경우 fallback decorator를 찾아서 fallback method를 호출하게 됩니다.
 
 ## Thread isolation(Hystrix)과 BulkHead(resilience4J)
 
-### Hystrix 간단한 설명
+### 정의
+
+- 두 lib 모두 다 외부 서비스(API)의 한번에 호출 가능한 횟수를 제한 하는 기능을 제공해줍니다
+
+### Thread isolation(Hystrix)
 
 1. Hystrix는 Thread Isolation semaphore 방식과 Thread pool방식이 존재합니다
 
@@ -75,6 +88,9 @@ public class DefaultFallbackDecorator implements FallbackDecorator { // 검색�
 
 - Semaphore방식은 thread pool과 달리 main application의 thread가 API를 호출하기 때문에 중간에 timeout이 발생할 경우 중간에 바로 멈추는 것이 불가능 합니다
 - 하지만 thread pool은 외부의 thread를 호출 하기 때문에 timeout 이 발생하면 바로 중간에 main application thread를 return하면 됩니다. 결론적으로 timeout 시간을 명확하게 지켜야할 경우 thread pool을 사용하면 좋습니다
+    - cf) thread pool 방식에서 timeout이 발생해서 main thread가 return 되더라도 외부 API를 호출한 thread는 `http time out`, `정상 종료`, `error 발생`과 같이 **정상 적으로 종료될 때 까지 유지** 됩니다
+
+### Hystrix 사용법
 
 ```java
 public class AdapterForOuterServer {
@@ -104,6 +120,26 @@ public class AdapterForOuterServer extends HystrixCommand<String> {
 - resilience4J bulkhead 종류
     - SemaphoreBulkhead(Default)
     - FixedThreadPoolBulkhead
+- `@Bulkhead`를 통해서 AOP기반으로 설정 가능
+
+### BulkHead 사용법
+
+```java
+
+public class BulkHeadeTest {
+    // ..codes
+
+    @Bulkhead(name = CIRCUIT_NAME, fallbackMethod = "bulkheadNotFoundFallback", type = Bulkhead.Type.THREADPOOL)
+    public void callApiWithBulkHead(Long param) {
+        externalApi.callApi(param);
+    }
+
+    public void bulkheadNotFoundFallback(Throwable e, Long param) {
+        log.warn("bulk head error paramId: {}", param);
+    }
+}
+
+```
 
 ### SemaphoreBulkhead(Default) 특징
 
@@ -118,9 +154,48 @@ public class AdapterForOuterServer extends HystrixCommand<String> {
 - 모든 thread pool이 사용중이며, queue가 꽉찰 경우 reject가 발생 합니다
 - hystrix에서 제공하고 있는 isolation과 동일하다고 생각 하시면 됩니다
 
-### BulkHead(resilience4J) 설정 팔일 및 AOP
+### BulkHead 설정
 
-1. AOP
+```
+resilience4j:
+  bulkhead:
+    configs:
+      default:
+        max-concurrent-calls: 2
+        max-wait-duration: 0
+  thread-pool-bulkhead:
+    configs:
+      default:
+        max-thread-pool-size: 2
+        core-thread-pool-size: 2
+        queue-capacity: 2
+        keep-alive-duration: 20ms
+```
+
+- max-concurrent-calls
+    - thread 최대 동시 호출 수
+- max-wait-duration
+    - 스레드를 차단할 최대 시간 -> 기본값은 0 입니다
+    - default 0
+    - bulkhead가 포화 상태일 때, 진입하려는 쓰레드를 블로킹할 최대 시간
+    - 만약 max-concurrent-calls이 5, max-wait-duration 2초이고, 6개의 요청이 들어왔을 때, 5개의 Thread중 최소 1개 이상 2초 내로 끝나야지 6개 모두 처리 가능합니다
+- core-thread-pool-size
+    - ThreadPoolExecutor의 coreThreadPoolSize
+    - default는 현재 PC의 core개수
+- max-thread-pool-size
+    - bulkhead thread 방식은 요청을 thread pool에 전달 합니다 이때 thread pool 사이즈를 설정합니다
+    - ThreadPoolExecutor의 maxThreadPoolSize
+- queue-capacity
+    - max-thread-pool-size 를 초고하는 요청이 들어올 경우 queue에 적제해서 대기를 하게 되는데, 이때 queue의 사이즈를 나타 냅니다
+- keep-alive-duration
+    - ThreadPoolExecutor keep alive time을 의미 합니다
+- cf) ThreadPoolExecutor
+    - coreThreadPoolSize와 maxThreadPoolSize를 구분합니다
+    - coreThreadPoolSize: 초기에 생성된 thread pool size
+    - maxThreadPoolSize: coreThreadPoolSize 보다 더 많은 요청이 들어올 경우 추가로 최대로 생성가능한 thread pool size 입니다
+    - 만약 요청이 많을때 maxThreadPoolSize만큼 Thread를 생성해서 keep a live time만큼 대기했다가, 추가 요청이 없음 coreThreadPoolSize개수 만큼 줄이게 됩니다
+
+### BulkHead(resilience4J) AOP 구현 부분
 
 ```java
 
@@ -174,55 +249,15 @@ public class BulkheadAspect implements Ordered {
 - Flow
     - @Bulkhead 존재 유무 검사
     - Annotation 검사 후 callee method 호출
-    - error 발생시 fallback 실행
-
-2. 설정 파일
-
-```
-resilience4j:
-  bulkhead:
-    configs:
-      default:
-        max-concurrent-calls: 2
-        max-wait-duration: 0
-  thread-pool-bulkhead:
-    configs:
-      default:
-        max-thread-pool-size: 2
-        core-thread-pool-size: 2
-        queue-capacity: 2
-        keep-alive-duration: 20ms
-```
-
-- max-concurrent-calls
-    - thread 최대 동시 호출 수
-- max-wait-duration
-    - 스레드를 차단할 최대 시간 -> 기본값은 0 입니다
-    - default 0
-    - bulkhead가 포화 상태일 때, 진입하려는 쓰레드를 블로킹할 최대 시간
-    - 만약 max-concurrent-calls이 5, max-wait-duration 2초이고, 6개의 요청이 들어왔을 때, 5개의 Thread중 최소 1개 이상 2초 내로 끝나야지 6개 모두 처리 가능합니다
-- core-thread-pool-size
-    - ThreadPoolExecutor의 coreThreadPoolSize
-    - default는 현재 PC의 core개수
-- max-thread-pool-size
-    - bulkhead thread 방식은 요청을 thread pool에 전달 합니다 이때 thread pool 사이즈를 설정합니다
-    - ThreadPoolExecutor의 maxThreadPoolSize
-- queue-capacity
-    - max-thread-pool-size 를 초고하는 요청이 들어올 경우 queue에 적제해서 대기를 하게 되는데, 이때 queue의 사이즈를 나타 냅니다
-- keep-alive-duration
-    - ThreadPoolExecutor keep alive time을 의미 합니다
-- cf) ThreadPoolExecutor
-    - coreThreadPoolSize와 maxThreadPoolSize를 구분합니다
-    - coreThreadPoolSize: 초기에 생성된 thread pool size
-    - maxThreadPoolSize: coreThreadPoolSize 보다 더 많은 요청이 들어올 경우 추가로 최대로 생성가능한 thread pool size 입니다
-    - 만약 요청이 많을때 maxThreadPoolSize만큼 Thread를 생성해서 keep a live time만큼 대기했다가, 추가 요청이 없음 coreThreadPoolSize개수 만큼 줄이게 됩니다
+    - Error 발생시 fallback 실행
 
 ## RateLimit(resilience4J)
 
 ### RateLimit 정의
 
 - 일정 시간동안 target application/method호출 요청 횟수를 제한하는데 기능을 의미 합니다
-- AtomicRateLimiter와 SemaphoreRateLimiter 방식 2가지가 있고 AtomicRateLimiter가 default 입니다
+
+### RateLimit 특징
 
 ```java
 public interface RateLimit {
@@ -245,12 +280,17 @@ public interface RateLimit {
 }
 ```
 
-### RateLimit 특징
+- 클라이언트가 설정된 `permits`개수를 초과 한 경우 추가 요청을 거부하거나, 나중에 처리하거나(Queue 적제), 더 적은 양의 리소스를 할당할 수 있다
+- 위 코드를 보면 `permits`개수를 넘을 경우 wait를 진행하는 `waitForPermission` method가 있고, `waitForPermission` method를 통해서 대기 상태가 아닌 method인 경우 `supplier.apply()`를 통해 사용자 method를 호출 하게 됩니다
+- client가 처음 rate limit이 걸려있는 code를 호출할 때 lazy하게 rate limit 객체가 생성됩니다(**아래 RateLimit 사용 법 code 참고**)
+    - 만약 rate limit 객체를 바로 생성하고, rate limit이 에러 없이 처리되거나, time out과 같은 실패가 났을때 추가 적으로 callback method를 호출 하고 싶을 경우 아래 예시 코드와 같이 설정할 수 있습니다
+    - 그러면 `callRateLimit`에서 test RateLimit 객체가 생성되지 않고 `AnnotationBaseCircuitService` 객체가 생성될때 test RateLimit이 생성되게 됩니다
+    - 그리고 success/fail logging을 해주는 callback method를 등록 하였습니다
+- ratelimit 구현 방식
+    - `AtomicRateLimiter` (default)
+    - `SemaphoreRateLimiter`
 
-- 클라이언트가 설정된 rate limit을 초과 한 경우 추가 요청을 거부하거나, 나중에 처리하거나(Queue 적제), 더 적은 양의 리소스를 할당할 수 있다
-- client가 처음 rate limit이 걸려있는 code를 호출할 때 lazy하게 rate limit 객체가 생성됩니다
-    - 만약 rate limit 객체를 바로 생성하고, rate limit이 에러 없이 처리되거나 실패가 났을때 event를 추가하고 싶을 경우 아래와 같이 설정할 수 있습니다
-    - 그러면 `callRateLimit`에서 test RateLimit 객체가 생성되지 않고 `AnnotationBaseCircuitService` 객체가 생성될때 test RateLimit이 생성되게 되고, Evnet도 등록할 수 있습니다.
+### RateLimit 사용 법
 
 ```kotlin
 @Component
@@ -277,10 +317,23 @@ class AnnotationBaseCircuitService(
 }
 ```
 
-- 파라미터 종류
-    - limit-for-period: 5
-    - limit-refresh-period: 4s
-    - timeout-duration: 10s
+### RateLimit 설정
+
+```
+resilience4j:
+  ratelimiter:
+    instances:
+      test:
+        limit-for-period: 5
+        limit-refresh-period: 4s
+        timeout-duration: 10s
+
+```
+
+- 파라미터 정의
+    - limit-for-period: 한번에 처리 가능한 요청 개수
+    - limit-refresh-period: 다음 `limit-for-period` 횟수 만큼 처리 하기 위해서 기다려야 하는 대기 시간
+    - timeout-duration: 대기 시간의 timeout 시간 설정
 - 파라미터 해설:
     - 처음에 `limitForPeriod`에 설정된 갯수 만큼만 한번에 처리가 가능합니다
     - 그리고 처음 `limitForPeriod` 개수만큼의 thread 및 요청을 처리하게 됩니다.
@@ -423,31 +476,23 @@ public class SemaphoreBasedRateLimiter implements RateLimiter {
 - 처음 API를 호출 후 네트워크 이상과 같은 실패가 났을때 재시도하는 역할을 하는 기능 입니다
 - 재시도 횟수와 간격을 지정할 수 있는 것 입니다
 
-### 매게변수 정의
+### Retry 설정
+
+```
+resilience4j:
+  retry:
+    configs:
+      default:
+        max-attempts: 2 # 2회
+        wait-duration: 1000 # 1초
+        
+```
 
 - max-retry-attempts(max-attempts): 재시도 횟수
 - wait-duration: 재시도 하기 위해서 다기 시간(간격)
 - retry-exception: 재시도를 할 수 있는 예외 에러 케이스
 
-### Retry 예시와 코드 설명
-
-```kotlin
-class TestService {
-    @Retry(name = "retry-test", fallbackMethod = "retryFallback")
-    fun callRetry(): String {
-        logger.info("retry")
-        throw Exception("exp")
-        return "retry"
-    }
-
-    private fun retryFallback(t: Throwable): String {
-        return "retry fallback"
-    }
-}
-```
-
-- @Retry 에서 name설정과 fallback을 진행합니다
-- 최대 max-attempts 횟수까지만 retry가 가능 하고 그 후에는 fallback으로 처리 합니다
+### Retry 특징
 
 ```java
 public interface Retry {
@@ -477,6 +522,26 @@ public interface Retry {
 - retry 로직은 위와 같이 do while 형태로 진행하며
 - context(RetryImpl.class)에서 onError에서 retry 횟수보다 아래일 경우 exception을 띄우지 않고 만약 retry 횟수를 넘길 경우 exception을 띄우게 됩니다
 - exception이 발생하게 되면 fallback이 호출 됩니다
+
+### Retry 사용 법
+
+```kotlin
+class TestService {
+    @Retry(name = "retry-test", fallbackMethod = "retryFallback")
+    fun callRetry(): String {
+        logger.info("retry")
+        throw Exception("exp")
+        return "retry"
+    }
+
+    private fun retryFallback(t: Throwable): String {
+        return "retry fallback"
+    }
+}
+```
+
+- `@Retry` 에서 name설정과 fallback을 진행합니다
+- 최대 max-attempts 횟수까지만 retry가 가능 하고 그 후에는 fallback으로 처리 합니다
 
 ## 회로 차단기(CircuitBreaker)
 
