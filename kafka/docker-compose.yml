@@ -11,6 +11,8 @@ services:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_SERVER_ID: 1
       ZOOKEEPER_SERVERS: zoo1:2888:3888;zoo2:2888:3888;zoo3:2888:3888
+    networks:
+      - kafka-cluster-network
 
   zoo2:
     image: confluentinc/cp-zookeeper:7.2.0
@@ -22,6 +24,8 @@ services:
       ZOOKEEPER_CLIENT_PORT: 2182
       ZOOKEEPER_SERVER_ID: 2
       ZOOKEEPER_SERVERS: zoo1:2888:3888;zoo2:2888:3888;zoo3:2888:3888
+    networks:
+      - kafka-cluster-network
 
   zoo3:
     image: confluentinc/cp-zookeeper:7.2.0
@@ -33,7 +37,8 @@ services:
       ZOOKEEPER_CLIENT_PORT: 2183
       ZOOKEEPER_SERVER_ID: 3
       ZOOKEEPER_SERVERS: zoo1:2888:3888;zoo2:2888:3888;zoo3:2888:3888
-
+    networks:
+      - kafka-cluster-network
 
   kafka1:
     image: confluentinc/cp-kafka:7.2.0
@@ -55,6 +60,8 @@ services:
       - zoo1
       - zoo2
       - zoo3
+    networks:
+      - kafka-cluster-network
 
   kafka2:
     image: confluentinc/cp-kafka:7.2.0
@@ -76,6 +83,9 @@ services:
       - zoo1
       - zoo2
       - zoo3
+      - kafka1
+    networks:
+      - kafka-cluster-network
 
   kafka3:
     image: confluentinc/cp-kafka:7.2.0
@@ -97,6 +107,10 @@ services:
       - zoo1
       - zoo2
       - zoo3
+      - kafka1
+      - kafka2
+    networks:
+      - kafka-cluster-network
 
   kafka-schema-registry:
     image: confluentinc/cp-schema-registry:7.2.0
@@ -115,3 +129,29 @@ services:
       SCHEMA_REGISTRY_HOST_NAME: kafka-schema-registry
       SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: 'PLAINTEXT://kafka1:19092,PLAINTEXT://kafka2:19093,PLAINTEXT://kafka3:19094'
       SCHEMA_REGISTRY_LISTENERS: http://0.0.0.0:8081
+    networks:
+      - kafka-cluster-network
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui
+    hostname: kafka-ui
+    container_name: kafka-ui
+    ports:
+      - "28080:8080"
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_ZOOKEEPER: zoo1:2181,zoo2:2182,zoo3:2183
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka1:19092,kafka2:19093,kafka3:19094
+    depends_on:
+      - zoo1
+      - zoo2
+      - zoo3
+      - kafka1
+      - kafka2
+      - kafka3
+    networks:
+      - kafka-cluster-network
+
+networks:
+  kafka-cluster-network:
+    driver: bridge
