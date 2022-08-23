@@ -1,6 +1,6 @@
 package com.example.payapi.pay.application
 
-import com.example.common.domain.ActResult
+import com.example.common.domain.ProcessResult
 import com.example.common.domain.ErrorResponse
 import com.example.payapi.pay.domain.command.PayCommand
 import com.example.payapi.pay.domain.event.OrderPayFailEvent
@@ -19,7 +19,7 @@ class PayService(
     private val paymentFailHandlerPort: PaymentFailHandlerPort,
 ) : PayMoneyUseCase {
     override fun payMoney(payCommand: PayCommand) {
-        ActResult { paymentPort.pay(payCommand) }
+        ProcessResult { paymentPort.pay(payCommand) }
             .onSuccess { payId -> handlePaySuccess(payId, payCommand) }
             .onFailure { err -> handleFailure(err, payCommand) }
     }
