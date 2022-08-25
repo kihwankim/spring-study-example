@@ -5,11 +5,9 @@ import com.example.redisexample.dto.PointDto;
 import com.example.redisexample.repository.PointRedisRepository;
 import com.example.redisexample.repository.PointRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
-import org.springframework.data.redis.core.RedisCallback;
-import org.springframework.data.redis.core.RedisOperations;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.SessionCallback;
+import org.springframework.data.redis.core.*;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,10 +15,11 @@ import org.springframework.transaction.support.TransactionSynchronizationAdapter
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -116,5 +115,69 @@ public class PointRedisService {
             pointDtos.forEach(point -> redisConnection.rPush(keySerializer.serialize(key), valueSerializer.serialize(point)));
             return null;
         });
+    }
+
+    public void hscanDataFromHash() {
+        redisTemplate.execute((RedisCallback<Object>) connection -> {
+            ScanOptions options = ScanOptions.scanOptions().match("*").count(200).build();
+            Cursor<Map.Entry<byte[], byte[]>> entries = connection.hScan("key_val".getBytes(), options);
+
+            while (entries.hasNext()) {
+                Map.Entry<byte[], byte[]> next = entries.next();
+                byte[] actualValue = next.getValue();
+                String val = new String(actualValue);
+                log.info("value: {}", val);
+            }
+
+            return null;
+        });
+    }
+
+    public void saveHashMapValue() {
+        Map<String, String> mapValue = Map.of(
+                "firstName", "fName",
+                "lastName", "lName"
+        );
+        redisTemplate.opsForHash()
+                .putAll("key_val", mapValue);
+    }
+
+    public void getAllMapValue() {
+        Map<Object, Object> keyValValue = redisTemplate.opsForHash().entries("key_val");
+        Set<Object> objects = keyValValue.keySet();
+        for (Object key : objects) {
+            log.info("key: {}, value: {}", key, keyValValue.get(key));
+        }
+    }
+
+    public void getMultiGet() {
+        List<Object> objects = redisTemplate.opsForHash().multiGet("key_val", List.of("firstName"));
+        for (Object eachValue : objects) {
+            log.info("value: {}", eachValue);
+        }
+    }
+
+    public void getForOnlyValue() {
+        Object value = redisTemplate.opsForHash().get("key_val", "firstName");
+        log.info("key: firstName, value: {}", value);
+    }
+
+    public void saveListToRight(String val) {
+        final String key = "list_val";
+        Long index = redisTemplate.opsForList().rightPush(key, val);
+        redisTemplate.expire(key, 1000, TimeUnit.MICROSECONDS);
+
+        log.info("index: {}", index);
+    }
+
+    public void findAllFromList() {
+        List<String> listVals = redisTemplate.opsForList().range("list_val", 0, -1);
+        if (Objects.isNull(listVals)) {
+            listVals = List.of();
+        }
+
+        for (String eachVal : listVals) {
+            log.info("each val: {}", eachVal);
+        }
     }
 }
