@@ -124,9 +124,11 @@ public class PointRedisService {
 
             while (entries.hasNext()) {
                 Map.Entry<byte[], byte[]> next = entries.next();
+                byte[] actualKey = next.getKey();
                 byte[] actualValue = next.getValue();
+                String key = new String(actualKey);
                 String val = new String(actualValue);
-                log.info("value: {}", val);
+                log.info("hash key: {}, hash value: {}", key, val);
             }
 
             return null;
