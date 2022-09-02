@@ -47,3 +47,21 @@
 - Message, Payload interface: common module(공통)
 - Event, Command, CommandPayload, EventPayload: domain module에 위치
     - 이유: 주로 변경이 같이 이뤄짐
+
+## Aggregate/DomainModel
+
+- common module model
+
+
+## EventListner
+
+### 성공
+- 새로운 Event 생성
+  - hashkey 생성
+  - 새로운 Id 생성
+    - 기존 Command의 ID를 통해서 notify event 전송
+
+### 실패
+- Exception 전용 Event table에 적제
+  - 새로운 haskey 생성
+  - 기존 Id와 새로운 haskey로 notify event 전송
