@@ -14,5 +14,36 @@
     1. 결제 데이터 저장(결제 API 호출 대용)
     2. 성공/실패 전송
 4. Order Service
-   1. 고객에게 status값에 따라 성공 실패 여부 보여주기
+    1. 고객에게 status값에 따라 성공 실패 여부 보여주기
 
+## Message
+
+### 공통 데이터
+
+- Id
+- key: hash 값 -> RDB의 key값 이용
+
+### 하위 type
+
+- Command
+    - 정의: 변경, 추가. 삭제(CUD) 작업을 요청 하는 것
+    - convention: ~~Command
+- Event
+    - 정의: CUD 작업에 대해서 결과를 반환 하는 것
+    - convention: ~~Event
+
+### Payload 컨벤션
+
+- ~~CommandPayload
+- ~~EventPayload
+
+### Payload 필수 데이터
+
+- Id: aggreate의 id값
+- hashKey: 중복 수신 방지
+
+### Package 위치 설계
+
+- Message, Payload interface: common module(공통)
+- Event, Command, CommandPayload, EventPayload: domain module에 위치
+    - 이유: 주로 변경이 같이 이뤄짐
