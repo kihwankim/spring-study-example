@@ -4,8 +4,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 
 @SpringBootApplication
-class SpringCloudContractApplication
+class CalleeApplication
 
 fun main(args: Array<String>) {
-    runApplication<SpringCloudContractApplication>(*args)
+    runApplication<CalleeApplication>(*args)
 }
