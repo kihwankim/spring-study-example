@@ -1,9 +1,9 @@
 rootProject.name = "spring-cloud-contract"
 
 include(
-    ":app-callee",
-    ":app-callee-contracts",
-    ":app-caller"
+    "app-callee",
+    "app-callee-contracts",
+    "app-caller"
 )
 
 pluginManagement {
