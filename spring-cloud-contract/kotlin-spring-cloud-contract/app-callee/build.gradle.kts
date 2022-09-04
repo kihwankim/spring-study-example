@@ -7,6 +7,7 @@ tasks.getByName("jar") {
 }
 
 publishing {
+
     publications {
         create<MavenPublication>("mavenJava") {
 //            artifact(tasks.named("bootJar"))
@@ -18,6 +19,18 @@ publishing {
                 usage("java-runtime") {
                     fromResolutionResult()
                 }
+            }
+        }
+    }
+    repositories {
+        maven {
+            val baseUrl = project.properties["nexusUrl"] as String
+            val nexusUrl = "http://$baseUrl/repository/maven-releases"
+            url = uri(nexusUrl)
+            isAllowInsecureProtocol = true
+            credentials {
+                username = project.properties["nexusUsername"].toString()
+                password = project.properties["nexusPassword"].toString()
             }
         }
     }
