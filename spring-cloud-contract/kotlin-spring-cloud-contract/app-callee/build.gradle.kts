@@ -9,10 +9,10 @@ tasks.getByName("jar") {
 publishing {
     publications {
         create<MavenPublication>("mavenJava") {
-            artifact(tasks.named("bootJar"))
-            artifact(tasks.named("verifierStubsJar"))
-            versionMapping {
-                usage("java-api") {
+//            artifact(tasks.named("bootJar"))
+            artifact(tasks.named("verifierStubsJar")) // stub jar file creation
+            versionMapping { // version setting
+                usage("java-api") { // java api setting version
                     fromResolutionOf("runtimeClasspath")
                 }
                 usage("java-runtime") {
