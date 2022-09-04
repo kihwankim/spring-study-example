@@ -6,13 +6,29 @@ tasks.getByName("jar") {
     enabled = false
 }
 
+publishing {
+    publications {
+        create<MavenPublication>("mavenJava") {
+            artifact(tasks.named("bootJar"))
+            artifact(tasks.named("verifierStubsJar"))
+            versionMapping {
+                usage("java-api") {
+                    fromResolutionOf("runtimeClasspath")
+                }
+                usage("java-runtime") {
+                    fromResolutionResult()
+                }
+            }
+        }
+    }
+}
+
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+    testImplementation("org.springframework.cloud:spring-cloud-starter-contract-verifier")
 }
 
-//contracts {
-//    contractsDslDir = new File("../ftgo-order-service-contracts/src/main/resources/contracts")
-//    packageWithBaseClasses = 'net.chrisrichardson.ftgo.orderservice.contract'
-//    generatedTestSourcesDir = project.file("${project.buildDir}/generated-integration-test-sources/contracts")
-//}
+contracts {
+    baseClassForTests.set("com.example.springcloudcontract.ProducerBase")
+}

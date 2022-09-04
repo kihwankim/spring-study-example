@@ -1,12 +1,25 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
+buildscript {
+    val kotlinVerifierVersion: String by extra
+    repositories {
+        mavenCentral()
+        mavenLocal()
+    }
+
+    dependencies {
+        classpath("org.springframework.cloud:spring-cloud-contract-spec-kotlin:$kotlinVerifierVersion")
+    }
+}
+
 plugins {
     kotlin("jvm")
     kotlin("plugin.spring") apply false
     id("org.springframework.boot") apply false
     id("io.spring.dependency-management")
+    id("maven-publish")
+    id("org.springframework.cloud.contract") apply false
 }
-
 
 java.sourceCompatibility = JavaVersion.VERSION_11
 val projectGroup: String by project
@@ -19,6 +32,7 @@ allprojects {
 
     repositories {
         mavenCentral()
+        mavenLocal()
     }
 }
 
@@ -30,6 +44,8 @@ subprojects {
         plugin("java")
         plugin("kotlin")
         plugin("kotlin-spring")
+        plugin("maven-publish")
+        plugin("org.springframework.cloud.contract")
     }
 
     dependencyManagement {
@@ -46,6 +62,7 @@ subprojects {
 
         implementation("io.github.microutils:kotlin-logging-jvm:${kotlinLoggingVersion}")
         testImplementation("org.springframework.boot:spring-boot-starter-test")
+        testImplementation("org.springframework.cloud:spring-cloud-contract-spec-kotlin")
     }
 
     tasks.getByName("bootJar") {
