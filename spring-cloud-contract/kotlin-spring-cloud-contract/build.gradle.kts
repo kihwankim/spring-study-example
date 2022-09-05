@@ -1,7 +1,8 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 buildscript {
-    val kotlinVerifierVersion: String by extra
+    val kotlinVerifierVersion: String by project
+
     repositories {
         mavenCentral()
         mavenLocal()
