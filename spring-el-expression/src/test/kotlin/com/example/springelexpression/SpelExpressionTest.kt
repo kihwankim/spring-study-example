@@ -13,6 +13,7 @@ import org.springframework.expression.ExpressionParser
 import org.springframework.expression.spel.standard.SpelExpressionParser
 import org.springframework.expression.spel.support.StandardEvaluationContext
 import java.lang.reflect.Method
+import java.util.*
 
 data class ExpressionRootObject(
     val method: Method,
@@ -90,5 +91,51 @@ class SpelExpressionTest {
             .toString()
         assertThat(key).isEqualTo("1:contentdata")
     }
+
+    @Test
+    @Throws(Exception::class)
+    fun `root 객체 검사 테스트`() {
+        val c = GregorianCalendar()
+        c.set(1856, 7, 9)
+
+        // The constructor arguments are name, birthday, and nationality.
+        val tesla = Inventor("Nikola Tesla", c.time, "Serbian")
+
+        val parser = SpelExpressionParser()
+
+        var exp = parser.parseExpression("name") // Parse name as an expression
+        val name = exp.getValue(tesla) as String
+        // name == "Nikola Tesla"
+
+        exp = parser.parseExpression("name == 'Nikola Tesla'")
+        val result = exp.getValue(tesla, Boolean::class.java)
+
+        assertThat(result).isEqualTo(true)
+        assertThat(name).isEqualTo("Nikola Tesla")
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun `root 객체 this 검사 테스트`() {
+        val c = GregorianCalendar()
+        c.set(1856, 7, 9)
+
+        // The constructor arguments are name, birthday, and nationality.
+        val tesla = Inventor("Nikola Tesla", c.time, "Serbian")
+
+        val parser = SpelExpressionParser()
+
+        val exp = parser.parseExpression("#this") // Parse name as an expression
+        val fetchedTesla = exp.getValue(tesla) as Inventor
+        // name == "Nikola Tesla"
+
+        assertThat(fetchedTesla.name).isEqualTo("Nikola Tesla")
+    }
+
+    data class Inventor(
+        val name: String = "",
+        val birthday: Date,
+        val nationality: String,
+    )
 }
 
