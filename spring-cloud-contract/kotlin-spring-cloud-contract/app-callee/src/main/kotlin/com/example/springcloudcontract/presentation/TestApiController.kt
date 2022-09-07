@@ -23,12 +23,12 @@ enum class NumberType {
 
     companion object {
         fun findNumberType(num: Int): NumberType =
-            if (num % 2 == 0) {
-                logger.info("odd call")
-                EVEN
-            } else {
-                logger.info("even call")
-                ODD
-            }
+                if (num % 2 == 0) {
+                    logger.info("odd call")
+                    EVEN
+                } else {
+                    logger.info("even call")
+                    ODD
+                }
     }
 }
