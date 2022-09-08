@@ -1,21 +1,21 @@
 package com.example.kafka.order.adapter.message
 
 import com.example.kafka.order.adapter.message.dto.ConsumerMessageDto
+import com.example.kafka.order.domain.port.out.PersistncePort
 import org.springframework.kafka.annotation.KafkaListener
 import org.springframework.stereotype.Component
-import java.util.concurrent.CountDownLatch
 
 @Component
 class KafkaMessageReceiver(
-    val latch: CountDownLatch = CountDownLatch(1)
+    private val persistecePort: PersistncePort
 ) : MessageReceiver {
 
     companion object {
         const val topic = "product-topic"
     }
 
-    @KafkaListener(topics = [topic])
+    @KafkaListener(topics = [topic], id = "product-consumer-group")
     override fun receive(consumerMessageDto: ConsumerMessageDto) {
-        print(consumerMessageDto)
+        persistecePort.save(consumerMessageDto.toDomainModel())
     }
 }
