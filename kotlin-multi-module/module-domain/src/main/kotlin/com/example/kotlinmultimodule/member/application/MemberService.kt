@@ -1,6 +1,6 @@
 package com.example.kotlinmultimodule.member.application
 
-import com.example.kotlinmultimodule.member.domain.Member
+import com.example.kotlinmultimodule.member.domain.model.Member
 import com.example.kotlinmultimodule.member.domain.port.`in`.MemberCreationUseCase
 import com.example.kotlinmultimodule.member.domain.port.`in`.MemberSearchUseCase
 import com.example.kotlinmultimodule.member.domain.port.out.MemberSavePort

@@ -2,7 +2,7 @@ package com.example.kotlinmultimodule.adapter.member
 
 import com.example.kotlinmultimodule.adapter.member.entity.MemberEntity
 import com.example.kotlinmultimodule.adapter.member.repository.MemberRepository
-import com.example.kotlinmultimodule.member.domain.Member
+import com.example.kotlinmultimodule.member.domain.model.Member
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test

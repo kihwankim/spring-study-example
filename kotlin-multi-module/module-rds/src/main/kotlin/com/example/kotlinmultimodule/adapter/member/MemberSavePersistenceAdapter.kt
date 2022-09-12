@@ -3,7 +3,7 @@ package com.example.kotlinmultimodule.adapter.member
 import com.example.kotlinmultimodule.adapter.member.entity.MemberEntity
 import com.example.kotlinmultimodule.adapter.member.repository.MemberQueryRepository
 import com.example.kotlinmultimodule.adapter.member.repository.MemberRepository
-import com.example.kotlinmultimodule.member.domain.Member
+import com.example.kotlinmultimodule.member.domain.model.Member
 import com.example.kotlinmultimodule.member.domain.port.out.MemberSavePort
 import com.example.kotlinmultimodule.member.domain.port.out.MemberSearchPort
 import org.springframework.stereotype.Service
