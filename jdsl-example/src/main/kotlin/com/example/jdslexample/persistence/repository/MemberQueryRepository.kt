@@ -1,8 +1,11 @@
 package com.example.jdslexample.persistence.repository
 
 import com.example.jdslexample.persistence.entity.MemberEntity
+import com.example.jdslexample.persistence.entity.MemberRoleEntity
+import com.example.jdslexample.persistence.entity.RoleEntity
 import com.linecorp.kotlinjdsl.query.spec.expression.EntitySpec
 import com.linecorp.kotlinjdsl.querydsl.expression.col
+import com.linecorp.kotlinjdsl.querydsl.from.fetch
 import com.linecorp.kotlinjdsl.spring.data.SpringDataQueryFactory
 import com.linecorp.kotlinjdsl.spring.data.listQuery
 import org.springframework.stereotype.Repository
@@ -27,4 +30,15 @@ class MemberQueryRepository(
         where(col(MemberEntity::id).equal(id))
         limit(1)
     }.firstOrNull()
+
+    fun findByHasRoleName(roleName: String): List<MemberEntity> =
+        springDataQueryFactory
+            .listQuery {
+                val memberEntity: EntitySpec<MemberEntity> = entity(MemberEntity::class)
+                select(memberEntity)
+                from(memberEntity)
+                fetch(MemberEntity::memberRoles)
+                fetch(MemberRoleEntity::role)
+                where(col(RoleEntity::name).equal(roleName))
+            }
 }
