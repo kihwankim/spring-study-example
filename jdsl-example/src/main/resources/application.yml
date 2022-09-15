@@ -3,9 +3,10 @@ spring:
     hikari:
       maximum-pool-size: 30
       max-lifetime: 60000
+      driver-class-name: com.mysql.cj.jdbc.Driver
       jdbc-url: jdbc:mysql://localhost:3306/dev?serverTimezone=UTC
-      username: sa
-      password:
+      username: root
+      password: root
       connection-timeout: 5000
       pool-name: Spring-HikariPool
   jpa:

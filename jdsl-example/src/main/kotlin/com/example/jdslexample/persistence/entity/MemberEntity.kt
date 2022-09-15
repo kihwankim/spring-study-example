@@ -12,5 +12,9 @@ class MemberEntity(
     val id: Long = 0L,
     var name: String,
     @OneToMany(mappedBy = "member", cascade = [CascadeType.ALL], orphanRemoval = true)
-    var memberRoles: MutableList<MemberRoleEntity>
-) : BaseEntity()
+    var memberRoles: MutableList<MemberRoleEntity> = ArrayList()
+) : BaseEntity() {
+    fun addRole(roleEntity: RoleEntity) {
+        memberRoles.add(MemberRoleEntity(member = this, role = roleEntity))
+    }
+}
