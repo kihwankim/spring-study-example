@@ -19,4 +19,16 @@ class MemberQueryRepository(
             from(memberEntity)
             where(col(MemberEntity::name).equal(name))
         }
+
+    fun findById(id: Long): MemberEntity? =
+        springDataQueryFactory
+            .listQuery<MemberEntity> {
+                val memberEntity: EntitySpec<MemberEntity> = entity(MemberEntity::class)
+                select(memberEntity)
+                from(memberEntity)
+                where(col(MemberEntity::id).equal(id))
+                limit(1)
+            }
+            .firstOrNull()
+
 }
