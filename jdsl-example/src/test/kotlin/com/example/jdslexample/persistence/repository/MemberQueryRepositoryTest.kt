@@ -40,6 +40,6 @@ internal class MemberQueryRepositoryTest {
     @Throws(Exception::class)
     fun `subquery test`() {
         val result = memberQueryRepository.findByRoleNameSubQuery(listOf("admin", "user"))
-        assertThat(result).hasSize(2)
+        assertThat(result).hasSize(3)
     }
 }

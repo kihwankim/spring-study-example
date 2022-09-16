@@ -6,7 +6,6 @@ import com.example.jdslexample.persistence.entity.RoleEntity
 import com.linecorp.kotlinjdsl.query.spec.expression.EntitySpec
 import com.linecorp.kotlinjdsl.querydsl.expression.col
 import com.linecorp.kotlinjdsl.querydsl.from.fetch
-import com.linecorp.kotlinjdsl.querydsl.from.join
 import com.linecorp.kotlinjdsl.spring.data.SpringDataQueryFactory
 import com.linecorp.kotlinjdsl.spring.data.listQuery
 import com.linecorp.kotlinjdsl.spring.data.subquery
@@ -49,17 +48,20 @@ class MemberQueryRepository(
         springDataQueryFactory
             .listQuery {
                 select(entity(MemberEntity::class))
-                from(MemberRoleEntity::class)
-//                where(
-//                    col(MemberEntity::id).`in`(
-//                        springDataQueryFactory.subquery {
-//                            select(col(MemberEntity::id))
-//                            from(entity(MemberRoleEntity::class))
-//                            join(MemberRoleEntity::role, JoinType.INNER)
-//                            where(col(RoleEntity::name).`in`(roleNames))
-//                        }
-//                    )
-//                )
-            }
+                from(MemberEntity::class)
+                where(
+                    col(MemberEntity::id).`in`(
+                        springDataQueryFactory.subquery {
+                            val memberRoleEntity: EntitySpec<MemberRoleEntity> = entity(MemberRoleEntity::class)
+                            val innerQueryMemberEntity: EntitySpec<MemberEntity> = entity(MemberEntity::class, "inner_member")
 
+                            select(col(MemberEntity::id))
+                            from(memberRoleEntity)
+                            join(memberRoleEntity, entity(RoleEntity::class), on(MemberRoleEntity::role), JoinType.INNER)
+                            join(memberRoleEntity, innerQueryMemberEntity, on(MemberRoleEntity::member), JoinType.INNER)
+                            where(col(RoleEntity::name).`in`(roleNames))
+                        }
+                    )
+                )
+            }
 }
