@@ -35,4 +35,11 @@ internal class MemberQueryRepositoryTest {
         assertThat(result[0].memberRoles).hasSize(1)
         assertThat(result[0].memberRoles[0].role.name).isEqualTo("user")
     }
+
+    @Test
+    @Throws(Exception::class)
+    fun `subquery test`() {
+        val result = memberQueryRepository.findByRoleNameSubQuery(listOf("admin", "user"))
+        assertThat(result).hasSize(2)
+    }
 }
