@@ -173,6 +173,7 @@ dependencies {
 - stub을 wire mock으로 실행 하는 lib 입니다
 
 ```java
+
 @SpringBootTest
 @AutoConfigureWireMock
 @AutoConfigureStubRunner(
@@ -201,11 +202,15 @@ class CallServiceTest {
 }
 ```
 
-- stubsMode를 Local로 설정했기 때문에 local dir `.m2` dir위치에 stub file을  찾을것 입니다
+- stubsMode를 Local로 설정했기 때문에 local dir `.m2` dir위치에 stub file을 찾을것 입니다
+    - CLASSPATH: class path에 위치
+    - LOCAL: `.m2` 폴더에 위치
+    - REMOTE: 외부 dir (git/nexus ...etc) 서버
+        - `repositoryRoot = "http://localhost:8081/repository/maven-public/"` 와 같이 **repositoryRoot** 설정 필요
 - `com.example:app-callee:+:stubs:10010`은 stub file의 위치
-  - format: `${group}:${artifact}:${version}:stubs:${port}` 입니다
-  - 현재 version이 `+`로 표시되었기 때문에 최신 버전을 사용합니다
-  - port는 stub이 실행할 port 입니다
+    - format: `${group}:${artifact}:${version}:stubs:${port}` 입니다
+    - 현재 version이 `+`로 표시되었기 때문에 최신 버전을 사용합니다
+    - port는 stub이 실행할 port 입니다
 
 ### Kotlin project 필요 lib
 
@@ -355,9 +360,11 @@ Contract.make {
 ## 4. 사용 후기
 
 ### 장점
+
 - contract가 명시되어 있기 때문에 test code의 확실성이 생깁니다
 
 ### 단점
+
 - nexus와 enureka와 같은 외부 서버 생성이 필요
 - 여러 팀원들이 contract 도입에 협의가 되어야지 사용가능
 - groovy와 yml 파일 작성 방식을 배워야 하는 허들이 존재
