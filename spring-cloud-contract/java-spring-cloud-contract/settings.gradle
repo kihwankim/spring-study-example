@@ -1,0 +1,6 @@
+rootProject.name = 'java-spring-cloud-contract'
+
+include(
+        "app-callee",
+        "app-caller"
+)
