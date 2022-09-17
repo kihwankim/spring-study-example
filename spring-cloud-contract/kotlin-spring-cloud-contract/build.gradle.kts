@@ -63,7 +63,6 @@ subprojects {
 
         implementation("io.github.microutils:kotlin-logging-jvm:${kotlinLoggingVersion}")
         testImplementation("org.springframework.boot:spring-boot-starter-test")
-        testImplementation("org.springframework.cloud:spring-cloud-contract-spec-kotlin")
     }
 
     tasks.getByName("bootJar") {

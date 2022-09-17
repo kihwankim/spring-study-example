@@ -11,9 +11,9 @@ import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock
 @SpringBootTest
 @AutoConfigureWireMock
 @AutoConfigureStubRunner(
-        stubsMode = StubRunnerProperties.StubsMode.REMOTE,
-        repositoryRoot = "http://localhost:8081/repository/maven-public/",
-        ids = ["com.example:app-callee:+:stubs:10010"],
+    stubsMode = StubRunnerProperties.StubsMode.REMOTE,
+    repositoryRoot = "http://localhost:8081/repository/maven-public/",
+    ids = ["com.example:app-callee:+:stubs:10010"],
 )
 internal class CallServiceTest {
 
