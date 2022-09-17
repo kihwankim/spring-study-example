@@ -1,0 +1,8 @@
+server:
+  port: 10010
+callee:
+  base-url: localhost:10010
+
+stubrunner:
+  username: admin
+  password: adminpass

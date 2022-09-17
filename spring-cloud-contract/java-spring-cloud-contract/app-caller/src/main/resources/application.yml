@@ -1,0 +1,4 @@
+server:
+  port: 10010
+callee:
+  base-url: localhost:20080
