@@ -55,7 +55,7 @@ class MemberQueryRepository(
                             val memberRoleEntity: EntitySpec<MemberRoleEntity> = entity(MemberRoleEntity::class)
                             val innerQueryMemberEntity: EntitySpec<MemberEntity> = entity(MemberEntity::class, "inner_member")
 
-                            select(col(MemberEntity::id))
+                            select(col(innerQueryMemberEntity, MemberEntity::id))
                             from(memberRoleEntity)
                             join(memberRoleEntity, entity(RoleEntity::class), on(MemberRoleEntity::role), JoinType.INNER)
                             join(memberRoleEntity, innerQueryMemberEntity, on(MemberRoleEntity::member), JoinType.INNER)
