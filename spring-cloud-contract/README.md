@@ -286,7 +286,6 @@ publishing {
 
     publications {
         create<MavenPublication>("mavenJava") {
-//            artifact(tasks.named("bootJar"))
             artifact(tasks.named("verifierStubsJar")) // stub jar file creation
             versionMapping { // version setting
                 usage("java-api") { // java api setting version
@@ -352,6 +351,16 @@ Contract.make {
 
 2. `request`: API request 명세
 3. `response`: `status`(상태 코드)와 `body` 정의(json도 가능)
+
+## 4. 사용 후기
+
+### 장점
+- contract가 명시되어 있기 때문에 test code의 확실성이 생깁니다
+
+### 단점
+- nexus와 enureka와 같은 외부 서버 생성이 필요
+- 여러 팀원들이 contract 도입에 협의가 되어야지 사용가능
+- groovy와 yml 파일 작성 방식을 배워야 하는 허들이 존재
 
 ## 참고 사이트
 
