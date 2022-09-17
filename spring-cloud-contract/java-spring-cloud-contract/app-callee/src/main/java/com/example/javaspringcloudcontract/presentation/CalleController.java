@@ -12,9 +12,9 @@ public class CalleController {
     @GetMapping("/api/v1/callee")
     public ResponseEntity<String> calleeFunction(@RequestParam int num) {
         NumberType type = NumberType.findNumberType(num);
-        if (type == NumberType.ODD) return ResponseEntity.ok("odd val");
+        if (type == NumberType.ODD) return ResponseEntity.ok("odd val java");
 
-        return ResponseEntity.ok("even val");
+        return ResponseEntity.ok("even val java");
     }
 
     private enum NumberType {

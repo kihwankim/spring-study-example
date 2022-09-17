@@ -1,2 +1,7 @@
 dependencies {
+    testImplementation 'org.springframework.cloud:spring-cloud-starter-contract-verifier'
+}
+
+contracts {
+    baseClassForTests.set("com.example.javaspringcloudcontract.ProducerBase")
 }
