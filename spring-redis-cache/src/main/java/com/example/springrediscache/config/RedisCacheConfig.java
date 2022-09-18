@@ -6,9 +6,7 @@ import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
-import org.springframework.data.redis.cache.CacheKeyPrefix;
-import org.springframework.data.redis.cache.RedisCacheConfiguration;
-import org.springframework.data.redis.cache.RedisCacheManager;
+import org.springframework.data.redis.cache.*;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializationContext;
@@ -20,6 +18,9 @@ import java.time.Duration;
 @EnableCaching
 @Profile("!test")
 public class RedisCacheConfig {
+
+    private static final int CACHE_BATCH_SIZE = 1_000;
+
     @Bean(name = "cacheManager")
     public CacheManager redisCacheManager(RedisConnectionFactory redisConnectionFactory) {
         RedisCacheConfiguration configuration = RedisCacheConfiguration.defaultCacheConfig() // default cache 전략 선택
@@ -37,8 +38,12 @@ public class RedisCacheConfig {
                                 .fromSerializer(new GenericJackson2JsonRedisSerializer())
                 );
 
-        return RedisCacheManager.RedisCacheManagerBuilder
-                .fromConnectionFactory(redisConnectionFactory)
+        return RedisCacheManager.builder(
+                        RedisCacheWriter.nonLockingRedisCacheWriter(
+                                redisConnectionFactory,
+                                BatchStrategies.scan(CACHE_BATCH_SIZE)
+                        )
+                )
                 .cacheDefaults(configuration)
                 .build();
     }
