@@ -1,5 +1,6 @@
 package com.example.jdslexample.persistence.repository
 
+import com.example.jdslexample.persistence.base.nestedCol
 import com.example.jdslexample.persistence.entity.MemberEntity
 import com.example.jdslexample.persistence.entity.MemberRoleEntity
 import com.example.jdslexample.persistence.entity.RoleEntity
@@ -10,12 +11,17 @@ import com.linecorp.kotlinjdsl.spring.data.SpringDataQueryFactory
 import com.linecorp.kotlinjdsl.spring.data.listQuery
 import com.linecorp.kotlinjdsl.spring.data.subquery
 import org.springframework.stereotype.Repository
+import javax.persistence.EntityManager
+import javax.persistence.PersistenceContext
 import javax.persistence.criteria.JoinType
 
 @Repository
 class MemberQueryRepository(
     private val springDataQueryFactory: SpringDataQueryFactory
 ) {
+
+    @PersistenceContext
+    private lateinit var entityManager: EntityManager
 
     fun findByName(name: String): List<MemberEntity> =
         springDataQueryFactory.listQuery {
@@ -53,12 +59,9 @@ class MemberQueryRepository(
                     col(MemberEntity::id).`in`(
                         springDataQueryFactory.subquery {
                             val memberRoleEntity: EntitySpec<MemberRoleEntity> = entity(MemberRoleEntity::class)
-                            val innerQueryMemberEntity: EntitySpec<MemberEntity> = entity(MemberEntity::class, "inner_member")
-
-                            select(col(innerQueryMemberEntity, MemberEntity::id))
+                            select(nestedCol(col(MemberRoleEntity::member), MemberEntity::id))
                             from(memberRoleEntity)
                             join(memberRoleEntity, entity(RoleEntity::class), on(MemberRoleEntity::role), JoinType.INNER)
-                            join(memberRoleEntity, innerQueryMemberEntity, on(MemberRoleEntity::member), JoinType.INNER)
                             where(col(RoleEntity::name).`in`(roleNames))
                         }
                     )
