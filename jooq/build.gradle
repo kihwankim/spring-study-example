@@ -1,10 +1,25 @@
 import nu.studer.gradle.jooq.JooqEdition
+import org.testcontainers.containers.MySQLContainer
+
+buildscript {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath 'org.testcontainers:mysql:1.17.3'
+        classpath 'mysql:mysql-connector-java:8.0.29'
+        classpath 'org.flywaydb:flyway-mysql:9.0.1'
+    }
+}
 
 plugins {
     id 'org.springframework.boot' version '2.7.1'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'java'
     id 'nu.studer.jooq' version '7.1.1'
+    id 'org.flywaydb.flyway' version '9.0.1'
 }
 
 group = 'com.example'
@@ -12,27 +27,65 @@ version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
 
 repositories {
+    mavenLocal()
     mavenCentral()
 }
 
+configurations {
+    flywayMigration
+}
+
+ext {
+    set('testcontainersVersion', "1.17.3")
+}
+
+
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-jooq'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     runtimeOnly 'com.h2database:h2'
+    runtimeOnly 'mysql:mysql-connector-java'
 
-    jooqGenerator 'com.h2database:h2:1.4.200'
+    jooqGenerator 'mysql:mysql-connector-java'
 
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
 
+//    implementation 'org.flywaydb:flyway-core:7.11.2'
+
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.testcontainers:mysql'
 }
 
 tasks.named('test') {
     useJUnitPlatform()
 }
+
+dependencyManagement {
+    imports {
+        mavenBom "org.testcontainers:testcontainers-bom:${testcontainersVersion}"
+    }
+}
+
+task mysqlContainer {
+    var instance = new MySQLContainer("mysql:8.0.29").withDatabaseName('test')
+    instance.start()
+    mysqlContainer.ext.jdbcUrl = instance.getJdbcUrl()
+    mysqlContainer.ext.username = instance.getUsername()
+    mysqlContainer.ext.password = instance.getPassword()
+    mysqlContainer.ext.databaseName = instance.getDatabaseName()
+    mysqlContainer.ext.instance = instance
+}
+
+flyway {
+    locations = ['filesystem:./src/main/resources/db/migration']
+    configurations = ['flywayMigration']
+    url = mysqlContainer.jdbcUrl
+    user = mysqlContainer.username
+    password = mysqlContainer.password
+}
+
 
 jooq {
     version = dependencyManagement.importedProperties['jooq.version']
@@ -45,10 +98,10 @@ jooq {
             generationTool {
                 logging = org.jooq.meta.jaxb.Logging.WARN
                 jdbc {
-                    driver = 'org.h2.Driver'
-                    url = 'jdbc:h2:tcp://localhost/~/test'
-                    user = 'sa'
-                    password = ''
+                    driver = 'com.mysql.cj.jdbc.Driver'
+                    url = mysqlContainer.jdbcUrl
+                    user = mysqlContainer.username
+                    password = mysqlContainer.password
                     properties {
                         property {
                             key = 'PAGE_SIZE'
@@ -59,17 +112,18 @@ jooq {
                 generator {
                     name = 'org.jooq.codegen.DefaultGenerator'
                     database {
-                        name = 'org.jooq.meta.h2.H2Database'
+                        name = 'org.jooq.meta.mysql.MySQLDatabase'
                         includes = '.*'
                         excludes = ''
+                        inputSchema = mysqlContainer.databaseName
                     }
                     generate {
                         generatedSerialVersionUID = 'CONSTANT'
                         javaTimeTypes = true    // java.time.*
                         instanceFields = true
                         deprecated = false
-                        records = false
-                        immutablePojos = false
+                        records = true
+                        immutablePojos = true
                         fluentSetters = true
                     }
                     target {
@@ -79,5 +133,19 @@ jooq {
                 }
             }
         }
+    }
+}
+
+tasks.named('generateJooq').configure {
+    dependsOn tasks.named('mysqlContainer')
+    dependsOn tasks.named('flywayMigrate')
+
+    inputs.files(fileTree('src/main/resources/db/migration'))
+            .withPropertyName('migrations')
+            .withPathSensitivity(PathSensitivity.RELATIVE)
+
+    allInputsDeclared = true
+    doLast {
+        mysqlContainer.instance.stop()
     }
 }

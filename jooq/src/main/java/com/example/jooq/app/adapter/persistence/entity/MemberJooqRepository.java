@@ -1,12 +1,13 @@
 package com.example.jooq.app.adapter.persistence.entity;
 
+import com.example.jooq.tables.pojos.Member;
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-import static com.example.jooq.public_.tables.Member.MEMBER;
+import static com.example.jooq.tables.Member.MEMBER;
 
 @Repository
 @RequiredArgsConstructor

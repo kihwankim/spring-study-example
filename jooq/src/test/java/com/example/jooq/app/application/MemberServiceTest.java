@@ -1,7 +1,5 @@
 package com.example.jooq.app.application;
 
-import com.example.jooq.app.adapter.persistence.entity.Member;
-import com.example.jooq.app.adapter.persistence.entity.MemberRepository;
 import com.example.jooq.app.application.dto.MemberDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

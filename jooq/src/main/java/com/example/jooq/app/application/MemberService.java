@@ -1,8 +1,8 @@
 package com.example.jooq.app.application;
 
-import com.example.jooq.app.adapter.persistence.entity.Member;
 import com.example.jooq.app.adapter.persistence.entity.MemberJooqRepository;
 import com.example.jooq.app.application.dto.MemberDto;
+import com.example.jooq.tables.pojos.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

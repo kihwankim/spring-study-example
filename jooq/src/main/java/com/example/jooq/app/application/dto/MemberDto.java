@@ -1,6 +1,7 @@
 package com.example.jooq.app.application.dto;
 
-import com.example.jooq.app.adapter.persistence.entity.Member;
+
+import com.example.jooq.tables.pojos.Member;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -11,6 +12,6 @@ public class MemberDto {
     private String name;
 
     public static MemberDto from(Member member) {
-        return new MemberDto(member.getId(), member.getName());
+        return new MemberDto(member.getMemberId(), member.getName());
     }
 }
