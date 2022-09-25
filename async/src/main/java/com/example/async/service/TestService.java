@@ -4,7 +4,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.task.AsyncTaskExecutor;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
+import org.springframework.util.concurrent.ListenableFuture;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -59,5 +61,13 @@ public class TestService {
             sleepTest(millis, index);
             return index;
         });
+    }
+    @Async
+    public ListenableFuture<String> asyncLf() throws InterruptedException {
+        log.info("before run biz");
+        Thread.sleep(5000);
+        log.info("after run biz");
+
+        return new AsyncResult<>("hello");
     }
 }

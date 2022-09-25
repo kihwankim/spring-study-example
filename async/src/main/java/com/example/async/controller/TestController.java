@@ -3,8 +3,11 @@ package com.example.async.controller;
 import com.example.async.service.TestService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.util.concurrent.ListenableFuture;
+import org.springframework.util.concurrent.ListenableFutureCallback;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.request.async.DeferredResult;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,4 +59,27 @@ public class TestController {
 
         return testService.asyncWithWait(list);
     }
+
+    @GetMapping("/deferred-result")
+    public DeferredResult<String> getDeferredResult() throws InterruptedException {
+        DeferredResult<String> df = new DeferredResult<>();
+        log.info("add queue");
+
+        ListenableFuture<String> stringListenableFuture = testService.asyncLf();
+        stringListenableFuture.addCallback(new ListenableFutureCallback<>() {
+            @Override
+            public void onSuccess(String result) {
+                df.setResult(result);
+            }
+
+            @Override
+            public void onFailure(Throwable ex) {
+            }
+        });
+
+        log.info("before return");
+        return df;
+    }
+
+
 }
