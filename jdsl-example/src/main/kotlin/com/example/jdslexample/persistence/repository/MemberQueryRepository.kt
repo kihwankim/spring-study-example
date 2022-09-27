@@ -1,6 +1,5 @@
 package com.example.jdslexample.persistence.repository
 
-import com.example.jdslexample.persistence.base.nestedCol
 import com.example.jdslexample.persistence.entity.MemberEntity
 import com.example.jdslexample.persistence.entity.MemberRoleEntity
 import com.example.jdslexample.persistence.entity.RoleEntity
