@@ -140,11 +140,12 @@ tasks.named('generateJooq').configure {
     dependsOn tasks.named('mysqlContainer')
     dependsOn tasks.named('flywayMigrate')
 
-    inputs.files(fileTree('src/main/resources/db/migration'))
+    inputs.files(fileTree('${rootDir}/src/main/resources/db/migration'))
             .withPropertyName('migrations')
             .withPathSensitivity(PathSensitivity.RELATIVE)
 
     allInputsDeclared = true
+    outputs.cacheIf { true }
     doLast {
         mysqlContainer.instance.stop()
     }
