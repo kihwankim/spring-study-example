@@ -90,7 +90,7 @@ class CalFunSpec : FunSpec({
         )
 
         xs.forAtLeast(2) {
-            it.shouldHaveMinLength(8)
+            it.shouldHaveMinLength(7)
         }
     }
 }) {
