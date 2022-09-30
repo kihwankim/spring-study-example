@@ -8,11 +8,11 @@ import io.kotest.matchers.shouldBe
 class CalBehaviorSpec : BehaviorSpec({
     val stub = Calculator()
 
-    given("calculator") {
+    Given("calculator") {
         val expression = "1 + 2"
-        `when`("1과 2를 더한면") {
+        When("1과 2를 더한면") {
             val result = stub.calculate(expression)
-            then("3이 반환 된다") {
+            Then("3이 반환 된다") {
                 result shouldBe 3
             }
         }
