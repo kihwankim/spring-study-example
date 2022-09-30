@@ -38,14 +38,7 @@ class CalFunSpec : FunSpec({
 
         result shouldBe 3
     }
-})
-```
 
-- test 뒤에 String 값으로 test code에 대한 설명을 추가할 수 있습니다
-- 필드 변수 사용이 불가능하므로 함수 테스트에 주로 사용 됩니다
-
-```kotlin
-class CalFunSpec : FunSpec({
     context("enabled test run") {
         test("test code run") { // 실행
             val stub = Calculator()
@@ -84,6 +77,8 @@ class CalFunSpec : FunSpec({
 })
 ```
 
+- test 뒤에 String 값으로 test code에 대한 설명을 추가할 수 있습니다
+- 필드 변수 사용이 불가능하므로 함수 테스트에 주로 사용 됩니다
 - junit에 `@Disabled` 와 같이 `xcontext`나`xtest`를 통해서 test code를 실행에서 제외할 수 있습니다.
 
 ### Describe Spec
@@ -106,8 +101,8 @@ class CalDescribeSpec : DescribeSpec({
 })
 ```
 
-- spring 진영에서는 `given` `when` `then` 쓰고 있고 Ruby나 JS에서도 이와 비슷하게  `describe` `it` 키워드를 사용해서 test code를 작성할 수 있습니다
-- 위에서 context는 생략 해도 됩니다(DCI(Describe, Context, It) layout 지원)
+- spring 진영에서는 BDD(`given`, `when`, `then`) 쓰고 있고 Ruby나 JS에서도 이와 비슷하게  `describe`, `it` 키워드를 사용해서 test code를 작성할 수 있습니다(DCI(Describe, Context, It) layout 지원)
+- 위 code에서 context는 생략 해도 됩니다.
 - `FunSpec`과 동일하게 `xdescribe`와 `xit`을 사용하면 해당 case는 실행할 필요가 없습니다.
 
 ### Behavior Spec
@@ -138,7 +133,7 @@ class CalBehaviorSpec : BehaviorSpec({
 ```
 
 - BDD 스타일의 test code를 제공합니다
-- 우리가 아는 `given` `when` `then`을 제공합니다
+- 우리가 아는 `given`, `when`, `then`을 제공합니다
 - `xgiven`, `xwhen`, `xthen` 을 통해서 test code disable 할 수 있다
 
 ### AnnotationSpec
@@ -166,7 +161,7 @@ class AnnotationSpecExample : AnnotationSpec() {
 - 우리가 사용하는 Junit과 가장 비슷한 Spec 입니다
 - kotlin junit test code 를 kotest로 마이그레이션 할 때 사용하면 가장 편리하게 사용할 수 있습니다
 
-### 중복 코드 제거 이유
+### Kotest가 Junit 보다 중복 코드가 적은 이유
 
 ```kotlin
 class CalBehaviorSpec : BehaviorSpec({
@@ -225,9 +220,9 @@ class CalBehaviorSpec {
 ```
 
 - 위 java와 kotlin test code는 동일 합니다.
-- Junit인 경우 `@BeforeEach`를 통해서 모든 test code에 중복적으로 들어가야 하는 로직을 미리 설정하게 됩니다.
-- 그리고 만약 `@BeforeEach`가 달라지는 경우 Test Class를 분리 하거나, `@Nested` class를 정의하고 `@BeforeEach` 를 추가 정의 해야 하는 한계가 존재합니다(아래 코드 참고)
-- kotest인 경우 `Given("")` 하위에 작성한 Code는 `Given` 하위에 존재하는 `When` `Then` 모두 사용할 수 있으므로 `@BeforeEach`와 동일한 결과를 가져다 줍니다
+- Junit인 경우 `@BeforeEach`를 통해서 모든 test code의 중복로직을 실행 할 수 있습니다.
+- 그리고 만약 특정 test code에서 `@BeforeEach`가 달라지는 경우 Test Class를 분리 하거나, `@Nested` class를 정의하고 `@BeforeEach` 를 추가 정의 해야 하는 한계가 존재합니다(아래 코드 참고)
+- kotest인 경우 `Given("")` 하위에 작성한 Code는 `Given` 하위에 존재하는 `When` `Then` 모두 사용할 수 있으므로 `@BeforeEach`와 동일한 결과를 가져다 주고, 위와 같이 간결하게 구현할 수 있습니다
 
 ```kotlin
 class CalBehaviorSpec : BehaviorSpec({
@@ -330,9 +325,9 @@ class CalBehaviorSpec {
 }
 ```
 
-- 위 2가지 code 또한 동일하다
-- kotlin은 `Nested class` 선언 없이 바로 `Then` 문장을 작성하면 되었지만, Java는 `@Nested` class를 생성해서 추가로 `@BeforeEach` 를 정의해야 했습니다
-- 중복을 회피 하기 위해서 `@Nested` class를 생성하는 방법 밖에 없으므로 가독성과 간결성이 떨어질 수 밖에 없습니다
+- 위 java, kotlin code 동일합니다.
+- kotlin은 `Nested class` 선언 없이 바로 `Then` 문장을 공통 로직을 작성하면 되었지만, Java는 `@Nested` class를 생성해서 추가로 `@BeforeEach`를 정의 해야지 공통 로직을 세분화 할 수 있습니다.
+- 중복을 회피 하기 위해서 `@Nested` class를 생성하는 방법 밖에 없으므로, 가독성과 간결성이 떨어질 수 밖에 없습니다
 - kotest 는 DSL형태로 When 하위에 Then을 여러개 추가해서 처리할 수 있으므로 간결성을 증대시켜 코드 중복을 제거하고, 가독성 또한 증대 시킬 수 있습니다.
 
 ### Kotest Assertions
