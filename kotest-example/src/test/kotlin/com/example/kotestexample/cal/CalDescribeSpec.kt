@@ -20,8 +20,9 @@ class CalDescribeSpec : DescribeSpec({
         }
 
         context("0으로 나누는 경우") {
+            val expression = "1 / 0"
             it("infinity를 반환한다") {
-                val result = stub.calculate("1 / 0")
+                val result = stub.calculate(expression)
 
                 result shouldBe Double.POSITIVE_INFINITY
             }
