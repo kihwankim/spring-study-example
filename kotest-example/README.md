@@ -24,7 +24,6 @@
 ```kotlin
 testImplementation("io.kotest:kotest-runner-junit5:5.4.2") // kotlin junit 처럼 쓸 수 있는 Spec 들이 정의 됨
 testImplementation("io.kotest:kotest-assertions-core:5.4.2") // shouldBe... etc 와같이 Assertions 의 기능을 제공
-testImplementation("io.kotest.extensions:kotest-extensions-spring:1.1.2") // spring boot test 를 위해서 추가
 ```
 
 ### FunSpec
@@ -369,3 +368,65 @@ shouldThrow {
     // code in here that you expect to throw an IllegalAccessException
 }
 ```
+
+## Spring Boot 와 kotest
+
+### 설정
+
+```kotlin
+testImplementation("io.kotest.extensions:kotest-extensions-spring:1.1.2") // spring boot test 를 위해서 추가
+testImplementation("com.ninja-squad:springmockk:3.1.1") // junit 의 @MockBean @SpyBean 과 같은 기능을 제공 해주는 lib
+testImplementation("io.mockk:mockk:1.12.8") // unit test 에서 mockking 사용
+```
+
+### Spring Test
+
+```kotlin
+@SpringBootTest
+internal class CalSpringBootBehavioWithMockSpec : BehaviorSpec() {
+    override fun extensions() = listOf(SpringExtension)
+
+    @Autowired
+    private lateinit var calculatorService: CalculatorService
+
+    @MockkBean
+    private lateinit var mockComponent: MockComponent
+
+    init {
+        this.Given("calculate") {
+            When("식이 주어지면") {
+                Then("해당 식에 대한 결과값이 반환된다") {
+                    calculations.forAll { (expression, data) ->
+                        val result = calculatorService.calculate(expression)
+
+                        result shouldBe data
+                    }
+                }
+            }
+        }
+
+        this.Given("Mocking 한 값과 합을 구한다") {
+            every { mockComponent.returnOne() } answers { 2 }
+
+            When("덧셈 로직 실행") {
+                val result = calculatorService.calPlus(2)
+                Then("덧셈 결과") {
+                    result shouldBe 4
+                }
+            }
+        }
+    }
+
+    companion object {
+        private val calculations = listOf(
+            "1 + 3 * 5" to 20.0,
+            "2 - 8 / 3 - 3" to -5.0,
+            "1 + 2 + 3 + 4 + 5" to 15.0
+        )
+    }
+}
+```
+
+- `override fun extensions() = listOf(SpringExtension)` 를 통해서 spring extension을 추가 해줘야 합니다
+- 위에서 `CalculatorService`는 `MockComponent` 를 가지고 있습니다
+- 그리고 `MockComponent`를 mocking하고 싶을 경우 `springmockk` 의 `@MockkBean` 이나 `@SpykBean` 을 선언해서 Spring Boot의 `@MockBean` `@SpyBean` 기능을 사용할 수 있습니다
