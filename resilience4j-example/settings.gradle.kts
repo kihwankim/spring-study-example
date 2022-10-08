@@ -1,4 +1,4 @@
-rootProject.name = "hystrix-feign"
+rootProject.name = "resilience4j-example"
 
 include(
     "module-test-api",
