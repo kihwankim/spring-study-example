@@ -26,7 +26,6 @@ class AnnotationBaseCircuitService(
     }
 
     @CircuitBreaker(name = CIRCUIT_NAME, fallbackMethod = "handleNormal")
-//    @Bulkhead(name = CIRCUIT_NAME, type = Bulkhead.Type.SEMAPHORE)
     override fun callNoraml() {
         callApiClient.calledData()
         logger.info { "run success" }
@@ -80,7 +79,6 @@ class AnnotationBaseCircuitService(
     fun callRetry(): String {
         logger.info("retry")
         throw Exception("exp")
-        return "retry"
     }
 
     private fun retryFallback(t: Throwable): String {
