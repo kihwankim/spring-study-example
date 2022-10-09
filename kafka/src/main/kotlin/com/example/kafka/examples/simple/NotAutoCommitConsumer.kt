@@ -3,7 +3,6 @@ package com.example.kafka.examples.simple
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.consumer.ConsumerRecords
 import org.apache.kafka.clients.consumer.KafkaConsumer
-import org.apache.kafka.clients.consumer.OffsetCommitCallback
 import org.apache.kafka.common.serialization.StringDeserializer
 import java.time.Duration
 import java.util.*
@@ -29,7 +28,7 @@ class NotAutoCommitConsumer {
         while (true) {
             val records: ConsumerRecords<String, String> = kafkaConsumer.poll(Duration.ofSeconds(1))
             for (record in records) {
-                print(record)
+                print(record.value())
                 commit(kafkaConsumer)
             }
         }
@@ -38,14 +37,13 @@ class NotAutoCommitConsumer {
     private fun commit(consumer: KafkaConsumer<String, String>, isSync: Boolean = true) {
         when (isSync) {
             true -> consumer.commitSync()
-            false -> consumer.commitAsync(OffsetCommitCallback { offsets, exception ->
+            false -> consumer.commitAsync { offsets, exception ->
                 if (exception != null) {
                     println("Commit failed, offset $offsets")
                 } else {
                     print("Commit Success")
                 }
             }
-            )
         }
     }
 }
