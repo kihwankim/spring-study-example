@@ -1,0 +1,34 @@
+spring:
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL57Dialect
+        dialect.storage_engine: innodb
+        default_batch_fetch_size: 500
+        format_sql: true
+        show_sql: true
+  first:
+    datasource:
+      hikari:
+        maximum-pool-size: 10
+        max-lifetime: 60000
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        username: root
+        password: root
+        jdbc-url: jdbc:mysql://localhost:3306/first?serverTimezone=UTC
+        connection-timeout: 5000
+        pool-name: Spring-HikariPool
+  second:
+    datasource:
+      hikari:
+        maximum-pool-size: 10
+        max-lifetime: 60000
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        username: root
+        password: root
+        jdbc-url: jdbc:mysql://localhost:3306/second?serverTimezone=UTC
+        connection-timeout: 5000
+        pool-name: UserLock-HikariPool
