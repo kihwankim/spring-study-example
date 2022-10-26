@@ -9,22 +9,26 @@
 - 인터페이스나 기반 요소(infrastructure/presenation)의 변경에 영향을 받지 않는 핵심 코드를 만들고, 이를 견고하게 관리하는 것이 목표로 하는 아키텩처를 의미 합니다.
 - 견고해야하는 핵심 로직이 들어있는 영역을 도메인 영역(Domain)이라고 합니다
 - interface 기반의 요소는 세부 사항이라고 합니다
+- 데이터 flow는 presentation(세부사항) -> domain(use case/domain) -> infra(세부사항) 이지만, 의존성은 세부사항 -> domain(use case/domain) 로 구성 됩니다
 
 ### 1.1.2 용어
 
-- hex 아키텍쳐는 application과 Domain 영역을 분리해서 보여줍니다
-    - domain엔 주로 업무 로직을 포함하는 클래스들이 들어섭니다, 업무 로직의 validation과 port 객체, Domain Model Entity class(Jpa Entity가 아닙니다) 가존재
-    - application은 주로 유스케이스(usecases)가 작성된 클래스를 포함하고, 업무 로직이 거의 없고 domain의 여러 업무 로직을 조합하는 역할을 합니다 -> validation, port interface 호출 등을 담당
-- Hex 아키텍쳐는 Domain 영역과 Application layer를 분리하지만 아래는 설명에 용의를 위해 Application 으로 통일해서 말씀드리겠습니다
-- 세부사항들은 여러가지 입니다. 설명의 편의성을 위해서 아래와 같이 용어를 통일해서 설명을 드리겠습니다
-    - api의 web 이나 kafak consumer 와 같은 end point 지점을 presentation layer로 통일 해서 설명하겠습니다
-    - DB persistnce, 외부 api 등을 통합해서 infra layer 라고 통일해서부르겠습니다
+- Hex 아키텍쳐는 Application과 Domain 영역을 분리해서 보여줍니다
+    - domain엔 주로 업무 로직을 포함하는 클래스들이 들어섭니다, 업무 로직의 validation과 port interface, UseCase interface, Domain Model Entity class(Jpa Entity가 아닙니다)가 존재합니다.
+    - application은 주로 domain 영역의 유스케이스(use case) interface를 상속 받은 클래스를 포함하고, 업무 로직이 거의 없고 domain의 여러 업무 로직을 조합하는 역할을 합니다 -> validation, port interface 호출 등을 담당
+    - Hex 아키텍쳐는 Domain 영역과 Application layer를 분리하지만, 아래는 설명에 용의를 위해 Application/Domain 영역으로 용어를 통일하겠습니다.
+- 세부사항들은 여러가지 입니다.
+    - api의 web 이나 kafak consumer 와 같은 end point 지점을 presentation layer 들이 있습니다.
+    - api 는 rest api 일 수 있고, GraphQL, gRPC 등으로 변경이 이뤄질 수 있기 때문에 세부 사항 입니다.
+    - kafak consumer 또한 아마존 SQS, Spring EventListner 등으로 쉽게 변경될 수 있기 때문에 세부 사항 입니다
+    - DB persistnce, 외부 api 호출 등 데이터 적제 및 외부 서버 API 호출 등 비즈니스 로직에 필요한 재료들을 통합해서 infra layer 라고 합니다
 
 ## 1.2 특징과 필요성
 
 ### 1.2.1 비즈니스 로직과 세부 사항 정의
 
-- 세부 사항은 언제나 변합니다. 하지만 비즈니스 로직은 기획자가 새로운 기획을 내놓지 않는 이상 변하지 않습니다.
+- 세부 사항은 언제나 변합니다.
+- 비즈니스 로직은 기획자가 새로운 기획을 내놓지 않는 이상 변하지 않습니다.
 - ex) 물건을 산다고 가정하겠습니다
     - 비즈니스 로직
         - 장바구니 정보를 입력 받는다
