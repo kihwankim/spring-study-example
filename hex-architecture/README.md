@@ -116,7 +116,7 @@ class TestEntity(
     @Column(name = "name", unique = true)
     var name: String = "",
     @Column(name = "age")
-    var age: Int = "",
+    var age: Int = 0,
 )
 ```
 
@@ -213,7 +213,7 @@ class TestEntity(
     @Column(name = "name", unique = true)
     var name: String = "",
     @Column(name = "age")
-    var age: Int = "",
+    var age: Int = 0,
 )
 ```
 
