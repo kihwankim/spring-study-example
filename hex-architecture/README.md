@@ -4,7 +4,7 @@
 
 ### 1.1.1 정의
 
-![img.png](assets/hex 아키텍쳐 전체 모습.png)
+![img.png](assets/hex_아키텍쳐_전체_모습.png)
 
 - 인터페이스나 기반 요소(infrastructure/presenation)의 변경에 영향을 받지 않는 핵심 코드를 만들고, 이를 견고하게 관리하는 것이 목표로 하는 아키텩처를 의미 합니다.
 - 견고해야하는 핵심 로직이 들어있는 영역을 도메인 영역(Domain)이라고 합니다
