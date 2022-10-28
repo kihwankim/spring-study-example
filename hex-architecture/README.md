@@ -6,7 +6,7 @@
 
 ![img.png](assets/hex_아키텍쳐_전체_모습.png)
 
-- 인터페이스나 기반 요소(infrastructure/presenation)의 변경에 영향을 받지 않는 핵심 코드를 만들고, 이를 견고하게 관리하는 것이 목표로 하는 아키텩처를 의미 합니다.
+- 인터페이스나 기반 요소(infrastructure/presenation)의 변경에 영향을 받지 않는 핵심 코드를 만들고, 이를 견고하게 관리하는 것이 목표로 하는 아키텍처를 의미 합니다.
 - 견고해야하는 핵심 로직이 들어있는 영역을 도메인 영역(Domain)이라고 합니다
 - interface 기반의 요소는 세부 사항이라고 합니다
 - 데이터 flow는 presentation(세부사항) -> domain(use case/domain) -> infra(세부사항) 이지만, 의존성은 세부사항 -> domain(use case/domain) 로 구성 됩니다
@@ -18,9 +18,9 @@
     - application은 주로 domain 영역의 유스케이스(use case) interface를 상속받은 클래스를 포함하고, 업무 로직이 거의 없고 domain의 여러 업무 로직을 조합하는 역할을 합니다 -> validation, port interface 호출 등을 담당
     - Hex 아키텍처는 Domain 영역과 Application layer를 분리하지만, 아래는 설명에 용의를 위해 Application/Domain 영역으로 용어를 통일하겠습니다.
 - 세부 사항들은 여러 가지 입니다.
-    - api의 web 이나 kafak consumer 와 같은 end point 지점을 presentation layer 들이 있습니다.
+    - api의 web 이나 kafka consumer 와 같은 end point 지점을 presentation layer 들이 있습니다.
     - api 는 rest api 일 수 있고, GraphQL, gRPC 등으로 변경이 이뤄질 수 있으므로 세부 사항입니다.
-    - kafak consumer 또한 아마존 SQS, Spring EventListner 등으로 쉽게 변경될 수 있기 때문에 세부 사항입니다
+    - kafka consumer 또한 아마존 SQS, Spring EventListner 등으로 쉽게 변경될 수 있기 때문에 세부 사항입니다
     - DB persistnce, 외부 api 호출 등 데이터 적지 및 외부 서버 API 호출 등 비즈니스 로직에 필요한 재료들을 통합해서 infra layer 라고 합니다
 
 ## 1.2 특징과 필요성
@@ -120,7 +120,7 @@ class TestEntity(
 )
 ```
 
-- 위 코드는 우리가 많이 접하는 3티어 아키텩처 이다
+- 위 코드는 우리가 많이 접하는 3티어 아키텍처 이다
 
 2. 3티어 코드의 문제점
 
@@ -283,7 +283,7 @@ class TestEntity(
 - 퍼사드 객체에서 Application/Domain 영역에 필요한 API들을 호출해서 AggreteRoot Model 객체들을 반환받게 됩니다. 그리고 고객이 필요한 정보를 filter해서 Resposne 객체로 만들어서 Controller에서 전달 합니다.
 - 위 내용을 통해 우리는 퍼사드 객체는 presentation layer의 객체로 이용됩니다.
 
-# 3 Hex 아키텩처와 접목과 오버 엔지니어링
+# 3 Hex 아키텍처와 접목과 오버 엔지니어링
 
 ## 3.1 Hex 아키텍쳐를 사용할 경우 오버 엔지이링인 경우
 
@@ -294,7 +294,7 @@ class TestEntity(
     - 외부 adapter 가 단순하고 거의 없는 경우 대부분 domain 영역에 로직이 없는 경우가 많습니다.
     - 이경우에서는 오버엔지니어링이 될 가능성이 큽니다
 - 추가로 비즈니스 domain 영역(결제/빌링/주문)이 적은 경우
-    - 비즈니스 domain은 package 단위로 나누는 경우가 많습니다. package 단위로 나누고 서비스 트래픽이 증가될 경우 분리 하는 것이 일반적이기 떄문 입니다
+    - 비즈니스 domain은 package 단위로 나누는 경우가 많습니다. package 단위로 나누고 서비스 트래픽이 증가될 경우 분리 하는 것이 일반적이기 때문 입니다
     - 그러므로 package가 1, 2가지밖에 없으면 굳이 복잡한 아키텍처를 가져가게 되면 개발 시간이 더 느려질 수 있습니다
 
 ## 3.2 Hex 아키텍처를 도입하면 좋은 케이스
@@ -313,5 +313,6 @@ class TestEntity(
 - 저 또한 트랜잭션을 어떻게 처리할지 부터, 에러 발생 시 어떻게 rollback을 해야 할지 감을 못 잡았습니다.
 - rollback을 처리 하기위해서 try catch 가 난무한 코드가 되기도 하였고, 이걸 해결하기 위해서 handler를 람다로 호출하도록 해보고, retry 가능하게 멱등성 보존 API로 변경한 적도 있었습니다.
 - 최종적으로 Retry 가능 영역, 실패 시 rollback을 처리 하는 영역 그리고 백오피스에서 데이터 클렌징 작업을 해야 하는 영역을 분리하고 로직을 작성하였습니다.
-- 이렇게 저의 경험과 회고를 남기는 이유는 많은 책을 읽고 Hex 아키텍처에 대해서 저의 의견을 작성하였지만, 저의 주관이 어쩔 수 없게 들어갔습니다. 결론적으로 언제나 틀린 글을 작성할 수 있으므로 동의 하지 않는 부분이 있으면 그 부분은 무시해주시면 됩니다.
+- 이렇게 저의 경험과 회고를 남기는 이유는 잘 못된 정보를 전달할 수 있기 때문입니다.
+- 많은 책을 읽고 현업에도 적용해 본 후, Hex 아키텍처에 대해 저의 의견을 추가해서 아티클을 작성하였습니다. 저의 의견이 추가되었기 때문에, 어쩔 수 없이 주관이 들어가게 됩니다. 결론적으로 언제나 틀린 글을 작성할 수 있으므로 동의하지 않는 부분이 있으면 그 부분은 무시해 주시면 됩니다.
 - 그리고 추가로 더 좋은 의견이 있다면, 댓글이나 Git Issue로 등록해 주시면 좋을거 같습니다.
