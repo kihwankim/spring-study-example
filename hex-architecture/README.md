@@ -131,8 +131,13 @@ class TestEntity(
       ![img.png](assets/app_infra범위침범.png)
 - 위 사진을 본다면 application에 많은 세부 사항들 포함된걸 알수 있다.
 - 돌발 미션으로 만약 RDS에서 redis로 변경할 경우 어떻게 할것인가?, rest api 에서 graphQL로 변경하면 어떻게 대응할 것인가?
-- 이 경우 모든 변경 사항에 대해서 application layer가 변경되어야 합니다
-- 또한 request/response 객체가 application layer에 존재하기 때문에 application layer presentation layer 간의 모듈 분리 또한 힘들어집니다.
+- 위와 같은 요구사항이 들어올 경우, application layer 또한 변경 되어야 합니다.
+    - request/response 객체가 application layer에 존재하기 때문에 graphQL과 같이 presentation layer 기술이 변경되면 Application Layer 영역은 어쩔 수없이 변경이 필요 합니다.
+    - @Transactional 과 같이 infra layer에서 사용되는 코드가 application layer에 들어가기 때문에 Application Layer 영역은 어쩔 수없이 변경이 필요 합니다.
+- 위 구조에서는 모듈 분리 또한 어려움이 있습니다
+    - Application 과 Infra는 역참조가 없기 때문에 손쉬게 모듈을 분리하고 gradle에 `implementation`/`compile`로 연결 하면 됩니다
+    - Presentation Layer경우에는 Application Layer에 Request/Response 객체가 존재 하기 때문에 Request/Response 객체를 Application 모듈에 넣지 않는 이상 분리가 어려워 집니다
+- 위 내용을 통해서 우리는 3티어 코드에서 모듈 분리와 기술 변경에 많은 취약성을 가지고 있다는 것을 확인할 수 있습니다.
 
 3. hex 아키텍쳐
 
@@ -224,7 +229,6 @@ class TestEntity(
     - 특이점은 application layer는 domain 영역의 DTO(Model/command) class와 interface만 사용합니다
     - 어떤 외부 요소들(request, `@Transactional`등)에 의존 하지 않습니다
 - presentation layer 영역을 보겠습니다
-
   ![img.png](assets/hex_presentation_layer_code.png)
     - 위 코드를 보면 presentation layer와 domain layer의 코드만 의존하고 있습니다
     - 즉 presentation layer는 application/domain 영역을 의존하지만 반대는 성립하지 않습니다
@@ -245,13 +249,16 @@ class TestEntity(
             - cf) 이 부분을 더 공부하고 싶은 신 분이 있다면 DDD라는 책을 읽어 보시길 바랍니다
     - 위2개의 규칙을 지키게 된다면 자연스럽게 infra layer 또한 applicaiton/domain 모듈을 의존 하는 구조가 되고, 반대는 이뤄지지 않습니다
 - hex 아키텍처 예제를 통해서 우리는 application/domain 모듈을 가장 안전지대인 아래에 위치시킬 수 있고, 세부 사항들을 불안정한 모듈로 분류해서 위쪽에 위치 시킬 수 있습니다
-  ![img.png](assets/의존성 결과.png)
+
+![img.png](assets/의존성 결과.png)
 
 4. Hex 아키텍쳐에서 Rds 에서 Redis로 전환 해보기
 
 - 3티어와 hex 아키텍처 에서 각각 Redis 로 전환할 경우 영향이 가는 layer는 아래와 같습니다
 - @Transactional를 모두 제거하고, Entity class 를 모두 Redis 의 Dto class 로 변경해야 합니다, 그리고 redis 와 관련된 interface를 사용하게 되면 아래 사진의 사각형 정도만 변경이 이뤄집니다
-  ![img.png](assets/영향도 결과.png)
+
+![img.png](assets/영향도 결과.png)
+
 - 우리는 사진을 통해 영향도가 확실히 줄었다는 것을 인지할 수 있습니다
 - 그리고 비즈니스 로직 변경 없이는 비즈니스 로직 변경 코드 또한 변경이 이뤄지지 않는다는 것을 의미하게 되었다는 것을 알게 되었습니다.
 - 마지막으로 application/domain 영역은 어떠한 **의존성** 을 가지지 않으므로 자유롭고 안정화된 영역을 가지게 되었습니다
@@ -280,9 +287,9 @@ class TestEntity(
 ### 2.2.2 퍼사드 패턴
 
 - 정의: 여러 세부적인 인터페이스를 하나의 추상화된 인터페이스로 치환해주는 디자인 패턴입니다
-- Application/Domain 영역에 필요한 API들을 호출해서 AggreteRoot Model 객체들을 반환받게 됩니다. 그리고 반환 받은 model 객체를 퍼사드 객체에서 고객이 필요한 정보를 filter 후 Resposne 객체로 만들어서 Controller에서 전달 합니다.
+- Application/Domain 영역에 필요한 API들을 호출해서 AggreteRoot Model 객체들을 반환받게 됩니다. 그리고 반환 받은 model 객체를 퍼사드 객체에서 고객이 필요한 정보를 filter 후 Resposne 객체로 만들어서 Controller에서 전달합니다.
 - 위 내용을 통해 우리는 퍼사드 객체는 presentation layer의 객체로 이용되는 것을 알 수 있습니다.
-- 어떤 분은 퍼사드를 presentation layer로 볼 수 없다라고 할 수 있습니다. 하지만 저는 퍼사드를 주로 presentation layer에서 고객이 원하는 객체로 변환 하는 작업을 위해서 사용 합니다.
+- 어떤 분은 퍼사드를 presentation layer로 볼 수 없다고 할 수 있습니다. 하지만 저는 퍼사드를 주로 presentation layer에서 고객이 원하는 객체로 변환하는 작업을 위해서 사용합니다.
 
 # 3 Hex 아키텍처와 접목과 오버 엔지니어링
 
