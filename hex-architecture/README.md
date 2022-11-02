@@ -280,8 +280,9 @@ class TestEntity(
 ### 2.2.2 퍼사드 패턴
 
 - 정의: 여러 세부적인 인터페이스를 하나의 추상화된 인터페이스로 치환해주는 디자인 패턴입니다
-- 퍼사드 객체에서 Application/Domain 영역에 필요한 API들을 호출해서 AggreteRoot Model 객체들을 반환받게 됩니다. 그리고 고객이 필요한 정보를 filter해서 Resposne 객체로 만들어서 Controller에서 전달 합니다.
-- 위 내용을 통해 우리는 퍼사드 객체는 presentation layer의 객체로 이용됩니다.
+- Application/Domain 영역에 필요한 API들을 호출해서 AggreteRoot Model 객체들을 반환받게 됩니다. 그리고 반환 받은 model 객체를 퍼사드 객체에서 고객이 필요한 정보를 filter 후 Resposne 객체로 만들어서 Controller에서 전달 합니다.
+- 위 내용을 통해 우리는 퍼사드 객체는 presentation layer의 객체로 이용되는 것을 알 수 있습니다.
+- 어떤 분은 퍼사드를 presentation layer로 볼 수 없다라고 할 수 있습니다. 하지만 저는 퍼사드를 주로 presentation layer에서 고객이 원하는 객체로 변환 하는 작업을 위해서 사용 합니다.
 
 # 3 Hex 아키텍처와 접목과 오버 엔지니어링
 
