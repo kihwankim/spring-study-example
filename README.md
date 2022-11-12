@@ -10,7 +10,7 @@
 - <a href="https://github.com/kihwankim/spring-study-example/tree/master/rsetdocs">링크</a>
 
 ## Spring redis local설정과 Cache 설정
-- <a href="https://github.com/kihwankim/spring-study-example/tree/master/redis/redis-example">로컬 설정 링크</a>
+- <a href="https://github.com/kihwankim/spring-study-example/tree/master/redis/redis-example">redis 캐시와 구조</a>
 - <a href="https://github.com/kihwankim/spring-study-example/tree/master/redis/spring-redis-cache">redis 정의</a>
 
 ## Batch
