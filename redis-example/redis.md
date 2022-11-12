@@ -260,5 +260,3 @@
   - DISK
   - Network 정보: 스위치 packet drop이 발생할 수 있기때문에 대역폭을 많이 사용 될경우 있음
 
-## Redis Replication
-
