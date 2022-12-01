@@ -42,4 +42,10 @@ internal class MemberQueryRepositoryTest {
         val result = memberQueryRepository.findByRoleNameSubQuery(listOf("admin", "user"))
         assertThat(result).hasSize(3)
     }
+
+    @Test
+    @Throws(Exception::class)
+    fun `criteria test`() {
+        memberQueryRepository.findByNameCriateria("admin")
+    }
 }
