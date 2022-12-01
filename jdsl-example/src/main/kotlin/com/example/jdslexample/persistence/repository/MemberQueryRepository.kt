@@ -12,7 +12,7 @@ import com.linecorp.kotlinjdsl.spring.data.subquery
 import org.springframework.stereotype.Repository
 import javax.persistence.EntityManager
 import javax.persistence.PersistenceContext
-import javax.persistence.criteria.JoinType
+import javax.persistence.criteria.*
 
 @Repository
 class MemberQueryRepository(
@@ -66,4 +66,25 @@ class MemberQueryRepository(
                     )
                 )
             }
+
+    fun findByNameCriateria(name: String): List<MemberEntity> {
+        // builder는 criteriaQuery, criteriaDeleteQuery ...etc(기준 쿼리) 생성을 담당 , 복합 선택(tuple root query builder), 식(fucntion -> sum, max ...etc), 술어(where 조건 정 equal ..etc), 순서(order by)
+        val criteriaBuilder: CriteriaBuilder = entityManager.criteriaBuilder
+
+        // root query 생성을 담당, subquery 생성 가능 ->  query root query select 문 생성, where 조건 절 생성 담당
+        val criteriaQuery: CriteriaQuery<MemberEntity> = criteriaBuilder.createQuery(MemberEntity::class.java)
+
+        val subquery: Subquery<MemberRoleEntity> = criteriaQuery.subquery(MemberRoleEntity::class.java) // sub query builder
+        val subQueryFrom: Root<MemberRoleEntity> = subquery.from(MemberRoleEntity::class.java) // sub query from stmt
+        subquery.select(subQueryFrom.get("id"))
+            .where(criteriaBuilder.equal(subQueryFrom.get<Long>("id"), 1L))
+
+        val rootMember: Root<MemberEntity> = criteriaQuery.from(MemberEntity::class.java) // from 절, 별칭에 맞는 parameter 조회 용도, 죄회 query builder의 시작점, 조건의 column 값 조회의 기준이 되는 class
+
+        criteriaQuery.select(rootMember)
+            .where(criteriaBuilder.equal(rootMember.get<String>("name"), name))
+
+        // path -> entity class 의 그래프를 나타내는 클래스 참조된 데이터, entity 파라미터 정보를 담는 객체
+        return entityManager.createQuery(criteriaQuery).resultList
+    }
 }
