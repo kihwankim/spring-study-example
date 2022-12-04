@@ -1,13 +1,4 @@
 spring:
-  profiles:
-    active: test
-    default: test
----
-
-spring:
-  config:
-    activate:
-      on-profile: test
   h2:
     console:
       enabled: true

@@ -87,4 +87,19 @@ class MemberQueryRepository(
         // path -> entity class 의 그래프를 나타내는 클래스 참조된 데이터, entity 파라미터 정보를 담는 객체
         return entityManager.createQuery(criteriaQuery).resultList
     }
+
+    fun queryUtilTest() {
+        val arr: MutableList<Long> = ArrayList()
+        repeat(1010) {
+            arr.add(it.toLong())
+        }
+        println(arr)
+
+        springDataQueryFactory.listQuery<MemberEntity> {
+            val memberEntity: EntitySpec<MemberEntity> = entity(MemberEntity::class)
+            select(memberEntity)
+            from(memberEntity)
+            where(col(MemberEntity::id).`in`(arr))
+        }
+    }
 }
