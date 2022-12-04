@@ -1,7 +1,4 @@
 spring:
-  config:
-    activate:
-      on-profile: local
   h2:
     console:
       enabled: true

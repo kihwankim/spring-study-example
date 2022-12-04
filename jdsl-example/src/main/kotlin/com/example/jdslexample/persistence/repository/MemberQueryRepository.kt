@@ -93,13 +93,27 @@ class MemberQueryRepository(
         repeat(1010) {
             arr.add(it.toLong())
         }
-        println(arr)
 
-        springDataQueryFactory.listQuery<MemberEntity> {
-            val memberEntity: EntitySpec<MemberEntity> = entity(MemberEntity::class)
-            select(memberEntity)
-            from(memberEntity)
-            where(col(MemberEntity::id).`in`(arr))
+        inQueryUtil(arr) { list: List<Long> ->
+            springDataQueryFactory.listQuery<MemberEntity> {
+                val memberEntity: EntitySpec<MemberEntity> = entity(MemberEntity::class)
+                select(memberEntity)
+                from(memberEntity)
+                where(col(MemberEntity::id).`in`(list))
+            }
         }
     }
+}
+
+const val MAX_SIZE_OF_IN_VALUES: Int = 500
+inline fun <E, V> inQueryUtil(inValues: List<V>, inStmtQuery: (slicesInValues: List<V>) -> List<E>): List<E> {
+    val resultList: List<List<E>> = inValues.chunked(MAX_SIZE_OF_IN_VALUES)
+        .map { inStmtQuery(it) }
+    val result: MutableList<E> = ArrayList()
+
+    for (element in resultList) {
+        result.addAll(element)
+    }
+
+    return result
 }
