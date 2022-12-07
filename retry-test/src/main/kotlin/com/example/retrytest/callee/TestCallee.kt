@@ -10,8 +10,14 @@ private val logger = KotlinLogging.logger { }
 @Service
 class TestCallee {
 
-    @Retryable(backoff = Backoff(delay = 50L, multiplier = 2.0, maxDelay = 1000), value = [IllegalStateException::class])
+    @Retryable(backoff = Backoff(delay = 50L, multiplier = 2.0, maxDelay = 1000), maxAttempts = 2, value = [IllegalStateException::class])
     fun errorTest(): Int {
+        logger.info("run data")
+        throw IllegalStateException()
+    }
+
+    @Retryable(backoff = Backoff(delay = 50L, multiplier = 2.0, maxDelay = 1000), maxAttempts = 2, value = [IllegalStateException::class])
+    fun errorOtherTest(): Int {
         logger.info("run data")
         throw IllegalStateException()
     }

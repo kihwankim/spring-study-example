@@ -10,6 +10,6 @@ class TestCaller(
 
     fun callAll(isErr: Boolean): Int = when (isErr) {
         false -> testCallee.errorTest()
-        true -> 1
+        true -> testCallee.errorOtherTest()
     }
 }
