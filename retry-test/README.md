@@ -33,8 +33,9 @@ public @interface EnableRetry {
 ```
 
 - 위 코드와 같이 `@EnableRetry`를 통해 Retry 가능하게 설정을 해야 합니다
-- `@EnableRetry`가 선언되면 `RetryConfiguration` config class를 로드하게 됩니다.
-- `RetryConfiguration` class 는 Retry에 필요한 AOP를 정의 하는 class 입니다. 아래(2.1.1)에서 설명할 `AnnotationAwareRetryOperationsInterceptor` 또한 `RetryConfiguration` class 에서 생성됩니다.
+- `@EnableRetry`가 선언되면 `@Import(RetryConfiguration.class)`를 통해서 `RetryConfiguration` config class를 로드하게 됩니다.
+- `RetryConfiguration` class는 Retry에 필요한 AOP를 정의하는 class 입니다.
+- `2.1.1`에서 설명할 `AnnotationAwareRetryOperationsInterceptor`는 Retry Advice입니다. 이 객체 또한 `RetryConfiguration` class 에서 생성됩니다.
 
 ### 1.2.2 @Retryable 사용
 
@@ -54,11 +55,11 @@ class TestCallee {
 
 ```
 
-- 위와 같이 `@Retryable` 를 선언해주면 default로 최대 3회(첫시도 + 2번 retry)는 실행할 수 있게 됩니다.
-- `@Retryable`내부의 `@Backoff`는 retry 를 진행할 때 얼마나 대기를 할지 설정할 수 있게 해줍니다.
-    - 위예시는 1번 retry 전에 50ms 대기, 2번째 retry 전 100ms 대기
-    - `multiplier`는 retry 회수 증가시 (delay 시간) * (multiplier * retryCount) 만큼 대기하게 됩니다.
-    - `maxDelay`는 retry 하기전에 최대로 대기할 수 있는 시간입니다. multiplier로 인해서 backoff wait시간이 증가하게 되는데 이것의 제약을 두는 옵션입니다.
+- 위와 같이 `@Retryable`를 선언해주면 default로 최대 3회(첫시도 + 2번 retry)는 실행할 수 있게 됩니다.
+- `Backoff`는 retry 사이에 일정 시간동안 sleep할 수 있게 해주는 옵션 입니다.
+    - `multiplier`는 retry 회수 증가시 sleep 시간을 증가시키는 옵션 입니다. 공식: (delay 시간) * (multiplier * retryCount)
+    - 위예시는 1번 째 retry전에는 50ms 대기, 2번째 retry전에는 100ms 대기
+    - `maxDelay`는 retry 하기전에 최대로 대기할 수 있는 시간입니다. `multiplier`로 인해서 backoff wait시간이 증가하게 되는데 이것의 제약을 두는 옵션입니다.
 - value 는 retry할 수 있는 Exception class type을 정의할 수 있습니다.
 - exclude 옵션을 통해서 retry 하지 않을 Exception class 또한 정의 할 수 있습니다.
 
