@@ -12,17 +12,11 @@ class PointJpaEntity(
     var remainPoint: Long,
     var recvPoint: Long,
     @Enumerated(EnumType.STRING)
-    var pointType: PointType,
-    @Enumerated(EnumType.STRING)
     var pointStatus: PointStatus,
     var userId: Long,
     @Version
     var version: Int = 0,
 ) {
-
-    enum class PointType {
-        ADD, USE
-    }
 
     enum class PointStatus {
         USED, CREATE

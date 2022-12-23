@@ -16,7 +16,6 @@ class PointCommandAdapter(
             remainPoint = point,
             userId = userId,
             recvPoint = point,
-            pointType = PointJpaEntity.PointType.ADD,
             pointStatus = PointJpaEntity.PointStatus.CREATE,
         )
     }
