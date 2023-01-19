@@ -1,26 +1,17 @@
 package com.example.kotlinexposeexample.repository
 
 import com.example.kotlinexposeexample.entity.PaymentEntity
-import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.StdOutSqlLogger
-import org.jetbrains.exposed.sql.addLogger
+import com.example.kotlinexposeexample.entity.PaymentTable
+import com.example.kotlinexposeexample.entity.PaymentTable.toEntity
 import org.jetbrains.exposed.sql.select
-import org.jetbrains.exposed.sql.transactions.transaction
 import org.springframework.stereotype.Repository
-import javax.sql.DataSource
 
 @Repository
-class PaymentRepository(
-    private val datasource: DataSource
-) {
+class PaymentRepository {
 
-    fun findById(paymentId: Long) {
-        Database.connect(datasource)
-        transaction {
-            addLogger(StdOutSqlLogger)
-            PaymentEntity.select {
-                PaymentEntity.orderId.eq(1)
-            }.first()
-        }
+    fun findById(paymentId: Long): PaymentEntity? {
+        return PaymentTable.select {
+            PaymentTable.id.eq(paymentId)
+        }.firstOrNull()?.toEntity()
     }
 }
