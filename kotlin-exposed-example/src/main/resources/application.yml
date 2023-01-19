@@ -58,6 +58,6 @@ spring:
       driver-class-name: com.mysql.cj.jdbc.Driver
       username: root
       password: root
-      jdbc-url: jdbc:mysql://localhost:3306/member?serverTimezone=UTC
+      jdbc-url: jdbc:mysql://localhost:3306/member?serverTimezone=UTC&rewriteBatchedStatements=true
       connection-timeout: 5000
       pool-name: Spring-HikariPool
