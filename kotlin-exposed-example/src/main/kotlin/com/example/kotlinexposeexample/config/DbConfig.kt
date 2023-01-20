@@ -1,11 +1,15 @@
 package com.example.kotlinexposeexample.config
 
+import com.example.kotlinexposeexample.entity.PaymentTable
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
+import jakarta.annotation.PostConstruct
+import mu.KotlinLogging
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.Table
-import org.slf4j.LoggerFactory
+import org.jetbrains.exposed.sql.transactions.transaction
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.ApplicationArguments
 import org.springframework.boot.ApplicationRunner
@@ -15,25 +19,17 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.ApplicationContext
-import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider
-import org.springframework.context.annotation.Configuration
-import org.springframework.context.annotation.Primary
+import org.springframework.context.annotation.*
 import org.springframework.core.Ordered
 import org.springframework.core.type.filter.AssignableTypeFilter
 import org.springframework.core.type.filter.RegexPatternTypeFilter
 import org.springframework.transaction.annotation.Transactional
 import java.util.regex.Pattern
 
+private val logger = KotlinLogging.logger { }
 
 @Configuration
-@AutoConfigureAfter(DataSourceAutoConfiguration::class)
-class DbConfig(
-    private val applicationContext: ApplicationContext
-) {
-
-    @Value("\${spring.exposed.excluded-packages:}#{T(java.util.Collections).emptyList()}")
-    private lateinit var excludedPackages: List<String>
+class DbConfig {
 
     @Bean
     @ConfigurationProperties(prefix = "spring.datasource.hikari")
@@ -49,6 +45,29 @@ class DbConfig(
 
     @Bean
     fun database(): Database = Database.connect(dataSurce())
+}
+
+@Configuration
+class DDLLocalConfig {
+    @Autowired
+    lateinit var database: Database
+
+    @PostConstruct
+    fun init() {
+        transaction(database) {
+            SchemaUtils.create(PaymentTable)
+        }
+    }
+}
+
+@Configuration
+@Profile("dev")
+@AutoConfigureAfter(DataSourceAutoConfiguration::class)
+class DDLConfig(
+    private val applicationContext: ApplicationContext
+) {
+    @Value("\${spring.exposed.excluded-packages:}#{T(java.util.Collections).emptyList()}")
+    private lateinit var excludedPackages: List<String>
 
     @Bean
     @ConditionalOnProperty("spring.exposed.generate-ddl", havingValue = "true", matchIfMissing = false)
@@ -59,13 +78,12 @@ open class DatabaseInitializer(
     private val applicationContext: ApplicationContext,
     private val excludedPackages: List<String>
 ) : ApplicationRunner, Ordered {
-    override fun getOrder(): Int = DATABASE_INITIALIZER_ORDER
 
     companion object {
         const val DATABASE_INITIALIZER_ORDER = 0
     }
 
-    private val logger = LoggerFactory.getLogger(javaClass)
+    override fun getOrder(): Int = DATABASE_INITIALIZER_ORDER
 
     @Transactional
     override fun run(args: ApplicationArguments?) {
