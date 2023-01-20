@@ -19,6 +19,7 @@ class PaymentDaoRepository {
     }
 
     fun findById(paymentId: Long): PaymentEntity? = PaymentDao.find { PaymentTable.id eq paymentId }.firstOrNull()?.toEntity()
+
     fun saveBulk(listOfPaymentEntity: List<PaymentEntity>) {
         // impossible
     }
