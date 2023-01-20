@@ -1,5 +1,8 @@
 package com.example.kotlinexposeexample.entity
 
+import org.jetbrains.exposed.dao.LongEntity
+import org.jetbrains.exposed.dao.LongEntityClass
+import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.LongIdTable
 import org.jetbrains.exposed.sql.ResultRow
 import java.math.BigDecimal
@@ -15,6 +18,19 @@ object PaymentTable : LongIdTable(name = "payment", columnName = "payment_id") {
             amount = get(amount)
         )
     }
+}
+
+class PaymentDao(id: EntityID<Long>) : LongEntity(id) {
+    companion object : LongEntityClass<PaymentDao>(PaymentTable)
+
+    var amount by PaymentTable.amount
+    var orderId by PaymentTable.orderId
+
+    fun toEntity(): PaymentEntity = PaymentEntity(
+        id = this.id.value,
+        orderId = this.orderId,
+        amount = this.amount
+    )
 }
 
 data class PaymentEntity(

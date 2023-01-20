@@ -9,7 +9,7 @@ import org.jetbrains.exposed.sql.select
 import org.springframework.stereotype.Repository
 
 @Repository
-class PaymentRepository {
+class PaymentDSLRepository {
 
     fun save(paymentEntity: PaymentEntity): PaymentEntity {
         val id = PaymentTable.insert {

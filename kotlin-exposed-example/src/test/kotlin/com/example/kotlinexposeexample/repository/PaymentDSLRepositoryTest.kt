@@ -12,13 +12,13 @@ import org.springframework.boot.test.context.SpringBootTest
 import java.math.BigDecimal
 
 @SpringBootTest
-class PaymentRepositoryTest {
+class PaymentDSLRepositoryTest {
 
     @Autowired
     lateinit var database: Database
 
     @Autowired
-    lateinit var paymentRepository: PaymentRepository
+    lateinit var paymentDSLRepository: PaymentDSLRepository
 
     @Test
     fun save() {
@@ -31,7 +31,7 @@ class PaymentRepositoryTest {
         // when
         val savedEntity = transaction(database) {
             addLogger(StdOutSqlLogger)
-            paymentRepository.save(paymentEntity)
+            paymentDSLRepository.save(paymentEntity)
         }
 
         // then
@@ -47,13 +47,13 @@ class PaymentRepositoryTest {
         )
         transaction(database) {
             addLogger(StdOutSqlLogger)
-            paymentRepository.save(paymentEntity)
+            paymentDSLRepository.save(paymentEntity)
         }
 
         // when
         val entity = transaction(database) {
             addLogger(StdOutSqlLogger)
-            paymentRepository.findById(1L)
+            paymentDSLRepository.findById(1L)
         }
 
         // then
