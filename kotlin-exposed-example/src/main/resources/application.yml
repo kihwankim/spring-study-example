@@ -21,18 +21,8 @@ spring:
       password:
       connection-timeout: 5000
       pool-name: Spring-HikariPool
-  jpa:
-    database-platform: H2
-    show-sql: true
-    open-in-view: false
-    hibernate:
-      ddl-auto: create
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.MySQL57Dialect
-        dialect.storage_engine: innodb
-        default_batch_fetch_size: 500
-        format_sql: true
+  exposed:
+    generate-ddl: true
 
 ---
 
@@ -40,17 +30,6 @@ spring:
   config:
     activate:
       on-profile: dev
-  jpa:
-    show-sql: true
-    open-in-view: false
-    hibernate:
-      ddl-auto: none
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.MySQL57Dialect
-        dialect.storage_engine: innodb
-        default_batch_fetch_size: 500
-        format_sql: true
   datasource:
     hikari:
       maximum-pool-size: 40
@@ -61,3 +40,5 @@ spring:
       jdbc-url: jdbc:mysql://localhost:3306/member?serverTimezone=UTC&rewriteBatchedStatements=true
       connection-timeout: 5000
       pool-name: Spring-HikariPool
+  exposed:
+    generate-ddl: true
