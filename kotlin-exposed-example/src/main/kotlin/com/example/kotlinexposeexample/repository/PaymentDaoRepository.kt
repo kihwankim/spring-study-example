@@ -20,7 +20,10 @@ class PaymentDaoRepository {
 
     fun findById(paymentId: Long): PaymentEntity? = PaymentDao.find { PaymentTable.id eq paymentId }.firstOrNull()?.toEntity()
 
-    fun saveBulk(listOfPaymentEntity: List<PaymentEntity>) {
-        // impossible
-    }
+    /**
+     * 만약 sulk save를 희망할 경우 dao 방식은 불가능함
+     */
+//    fun saveBulk(listOfPaymentEntity: List<PaymentEntity>) {
+//        // impossible
+//    }
 }
