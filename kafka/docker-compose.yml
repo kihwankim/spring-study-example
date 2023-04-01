@@ -10,7 +10,9 @@ services:
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_SERVER_ID: 1
-      ZOOKEEPER_SERVERS: zoo1:2888:3888;zoo2:2888:3888;zoo3:2888:3888
+      ZOOKEEPER_SERVERS: zoo1:2888:3888;zoo2:2888:3888;zoo3:2888:3888 # 2888 port: leader노드가 follower 노드를 위해 열어 두는 port(동기화 용도) -> follower가 leader에게 연결 요청을 하기 위한 포트, 3888 port: leader 선출을 위한 election용 포트
+      ZOOKEEPER_INIT_LIMIT: 20 #팔로워가 리더와 연결시도를 하는 최대 횟수
+      ZOOKEEPER_SYNC_LIMIT: 5  #팔로워가 리더와 연결된 후, 앙상블 안에서 리더와 동기화되기 위한 제한 수.
     networks:
       - kafka-cluster-network
 
@@ -24,6 +26,8 @@ services:
       ZOOKEEPER_CLIENT_PORT: 2182
       ZOOKEEPER_SERVER_ID: 2
       ZOOKEEPER_SERVERS: zoo1:2888:3888;zoo2:2888:3888;zoo3:2888:3888
+      ZOOKEEPER_INIT_LIMIT: 20 #팔로워가 리더와 연결시도를 하는 최대 횟수
+      ZOOKEEPER_SYNC_LIMIT: 5  #팔로워가 리더와 연결된 후, 앙상블 안에서 리더와 동기화되기 위한 제한 수.
     networks:
       - kafka-cluster-network
 
@@ -37,6 +41,8 @@ services:
       ZOOKEEPER_CLIENT_PORT: 2183
       ZOOKEEPER_SERVER_ID: 3
       ZOOKEEPER_SERVERS: zoo1:2888:3888;zoo2:2888:3888;zoo3:2888:3888
+      ZOOKEEPER_INIT_LIMIT: 20 #팔로워가 리더와 연결시도를 하는 최대 횟수
+      ZOOKEEPER_SYNC_LIMIT: 5  #팔로워가 리더와 연결된 후, 앙상블 안에서 리더와 동기화되기 위한 제한 수.
     networks:
       - kafka-cluster-network
 
@@ -48,7 +54,7 @@ services:
       - "9092:9092"
       - "29092:29092"
     environment:
-      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka1:19092,EXTERNAL://${DOCKER_HOST_IP:-127.0.0.1}:9092,DOCKER://host.docker.internal:29092
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka1:19092,EXTERNAL://${DOCKER_HOST_IP:-127.0.0.1}:9092,DOCKER://host.docker.internal:29092 # producer, consumer에 노출할 주소
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT,DOCKER:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
       KAFKA_ZOOKEEPER_CONNECT: "zoo1:2181,zoo2:2182,zoo3:2183"
