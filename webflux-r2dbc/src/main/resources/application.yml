@@ -1,1 +1,9 @@
+spring:
+  r2dbc:
+    url: r2dbc:pool:mysql://localhost:13306/test?serverTimezone=Asia/Seoul
+    username: root
+    password: root
 
+logging:
+  level:
+    org.springframework.r2dbc.core: debug
