@@ -16,7 +16,7 @@ import javax.persistence.criteria.*
 
 @Repository
 class MemberQueryRepository(
-    private val springDataQueryFactory: SpringDataQueryFactory
+    private val springDataQueryFactory: SpringDataQueryFactory,
 ) {
 
     @PersistenceContext
@@ -42,6 +42,7 @@ class MemberQueryRepository(
         springDataQueryFactory
             .listQuery {
                 val memberEntity: EntitySpec<MemberEntity> = entity(MemberEntity::class)
+                val roleEntity: EntitySpec<RoleEntity> = entity(RoleEntity::class)
                 select(memberEntity)
                 from(memberEntity)
                 fetch(MemberEntity::memberRoles)
@@ -76,7 +77,8 @@ class MemberQueryRepository(
 
         val subquery: Subquery<MemberRoleEntity> = criteriaQuery.subquery(MemberRoleEntity::class.java) // sub query builder
         val subQueryFrom: Root<MemberRoleEntity> = subquery.from(MemberRoleEntity::class.java) // sub query from stmt
-        subquery.select(subQueryFrom.get("id"))
+        val id: Expression<MemberRoleEntity> = subQueryFrom.get("id")
+        subquery.select(id)
             .where(criteriaBuilder.equal(subQueryFrom.get<Long>("id"), 1L))
 
         val rootMember: Root<MemberEntity> = criteriaQuery.from(MemberEntity::class.java) // from 절, 별칭에 맞는 parameter 조회 용도, 죄회 query builder의 시작점, 조건의 column 값 조회의 기준이 되는 class
