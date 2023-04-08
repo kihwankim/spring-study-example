@@ -15,7 +15,7 @@ class MemberController(
 
 
     @GetMapping("/members/name")
-    suspend fun findMember(@RequestParam name: String) = memberService.findByName(name)
+    suspend fun findMember(@RequestParam name: String?) = memberService.findByName(name)
 
     @GetMapping("/members/name2")
     suspend fun findMember2(@RequestParam name: String) = memberService.findByNameReactive(name)

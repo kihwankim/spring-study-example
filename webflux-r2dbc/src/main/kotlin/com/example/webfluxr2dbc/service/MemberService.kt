@@ -28,5 +28,5 @@ class MemberService(
 
     suspend fun findByNameReactive(name: String) = memberRepository.findByName(name).asFlow().toList()
 
-    suspend fun findByName(name: String): List<MemberR2Entity> = memberQueryRepository.findByName(name)
+    suspend fun findByName(name: String?): List<MemberR2Entity> = memberQueryRepository.findByName(name)
 }
