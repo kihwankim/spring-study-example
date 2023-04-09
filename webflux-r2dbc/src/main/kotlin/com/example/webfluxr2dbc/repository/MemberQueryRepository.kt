@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.reactive.asFlow
 import org.springframework.data.r2dbc.core.R2dbcEntityTemplate
 import org.springframework.data.relational.core.query.Criteria.where
+import org.springframework.data.relational.core.query.isEqual
 import org.springframework.stereotype.Repository
 
 @Repository
@@ -23,8 +24,8 @@ class MemberQueryRepository(
         return r2dbcEntityTemplate.select(MemberR2Entity::class)
             .matching(
                 query(
-                    name?.run { where(col(MemberR2Entity::name)).`is`(name) },
-                    opt?.run { where(col(MemberR2Entity::roleId)).`is`(opt) }
+                    name?.run { where(col(MemberR2Entity::name)).isEqual(name) },
+                    opt?.run { where(col(MemberR2Entity::roleId)).isEqual(opt) }
                 )
             )
             .all().asFlow().toList()
