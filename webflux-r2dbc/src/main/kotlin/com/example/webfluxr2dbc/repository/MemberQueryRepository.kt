@@ -1,7 +1,7 @@
 package com.example.webfluxr2dbc.repository
 
 import com.example.webfluxr2dbc.entity.MemberR2Entity
-import com.example.webfluxr2dbc.supports.r2dbc.helper.column.col
+import com.example.webfluxr2dbc.supports.r2dbc.helper.column.column
 import com.example.webfluxr2dbc.supports.r2dbc.helper.where.query
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.reactive.asFlow
@@ -24,8 +24,8 @@ class MemberQueryRepository(
         return r2dbcEntityTemplate.select<MemberR2Entity>()
             .matching(
                 query(
-                    name?.run { where(col(MemberR2Entity::name)).isEqual(name) },
-                    opt?.run { where(col(MemberR2Entity::roleId)).isEqual(opt) }
+                    name?.run { where(r2dbcEntityTemplate.column<MemberR2Entity, String>(MemberR2Entity::name)).isEqual(name) },
+                    opt?.run { where(r2dbcEntityTemplate.column<MemberR2Entity, Long>(MemberR2Entity::roleId)).isEqual(opt) }
                 )
             )
             .all().asFlow().toList()
