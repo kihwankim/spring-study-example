@@ -24,8 +24,8 @@ class MemberQueryRepository(
         return r2dbcEntityTemplate.select<MemberR2Entity>()
             .matching(
                 query(
-                    name?.run { where(r2dbcEntityTemplate.column<MemberR2Entity, String>(MemberR2Entity::name)).isEqual(name) },
-                    opt?.run { where(r2dbcEntityTemplate.column<MemberR2Entity, Long>(MemberR2Entity::roleId)).isEqual(opt) }
+                    name?.run { where(r2dbcEntityTemplate.column<MemberR2Entity, String>(MemberR2Entity::name)) isEqual name },
+                    opt?.run { where(r2dbcEntityTemplate.column<MemberR2Entity, Long>(MemberR2Entity::roleId)) isEqual opt }
                 )
             )
             .all().asFlow().toList()
