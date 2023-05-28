@@ -1,6 +1,7 @@
 package com.example.springrediscacheuidsetting.service
 
 import com.example.springrediscacheuidsetting.domain.TestValue
+import org.springframework.cache.annotation.CacheEvict
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.data.redis.cache.RedisCacheManager
 import org.springframework.stereotype.Service
@@ -17,6 +18,10 @@ class TestService(
             id = id,
             name = "newName"
         )
+    }
+
+    @CacheEvict(cacheNames = ["owaowa"], key = "#id")
+    fun delValueByid(id: Long) {
     }
 
     @Cacheable(cacheNames = ["owaowa-list"], key = "'COMMON'")

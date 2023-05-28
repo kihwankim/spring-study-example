@@ -1,8 +1,10 @@
 package com.example.springrediscacheuidsetting.controller
 
+import com.example.springrediscacheuidsetting.domain.TestValue
 import com.example.springrediscacheuidsetting.service.TestService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RestController
@@ -13,7 +15,14 @@ class TestController(
 ) {
 
     @GetMapping("/test/{id}")
-    suspend fun call(@PathVariable("id") id: Long) = withContext(Dispatchers.IO) { testService.callValue(id) }
+    suspend fun call(@PathVariable("id") id: Long): TestValue {
+        return withContext(Dispatchers.IO) { testService.callValue(id) }
+    }
+
+    @DeleteMapping("/test/{id}")
+    suspend fun delete(@PathVariable("id") id: Long) {
+        withContext(Dispatchers.IO) { testService.delValueByid(id) }
+    }
 
     @GetMapping("/test")
     suspend fun callAll() = withContext(Dispatchers.IO) { testService.callValues() }
