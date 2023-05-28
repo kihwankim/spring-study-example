@@ -9,8 +9,7 @@ import org.springframework.cache.Cache
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.cache.annotation.CachingConfigurerSupport
 import org.springframework.cache.annotation.EnableCaching
-import org.springframework.cache.interceptor.CacheErrorHandler
-import org.springframework.cache.interceptor.SimpleCacheErrorHandler
+import org.springframework.cache.interceptor.*
 import org.springframework.context.ApplicationContext
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -35,12 +34,16 @@ class CacheConfig(
     companion object {
         private val log = LoggerFactory.getLogger(CacheConfig::class.java)
 
-        fun fetchReturnTypeIfIterableFromMethod(method: Method): Class<*> {
+        private fun fetchReturnTypeIfIterableFromMethod(method: Method): Class<*> {
             return when {
                 Iterable::class.java.isAssignableFrom(method.returnType) -> (method.genericReturnType as ParameterizedType).actualTypeArguments.first() as Class<*>
                 else -> method.returnType
             }
         }
+    }
+
+    override fun cacheResolver(): CacheResolver {
+        return CacheUIDPostfixResolver(redisCacheManager())
     }
 
     @Bean
@@ -98,6 +101,22 @@ class CacheConfig(
 
         override fun handleCacheClearError(exception: RuntimeException, cache: Cache) {
             log.error("error clear")
+        }
+    }
+
+
+    class CacheUIDPostfixResolver(
+        cacheManager: RedisCacheManager,
+    ) : SimpleCacheResolver(cacheManager) {
+
+        override fun getCacheNames(context: CacheOperationInvocationContext<*>): MutableCollection<String> {
+            val names = super.getCacheNames(context)
+
+            val method = context.method
+
+            val returnType = fetchReturnTypeIfIterableFromMethod(method)
+
+            return names.map { "$it-${ObjectStreamClass.lookup(returnType).serialVersionUID}" }.toMutableList()
         }
     }
 }
