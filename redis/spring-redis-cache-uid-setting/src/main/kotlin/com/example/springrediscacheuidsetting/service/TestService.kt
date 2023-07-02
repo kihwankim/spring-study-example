@@ -1,6 +1,7 @@
 package com.example.springrediscacheuidsetting.service
 
 import com.example.springrediscacheuidsetting.domain.TestValue
+import com.example.springrediscacheuidsetting.global.annotation.CustomCacheable
 import org.springframework.cache.annotation.CacheEvict
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.data.redis.cache.RedisCacheManager
@@ -12,8 +13,16 @@ class TestService(
     private val redisCacheManager: RedisCacheManager,
 ) {
 
-    @Cacheable(cacheNames = ["owaowa"], key = "#id")
+    @CustomCacheable(cacheNames = ["owaowa"], key = "#id")
     fun callValue(id: Long): TestValue {
+        return TestValue(
+            id = id,
+            name = "newName"
+        )
+    }
+
+    @CustomCacheable(cacheNames = ["owaowa"], key = "#id")
+    fun callValue2(id: Long): TestValue {
         return TestValue(
             id = id,
             name = "newName"
