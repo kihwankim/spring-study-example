@@ -10,7 +10,7 @@ class BlockingSocketServer {
 
         while (true) {
             val socket = server.accept()
-            println("client 연결됨")
+            println("thread: ${Thread.currentThread()}, client 연결됨")
 
             val out = socket.getOutputStream()
             val `in` = socket.getInputStream()
@@ -18,6 +18,7 @@ class BlockingSocketServer {
             while (true) {
                 try {
                     val request = `in`.read()
+                    println("thread: ${Thread.currentThread()}, request: ${request.toChar()}")
                     out.write(request)
                 } catch (e: IOException) {
                     break

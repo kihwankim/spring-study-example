@@ -9,30 +9,31 @@ import java.nio.channels.ServerSocketChannel
 import java.nio.channels.SocketChannel
 
 class NonBlockingSocketServer(
+    // non blocking socket으로 부터 읽은 데이터는 바로 write 불가능
     private val keepDataTrack: MutableMap<SocketChannel, MutableList<ByteArray>> = HashMap(),
     private val buffer: ByteBuffer = ByteBuffer.allocate(2 * 1024),
 ) {
 
     fun startEchoServer() {
-        val selector: Selector = Selector.open()
+        val openedSelector: Selector = Selector.open() // channel 의 변경 사항 확인
         val serverSocketChannel: ServerSocketChannel = ServerSocketChannel.open()
         try {
-            selector.use { selector ->
+            openedSelector.use { selector ->
                 serverSocketChannel.use { serverSocketChannel ->
                     if (serverSocketChannel.isOpen && selector.isOpen) {
                         serverSocketChannel.configureBlocking(false)
-                        serverSocketChannel.bind(InetSocketAddress(8888))
+                        serverSocketChannel.bind(InetSocketAddress(8888)) // port binding
 
-                        serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT)
+                        serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT) // selector가 감지 할 이벤트는 `OP_ACCEPT` 이라는 것을 알려줌
                         println("접속 대기중")
 
                         while (true) {
-                            selector.select()
-                            val keys = selector.selectedKeys().iterator()
+                            selector.select() // 변경 사항 감지
+                            val keys = selector.selectedKeys().iterator() // 감지된 이벤트가 존재하는 channel들 key 조회
 
                             while (keys.hasNext()) {
-                                val key = keys.next() as SelectionKey
-                                keys.remove()
+                                val key = keys.next()
+                                keys.remove() // 이미 조회한 event가 다음 loop/다른 thread에서 중복으로 조회되는 것을 방지하기 위해서 제거
 
                                 if (!key.isValid) {
                                     continue
