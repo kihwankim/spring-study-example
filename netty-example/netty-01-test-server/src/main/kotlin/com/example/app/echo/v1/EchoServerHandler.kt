@@ -1,4 +1,4 @@
-package com.example.app.echo
+package com.example.app.echo.v1
 
 import io.netty.buffer.ByteBuf
 import io.netty.buffer.Unpooled
@@ -22,6 +22,7 @@ class EchoServerHandler : ChannelInboundHandlerAdapter() {
         val readMessage = (msg as ByteBuf).toString(Charset.defaultCharset())
 
         println("[$readMessage]")
+        ctx.writeAndFlush(readMessage)
     }
 
     override fun channelReadComplete(ctx: ChannelHandlerContext) {

@@ -1,4 +1,4 @@
-package com.example.app.echo
+package com.example.app.echo.v1
 
 import io.netty.bootstrap.ServerBootstrap
 import io.netty.channel.ChannelInitializer
