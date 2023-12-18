@@ -1,1 +1,26 @@
+spring:
+  application:
+    name: r2dbc-example
+  r2dbc:
+    url: r2dbc:mariadb://localhost:3306/test?useSSL=false&useUnicode=true&zeroDate=USE_UNLL&sslMode=DISABLED&socketTimeout=3500&characterEncoding=UTF-8
+    username: root
+    password: root
+    pool:
+      enabled: true
+      initial-size: 10
+      max-size: 20
+      validation-query: SELECT 1
+      max-create-connection-time: 3s
+      max-life-time: 15s
+    properties:
+      connect-timeout: 3s
+      socket-timeout: 4s
 
+  sql:
+    init:
+      platform: mysql
+      mode: never
+
+logging:
+  level:
+    org.springframework.data.r2dbc: DEBUG
