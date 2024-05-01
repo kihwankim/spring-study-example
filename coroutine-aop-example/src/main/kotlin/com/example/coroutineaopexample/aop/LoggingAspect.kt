@@ -27,17 +27,19 @@ class LoggingAspect {
         return handleReactor(methodSignature, joinPoint)
     }
 
-    @Suppress("ReactiveStreamsUnusedPublisher")
     private fun handleReactor(methodSignature: MethodSignature, joinPoint: ProceedingJoinPoint): Any? {
         return if (!Mono::class.java.isAssignableFrom(methodSignature.returnType) &&
             (!KotlinDetector.isSuspendingFunction(methodSignature.method) ||
                 FLOW_PACKAGE == MethodParameter(methodSignature.method, -1).parameterType.name)
         ) {
-            Flux.defer {
+            Flux.create { emitter ->
                 log.info("before")
-                joinPoint.proceed() as Flux<*>
-            }.doOnNext {
-                log.info("after")
+                val result = joinPoint.proceed() as Flux<*>
+                result.doFinally {
+                    log.info("after")
+                }.subscribe { item ->
+                    emitter.next(item)
+                }
             }
         } else {
             Mono.defer {
