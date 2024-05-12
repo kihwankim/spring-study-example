@@ -1,4 +1,4 @@
-package org.example.feignclientexample.config
+package org.example.feignclientexample.commons.config
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import feign.Logger

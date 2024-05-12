@@ -1,4 +1,4 @@
-package org.example.feignclientexample.controller.dto
+package org.example.feignclientexample.web.dto
 
 data class ResponseData(
     val id: Long,

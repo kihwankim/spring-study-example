@@ -1,7 +1,7 @@
-package org.example.feignclientexample.controller
+package org.example.feignclientexample.web.controller
 
-import org.example.feignclientexample.client.LocalFeignClient
-import org.example.feignclientexample.controller.dto.ResponseData
+import org.example.feignclientexample.infra.clients.LocalFeignClient
+import org.example.feignclientexample.web.dto.ResponseData
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController

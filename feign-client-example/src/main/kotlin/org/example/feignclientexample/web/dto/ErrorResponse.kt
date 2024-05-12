@@ -1,6 +1,6 @@
 package org.example.feignclientexample.web.dto
 
-data class ErrorMessage(
+data class ErrorResponse(
     val errorCode: String,
     val message: String,
 )

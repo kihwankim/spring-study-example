@@ -1,4 +1,4 @@
-package org.example.feignclientexample.constants
+package org.example.feignclientexample.commons.constants
 
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.SerializationFeature
