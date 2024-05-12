@@ -1,0 +1,15 @@
+spring.application.name: callee
+server:
+  port: 9999
+management:
+  tracing:
+    baggage:
+      correlation:
+        enabled: false
+  endpoints:
+    web:
+      exposure:
+        include: prometheus
+  metrics:
+    tags:
+      application: ${spring.application.name}
