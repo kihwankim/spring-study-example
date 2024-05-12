@@ -1,26 +1,25 @@
 package org.example.feignclientexample.commons.config
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import feign.Logger
 import feign.Response
 import feign.codec.ErrorDecoder
 import mu.KotlinLogging
+import org.example.feignclientexample.commons.enums.ErrorType
+import org.example.feignclientexample.commons.exceptions.AppException
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import java.io.IOException
 
 
 @Configuration
-class FeignClientConfig(
-    private val objectMapper: ObjectMapper,
-) {
+class FeignClientConfig {
     companion object {
         private val log = KotlinLogging.logger { }
     }
 
     @Bean
     fun errorDecoder(): ErrorDecoder {
-        return GlobalFeignErrorDecoder(objectMapper)
+        return GlobalFeignErrorDecoder()
     }
 
     @Bean
@@ -28,17 +27,15 @@ class FeignClientConfig(
         return Logger.Level.FULL
     }
 
-    class GlobalFeignErrorDecoder(
-        private val objectMapper: ObjectMapper,
-    ) : ErrorDecoder {
+    class GlobalFeignErrorDecoder : ErrorDecoder {
         override fun decode(str: String?, response: Response?): Exception {
             return try {
                 response?.body()?.asInputStream()?.use { responseBody ->
                     log.info("error body: $responseBody")
-                    IllegalArgumentException()
-                } ?: RuntimeException()
+                    AppException(errorType = ErrorType.BAD_GATEWAY)
+                } ?: AppException(errorType = ErrorType.BAD_GATEWAY)
             } catch (e: IOException) {
-                IllegalArgumentException()
+                AppException(errorType = ErrorType.BAD_GATEWAY)
             }
         }
 
