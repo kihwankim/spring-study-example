@@ -4,14 +4,16 @@ import feign.Logger
 import feign.Response
 import feign.codec.ErrorDecoder
 import mu.KotlinLogging
+import org.example.feignclientexample.FeignClientExampleApplication
 import org.example.feignclientexample.commons.enums.ErrorType
 import org.example.feignclientexample.commons.exceptions.AppException
+import org.springframework.cloud.openfeign.EnableFeignClients
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import java.io.IOException
 
-
 @Configuration
+@EnableFeignClients(basePackageClasses = [FeignClientExampleApplication::class])
 class FeignClientConfig {
     companion object {
         private val log = KotlinLogging.logger { }

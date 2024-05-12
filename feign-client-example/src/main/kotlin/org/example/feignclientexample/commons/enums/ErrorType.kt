@@ -6,6 +6,14 @@ enum class ErrorType(
     val message: String,
     val code: Int,
 ) {
+    BAD_IGNORE_ERROR(
+        message = "BadIgnoreRequest Error",
+        code = HttpStatus.BAD_REQUEST.value()
+    ),
+    BAD_REQUEST(
+        message = "BadRequest Error",
+        code = HttpStatus.BAD_REQUEST.value()
+    ),
     BAD_GATEWAY(
         message = "BadGateway Error",
         code = HttpStatus.BAD_GATEWAY.value()

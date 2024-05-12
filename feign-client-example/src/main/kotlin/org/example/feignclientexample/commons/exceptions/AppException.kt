@@ -2,6 +2,11 @@ package org.example.feignclientexample.commons.exceptions
 
 import org.example.feignclientexample.commons.enums.ErrorType
 
-class AppException(
-    val errorType: ErrorType,
-) : RuntimeException(errorType.message)
+open class AppException(
+    val errorCode: String,
+    val errorMessage: String,
+    val statusCode: Int,
+) : RuntimeException(errorMessage) {
+
+    constructor(errorType: ErrorType) : this(errorCode = errorType.name, errorMessage = errorType.message, statusCode = errorType.code)
+}

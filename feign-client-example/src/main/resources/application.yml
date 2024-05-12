@@ -1,3 +1,8 @@
 spring:
   application:
     name: feign-client-example
+
+clients:
+  local:
+    name: local-client
+    url: http://localhost:8080

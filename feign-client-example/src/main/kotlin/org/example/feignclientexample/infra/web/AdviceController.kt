@@ -14,11 +14,11 @@ class AdviceController {
 
     @ExceptionHandler(AppException::class)
     fun handleCustomException(e: AppException): ResponseEntity<ErrorResponse> = ResponseEntity
-        .status(e.errorType.code)
+        .status(e.statusCode)
         .body(
             ErrorResponse(
-                errorCode = e.errorType.name,
-                message = e.errorType.message
+                errorCode = e.errorCode,
+                message = e.errorMessage
             )
         )
 
