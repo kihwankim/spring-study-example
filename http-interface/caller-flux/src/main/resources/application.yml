@@ -1,0 +1,21 @@
+spring:
+  application.name: caller
+
+logging:
+  level:
+    reactor.netty.http.client: DEBUG
+server:
+  port: 8888
+
+management:
+  tracing:
+    baggage:
+      correlation:
+        enabled: false
+  endpoints:
+    web:
+      exposure:
+        include: prometheus
+  metrics:
+    tags:
+      application: ${spring.application.name}
