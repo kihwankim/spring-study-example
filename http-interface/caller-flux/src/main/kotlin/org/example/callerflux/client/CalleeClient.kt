@@ -10,10 +10,4 @@ interface CalleeClient {
 
     @GetExchange("/error")
     fun calleeError(): Mono<String>
-
-    @GetExchange("/callee")
-    fun calleeCallBlock(): String
-
-    @GetExchange("/error")
-    fun calleeErrorBlock(): String
 }

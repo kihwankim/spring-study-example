@@ -8,7 +8,7 @@ import reactor.core.publisher.Mono
 class CalleeController {
     @GetMapping("/callee")
     fun callee(): Mono<String> {
-        Thread.sleep(5_000L)
+        Thread.sleep(1_000L)
         return Mono.just("owa")
     }
 
