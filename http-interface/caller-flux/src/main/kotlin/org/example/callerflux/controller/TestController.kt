@@ -30,4 +30,16 @@ class TestController(
             log.info("!!!! call Error finished")
         }
     }
+
+    @GetMapping("/call-block")
+    fun callDataBlock(): String {
+        log.info("!!!call Block!!!!")
+        return calleeClient.calleeCallBlock()
+    }
+
+    @GetMapping("/error-block")
+    fun callErrorBlock(): String {
+        log.info("!!!call Error Block!!!!")
+        return calleeClient.calleeErrorBlock()
+    }
 }
