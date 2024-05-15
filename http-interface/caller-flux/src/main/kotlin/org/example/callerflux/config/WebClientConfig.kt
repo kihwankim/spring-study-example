@@ -4,17 +4,21 @@ import io.netty.channel.ChannelOption
 import io.netty.handler.logging.LogLevel
 import io.netty.handler.timeout.ReadTimeoutHandler
 import io.netty.handler.timeout.WriteTimeoutHandler
+import org.example.callerflux.client.CalleeClient
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.client.reactive.ReactorClientHttpConnector
 import org.springframework.web.reactive.function.client.ExchangeStrategies
 import org.springframework.web.reactive.function.client.WebClient
+import org.springframework.web.reactive.function.client.support.WebClientAdapter
+import org.springframework.web.service.invoker.HttpServiceProxyFactory
 import reactor.netty.http.client.HttpClient
 import reactor.netty.resources.ConnectionProvider
 import reactor.netty.tcp.DefaultSslContextSpec
 import reactor.netty.transport.logging.AdvancedByteBufFormat
 import java.time.Duration
 import java.util.concurrent.TimeUnit
+
 
 @Configuration
 class WebClientConfig {
@@ -28,7 +32,13 @@ class WebClientConfig {
     fun calleeWebClient(): WebClient = createWebClient("callee", "http://localhost:9999")
 
     @Bean
-    fun callee2WebClient(): WebClient = createWebClient("callee2", "http://localhost:9999")
+    fun calleeClient(): CalleeClient {
+        val httpServiceProxyFactory = HttpServiceProxyFactory
+            .builderFor(WebClientAdapter.create(calleeWebClient()))
+            .build()
+
+        return httpServiceProxyFactory.createClient(CalleeClient::class.java)
+    }
 
     private fun createWebClient(
         name: String,

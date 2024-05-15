@@ -1,7 +1,7 @@
 package org.example.callerflux.controller
 
 import mu.KotlinLogging
-import org.example.caller.client.CalleeClient
+import org.example.callerflux.client.CalleeClient
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RestController
 import reactor.core.publisher.Mono
@@ -20,6 +20,14 @@ class TestController(
         log.info("!!!call!!!!")
         return calleeClient.calleeCall().doOnNext {
             log.info("!!!! call finished")
+        }
+    }
+
+    @GetMapping("/error")
+    fun callError(): Mono<String> {
+        log.info("!!!call Error!!!!")
+        return calleeClient.calleeError().doOnError {
+            log.info("!!!! call Error finished")
         }
     }
 }
