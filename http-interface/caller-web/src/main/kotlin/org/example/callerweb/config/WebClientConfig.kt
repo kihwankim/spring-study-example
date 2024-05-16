@@ -1,83 +1,53 @@
 package org.example.callerweb.config
 
-import io.netty.channel.ChannelOption
-import io.netty.handler.logging.LogLevel
-import io.netty.handler.timeout.ReadTimeoutHandler
-import io.netty.handler.timeout.WriteTimeoutHandler
+import org.apache.hc.client5.http.impl.classic.HttpClients
+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager
+import org.example.callerweb.client.CalleeClient
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.http.client.reactive.ReactorClientHttpConnector
-import org.springframework.web.reactive.function.client.ExchangeStrategies
-import org.springframework.web.reactive.function.client.WebClient
-import reactor.netty.http.client.HttpClient
-import reactor.netty.resources.ConnectionProvider
-import reactor.netty.tcp.DefaultSslContextSpec
-import reactor.netty.transport.logging.AdvancedByteBufFormat
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory
+import org.springframework.web.client.RestTemplate
+import org.springframework.web.client.support.RestTemplateAdapter
+import org.springframework.web.service.invoker.HttpServiceProxyFactory
+import org.springframework.web.util.DefaultUriBuilderFactory
 import java.time.Duration
-import java.util.concurrent.TimeUnit
+
 
 @Configuration
-class WebClientConfig {
+class WebClientConfig(
+    @Value("\${client.local.url}") private val baseUrl: String,
+) {
 
-    companion object {
-        private const val DEFAULT_BUF_SZIE = 10 * (1024 * 1024) // 10MB
-        private const val DEFAULT_TIME_OUT_MICRO_SEC = 30_000L
+    @Bean
+    fun restTemplate(): RestTemplate {
+        val connectionManager = PoolingHttpClientConnectionManager()
+        connectionManager.maxTotal = 200 // 최대 전체 커넥션 수
+        connectionManager.defaultMaxPerRoute = 200 // 동일 호스트당 최대 커넥션 수
+
+        // CloseableHttpClient를 생성하고 커넥션 풀을 설정합니다.
+        val httpClient = HttpClients.custom()
+            .setConnectionManager(connectionManager)
+            .build()
+
+        // HTTP 요청 팩토리를 Apache HttpClient를 사용하여 생성합니다.
+        val uriBuilderFactory = DefaultUriBuilderFactory(baseUrl)
+        val requestFactory = HttpComponentsClientHttpRequestFactory(httpClient)
+        requestFactory.setConnectionRequestTimeout(Duration.ofMillis(3000L))
+        requestFactory.setConnectTimeout(Duration.ofMillis(3000L))
+
+        // RestTemplate을 생성하고 요청 팩토리를 설정합니다.
+        return RestTemplate(requestFactory).apply {
+            uriTemplateHandler = uriBuilderFactory
+        }
     }
 
     @Bean
-    fun calleeWebClient(): WebClient = createWebClient("callee", "http://localhost:9999")
+    fun calleeClient(): CalleeClient {
+        val httpServiceProxyFactory = HttpServiceProxyFactory
+            .builderFor(RestTemplateAdapter.create(restTemplate()))
+            .build()
 
-    private fun createWebClient(
-        name: String,
-        baseUrl: String,
-        maxConnection: Int = 200,
-        maxLifeTime: Duration = Duration.ofSeconds(8L),
-        maxIdleTime: Duration = Duration.ofSeconds(8L),
-        sslConnectTimeoutMSec: Long = 2500L,
-        connectTimeoutMSec: Int = 2500,
-        readTimeoutMSec: Long = DEFAULT_TIME_OUT_MICRO_SEC,
-        writeTimeoutMSec: Long = DEFAULT_TIME_OUT_MICRO_SEC,
-        maxBufferSize: Int = DEFAULT_BUF_SZIE,
-        pendingAcquireMaxCount: Int = 1_000,
-        pendingAcqTimeoutMSec: Long = 2_000, // 2sec
-        evictInBackgroundSec: Long = 0L,
-        isFifoLeasingStrategies: Boolean = true, // default fifo
-    ): WebClient = WebClient.builder().baseUrl(baseUrl)
-        .defaultHeaders { httpHeaders -> httpHeaders.acceptCharset = listOf(Charsets.UTF_8) }
-        .exchangeStrategies(
-            ExchangeStrategies.builder().codecs { configurer ->
-                configurer.defaultCodecs().maxInMemorySize(maxBufferSize)
-            }.build(),
-        )
-        .clientConnector(
-            ReactorClientHttpConnector(
-                HttpClient.create(
-                    ConnectionProvider.builder(name)
-                        .maxConnections(maxConnection)
-                        .maxLifeTime(maxLifeTime) // 살아 있는 최대 시간
-                        .maxIdleTime(maxIdleTime) // 유후 상태 유지 시간
-                        .pendingAcquireMaxCount(pendingAcquireMaxCount) // pending 대기자 수
-                        .pendingAcquireTimeout(Duration.ofMillis(pendingAcqTimeoutMSec)) // pending 최대 대기 시간
-                        .evictInBackground(Duration.ofSeconds(evictInBackgroundSec)) // 비활 성화 제거 시간 간격
-                        .metrics(true)
-                        .also { if (isFifoLeasingStrategies) it.fifo() else it.lifo() }
-                        .build(),
-                ).disableRetry(true).option(
-                    ChannelOption.CONNECT_TIMEOUT_MILLIS, connectTimeoutMSec,
-                ).doOnConnected { con ->
-                    con.addHandlerLast(ReadTimeoutHandler(readTimeoutMSec, TimeUnit.MILLISECONDS))
-                    con.addHandlerLast(WriteTimeoutHandler(writeTimeoutMSec, TimeUnit.MILLISECONDS))
-                }.secure { spec ->
-                    spec.sslContext(DefaultSslContextSpec.forClient())
-                        .handshakeTimeout(Duration.ofMillis(sslConnectTimeoutMSec))
-                }.wiretap(
-                    HttpClient::class.java.name,
-                    LogLevel.DEBUG,
-                    AdvancedByteBufFormat.TEXTUAL,
-                ).also {
-//                    it.warmup().block()
-                },
-            ),
-        ).build()
-
+        return httpServiceProxyFactory.createClient(CalleeClient::class.java)
+    }
 }

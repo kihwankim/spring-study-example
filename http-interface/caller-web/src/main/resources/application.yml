@@ -19,3 +19,7 @@ management:
   metrics:
     tags:
       application: ${spring.application.name}
+
+client:
+  local:
+    url: http://localhost:9999

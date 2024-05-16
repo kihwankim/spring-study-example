@@ -17,6 +17,12 @@ class TestController(
     @GetMapping("/call")
     fun callData(): String {
         log.info("!!!call!!!!")
-        return calleeClient.calleeCall().block()!!.also { log.info("!!!! call finished") }
+        return calleeClient.calleeCall().also { log.info("!!!! call finished") }
+    }
+
+    @GetMapping("/error")
+    fun callError(): String {
+        log.info("!!!call Error!!!!")
+        return calleeClient.calleeError().also { log.info("!!!! call error finished") }
     }
 }

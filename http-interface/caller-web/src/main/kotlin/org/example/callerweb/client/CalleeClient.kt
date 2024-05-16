@@ -1,19 +1,12 @@
 package org.example.callerweb.client
 
-import org.springframework.stereotype.Component
-import org.springframework.web.reactive.function.client.WebClient
-import org.springframework.web.reactive.function.client.bodyToMono
-import reactor.core.publisher.Mono
+import org.springframework.web.service.annotation.GetExchange
 
-@Component
-class CalleeClient(
-    private val calleeWebClient: WebClient,
-) {
+interface CalleeClient {
 
-    fun calleeCall(): Mono<String> {
-        return calleeWebClient.get()
-            .uri("/callee")
-            .retrieve()
-            .bodyToMono<String>()
-    }
+    @GetExchange("\${client.local.url}/callee")
+    fun calleeCall(): String
+
+    @GetExchange("\${client.local.url}/error")
+    fun calleeError(): String
 }
