@@ -4,9 +4,9 @@ import org.springframework.web.service.annotation.GetExchange
 
 interface CalleeClient {
 
-    @GetExchange("\${client.local.url}/callee")
+    @GetExchange("/callee")
     fun calleeCall(): String
 
-    @GetExchange("\${client.local.url}/error")
+    @GetExchange("/error")
     fun calleeError(): String
 }
