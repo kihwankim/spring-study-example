@@ -11,11 +11,12 @@ import org.springframework.web.client.RestTemplate
 import org.springframework.web.client.support.RestTemplateAdapter
 import org.springframework.web.service.invoker.HttpServiceProxyFactory
 import org.springframework.web.util.DefaultUriBuilderFactory
+import org.springframework.web.util.UriBuilderFactory
 import java.time.Duration
 
 
 @Configuration
-class WebClientConfig(
+class RestTemplateConfig(
     @Value("\${client.local.url}") private val baseUrl: String,
 ) {
 
@@ -31,16 +32,16 @@ class WebClientConfig(
             .build()
 
         // HTTP 요청 팩토리를 Apache HttpClient를 사용하여 생성합니다.
-        val uriBuilderFactory = DefaultUriBuilderFactory(baseUrl)
         val requestFactory = HttpComponentsClientHttpRequestFactory(httpClient)
         requestFactory.setConnectionRequestTimeout(Duration.ofMillis(3000L))
         requestFactory.setConnectTimeout(Duration.ofMillis(3000L))
 
         // RestTemplate을 생성하고 요청 팩토리를 설정합니다.
-        return RestTemplate(requestFactory).apply {
-            uriTemplateHandler = uriBuilderFactory
-        }
+        return RestTemplate(requestFactory)
     }
+
+    @Bean
+    fun localUriBuilderFactory(): UriBuilderFactory = DefaultUriBuilderFactory(baseUrl)
 
     @Bean
     fun calleeClient(): CalleeClient {
