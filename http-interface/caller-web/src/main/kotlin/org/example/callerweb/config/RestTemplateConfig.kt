@@ -23,8 +23,8 @@ class RestTemplateConfig(
     @Bean
     fun restTemplate(): RestTemplate {
         val connectionManager = PoolingHttpClientConnectionManager()
-        connectionManager.maxTotal = 200 // 최대 전체 커넥션 수
-        connectionManager.defaultMaxPerRoute = 200 // 동일 호스트당 최대 커넥션 수
+        connectionManager.maxTotal = 200 // 최대 전체 커넥션 수, default 25
+        connectionManager.defaultMaxPerRoute = 200 // 동일 호스트당 최대 커넥션 수, default 5
 
         // CloseableHttpClient를 생성하고 커넥션 풀을 설정합니다.
         val httpClient = HttpClients.custom()
