@@ -3,5 +3,6 @@ rootProject.name = "http-interface"
 include(
     "callee",
     "caller-flux",
-    "caller-web"
+    "caller-web",
+    "support-logging"
 )
