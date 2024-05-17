@@ -3,7 +3,6 @@ package org.example.callerweb.config
 import org.apache.hc.client5.http.impl.classic.HttpClients
 import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager
 import org.example.callerweb.client.CalleeRestTemplate
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.actuate.metrics.web.client.ObservationRestTemplateCustomizer
 import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.context.annotation.Bean
@@ -13,14 +12,11 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory
 import org.springframework.web.client.RestTemplate
 import org.springframework.web.client.support.RestTemplateAdapter
 import org.springframework.web.service.invoker.HttpServiceProxyFactory
-import org.springframework.web.util.DefaultUriBuilderFactory
-import org.springframework.web.util.UriBuilderFactory
 import java.time.Duration
 
 
 @Configuration
 class RestTemplateConfig(
-    @Value("\${client.local.url}") private val baseUrl: String,
     private val restTemplateBuilder: RestTemplateBuilder,
     private val observationRestTemplateCustomizer: ObservationRestTemplateCustomizer,
 ) {
@@ -50,9 +46,6 @@ class RestTemplateConfig(
             setConnectTimeout(Duration.ofMillis(3000L))
         }
     }
-
-    @Bean
-    fun localUriBuilderFactory(): UriBuilderFactory = DefaultUriBuilderFactory(baseUrl)
 
     @Bean
     fun calleeRestTemplate(): CalleeRestTemplate {
