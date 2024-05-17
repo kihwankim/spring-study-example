@@ -27,14 +27,14 @@ class TestController(
     @GetMapping("/error")
     fun callError(): String {
         log.info("!!!call Error!!!!")
-        return calleeRestTemplate.calleeError(localUriBuilderFactory).also { log.info("!!!! call error finished") }
+        return calleeRestClient.calleeError(localUriBuilderFactory).also { log.info("!!!! call error finished") }
     }
 
 
     @GetMapping("/call-client")
     fun callDataClient(): String {
         log.info("!!!call!!!!")
-        return calleeRestTemplate.calleeCall(localUriBuilderFactory).also { log.info("!!!! call finished") }
+        return calleeRestClient.calleeCall(localUriBuilderFactory).also { log.info("!!!! call finished") }
     }
 
     @GetMapping("/error-client")
