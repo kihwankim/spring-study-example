@@ -36,6 +36,7 @@ subprojects {
         testImplementation("org.springframework.boot:spring-boot-starter-test")
         implementation("org.springframework.boot:spring-boot-starter-actuator")
         implementation("io.micrometer:micrometer-registry-prometheus")
+        implementation("io.micrometer:micrometer-tracing-bridge-brave")
         val kotlinLoggingVersion = "3.0.5"
         implementation("io.github.microutils:kotlin-logging-jvm:$kotlinLoggingVersion")
         testImplementation("org.springframework.boot:spring-boot-starter-test")

@@ -1,5 +1,6 @@
 package org.example.callerweb.config
 
+import io.micrometer.observation.ObservationRegistry
 import org.apache.hc.client5.http.impl.classic.HttpClients
 import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager
 import org.example.callerweb.client.CalleeClient
@@ -18,13 +19,15 @@ import java.time.Duration
 @Configuration
 class RestTemplateConfig(
     @Value("\${client.local.url}") private val baseUrl: String,
+    private val observerRegistry: ObservationRegistry,
 ) {
 
     @Bean
     fun restTemplate(): RestTemplate {
-        val connectionManager = PoolingHttpClientConnectionManager()
-        connectionManager.maxTotal = 200 // 최대 전체 커넥션 수, default 25
-        connectionManager.defaultMaxPerRoute = 200 // 동일 호스트당 최대 커넥션 수, default 5
+        val connectionManager = PoolingHttpClientConnectionManager().apply {
+            maxTotal = 200 // 최대 전체 커넥션 수, default 25
+            defaultMaxPerRoute = 200 // 동일 호스트당 최대 커넥션 수, default 5
+        }
 
         // CloseableHttpClient를 생성하고 커넥션 풀을 설정합니다.
         val httpClient = HttpClients.custom()
@@ -32,12 +35,15 @@ class RestTemplateConfig(
             .build()
 
         // HTTP 요청 팩토리를 Apache HttpClient를 사용하여 생성합니다.
-        val requestFactory = HttpComponentsClientHttpRequestFactory(httpClient)
-        requestFactory.setConnectionRequestTimeout(Duration.ofMillis(3000L))
-        requestFactory.setConnectTimeout(Duration.ofMillis(3000L))
+        val requestFactory = HttpComponentsClientHttpRequestFactory(httpClient).apply {
+            setConnectionRequestTimeout(Duration.ofMillis(3000L))
+            setConnectTimeout(Duration.ofMillis(3000L))
+        }
 
         // RestTemplate을 생성하고 요청 팩토리를 설정합니다.
-        return RestTemplate(requestFactory)
+        return RestTemplate(requestFactory).apply {
+            observationRegistry = observerRegistry
+        }
     }
 
     @Bean
