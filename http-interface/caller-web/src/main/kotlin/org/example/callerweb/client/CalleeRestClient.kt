@@ -3,8 +3,7 @@ package org.example.callerweb.client
 import org.springframework.web.service.annotation.GetExchange
 import org.springframework.web.util.UriBuilderFactory
 
-interface CalleeClient {
-
+interface CalleeRestClient {
     @GetExchange("/callee")
     fun calleeCall(factory: UriBuilderFactory): String
 
