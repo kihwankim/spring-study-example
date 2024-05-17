@@ -5,6 +5,7 @@ import io.netty.handler.logging.LogLevel
 import io.netty.handler.timeout.ReadTimeoutHandler
 import io.netty.handler.timeout.WriteTimeoutHandler
 import org.example.callerflux.client.CalleeClient
+import org.springframework.boot.actuate.metrics.web.reactive.client.ObservationWebClientCustomizer
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.client.reactive.ReactorClientHttpConnector
@@ -21,7 +22,9 @@ import java.util.concurrent.TimeUnit
 
 
 @Configuration
-class WebClientConfig {
+class WebClientConfig(
+    private val observationWebClientCustomizer: ObservationWebClientCustomizer,
+) {
 
     companion object {
         private const val DEFAULT_BUF_SZIE = 10 * (1024 * 1024) // 10MB
@@ -55,7 +58,9 @@ class WebClientConfig {
         pendingAcqTimeoutMSec: Long = 2_000, // 2sec
         evictInBackgroundSec: Long = 0L,
         isFifoLeasingStrategies: Boolean = true, // default fifo
-    ): WebClient = WebClient.builder().baseUrl(baseUrl)
+    ): WebClient = WebClient.builder().apply {
+        observationWebClientCustomizer.customize(it)
+    }.baseUrl(baseUrl)
         .defaultHeaders { httpHeaders -> httpHeaders.acceptCharset = listOf(Charsets.UTF_8) }
         .exchangeStrategies(
             ExchangeStrategies.builder().codecs { configurer ->
