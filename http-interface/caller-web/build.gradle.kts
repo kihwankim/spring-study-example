@@ -7,5 +7,6 @@ tasks.getByName("jar") {
 }
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation("org.apache.httpcomponents.client5:httpclient5:5.3.1")
+    implementation("org.apache.httpcomponents.client5:httpclient5")
+    implementation(project(":support-logging"))
 }
