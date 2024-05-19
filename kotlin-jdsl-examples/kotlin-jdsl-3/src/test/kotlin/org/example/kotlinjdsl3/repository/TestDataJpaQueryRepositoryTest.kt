@@ -53,8 +53,8 @@ class TestDataJpaQueryRepositoryTest {
         val ids = dbData.filter { it.name == "name1" || it.name == "name3" }.map { it.id }
         val dataList = testDataJpaQueryRepository.findBySemiJoin(listOf("name1", "name3"))
 
-        assertThat(dataList).hasSize(2)
-            .extracting(TestDataJpaEntity::id)
+        assertThat(dataList.map { it.id })
+            .hasSize(2)
             .isEqualTo(ids)
     }
 }
