@@ -1,2 +1,74 @@
 spring:
   application.name: kotlin-jdsl-3
+  profiles:
+    default: local
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile:
+        - local
+        - test
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  datasource:
+    hikari:
+      maximum-pool-size: 30
+      max-lifetime: 60000
+      jdbc-url: jdbc:h2:mem:testdb;MODE=MYSQL;DATABASE_TO_LOWER=TRUE;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;
+      username: sa
+      password:
+      connection-timeout: 5000
+      pool-name: Spring-HikariPool
+  jpa:
+    database-platform: H2
+    show-sql: true
+    open-in-view: false
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        dialect.storage_engine: innodb
+        default_batch_fetch_size: 500
+        format_sql: true
+      jakarta.persistence.lock.timeout: 2000
+      jakarta.persistence.query.timeout: 3000
+  transaction:
+    default-timeout: 5s
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: dev
+  jpa:
+    show-sql: true
+    open-in-view: false
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        dialect.storage_engine: innodb
+        default_batch_fetch_size: 500
+        format_sql: true
+      jakarta.persistence.lock.timeout: 2000
+      jakarta.persistence.query.timeout: 3000
+  datasource:
+    hikari:
+      maximum-pool-size: 40
+      max-lifetime: 60000
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      username: root
+      password: root
+      jdbc-url: jdbc:mysql://localhost:3306/test?serverTimezone=Asia/Seoul
+      connection-timeout: 5000
+      pool-name: Spring-HikariPool
+  transaction:
+    default-timeout: 5s
