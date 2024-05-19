@@ -1,5 +1,4 @@
 spring:
-  application.name: kotlin-jdsl-3
   profiles:
     default: local
   config:
