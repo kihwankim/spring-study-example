@@ -2,6 +2,7 @@ package org.example.kotlinjdsl3.repository
 
 import com.linecorp.kotlinjdsl.querymodel.jpql.entity.Entities.entity
 import org.example.kotlinjdsl3.entity.TestDataJpaEntity
+import org.example.kotlinjdsl3.global.extensions.toNotNull
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
 
@@ -34,6 +35,6 @@ class TestDataJpaQueryRepository(
                             ).asSubquery()
                     )
                 )
-        }.map { it!! }
+        }.toNotNull()
     }
 }
