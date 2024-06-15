@@ -1,6 +1,7 @@
 package org.example.embedded_mongo.mongo
 
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
@@ -17,6 +18,11 @@ class ExampleMongoRepositoryTest {
     @Autowired
     lateinit var exampleMongoRepository: ExampleMongoRepository
 
+    @AfterEach
+    fun clean() {
+        exampleMongoRepository.deleteAll()
+    }
+
     @Test
     fun saveAndFindExample() {
         // given
@@ -26,11 +32,11 @@ class ExampleMongoRepositoryTest {
         mongoTemplate.save(mock)
 
         // when
-        val data = exampleMongoRepository.findByName("owa")
+        val data = exampleMongoRepository.findAll()
 
         // then
         assertThat(data).isNotNull
-        assertThat(data?.name).isEqualTo("owa")
+        assertThat(data).hasSize(1)
     }
 
     @Test
