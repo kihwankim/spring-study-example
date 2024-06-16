@@ -3,9 +3,10 @@ spring:
     name: embedded_mongo
   data:
     mongodb:
-      username: someUser
-      password: dontGuess
-      database: testdb
-      port: 27017
+      uri: mongodb://root:root%21@localhost:27017/
+      database: owa-shoppingmall
+      connection-pool-size: 10
+      connection-timeout: 5000
+      auto-index-creation: true
 
 de.flapdoodle.mongodb.embedded.version: 6.0.2
