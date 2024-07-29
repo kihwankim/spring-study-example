@@ -6,18 +6,11 @@ sealed class ProcessResult<A> {
     abstract val recoverHandler: List<() -> Unit>
 
     companion object {
-        fun <A> success(data: A): ProcessResult<A> = Success(data)
-
-        fun <A> failure(
-            errorResult: ErrorResult,
-            isFirstFailed: Boolean,
-            recoverHandler: List<() -> Unit>,
-        ): ProcessResult<A> = Failure(errorResult, isFirstFailed, recoverHandler)
-
-        operator fun <A> invoke(func: () -> A): ProcessResult<A> = executeExceptionSafeContext(
-            run = { Success(func()) },
-            failed = { Failure(it, true) }
-        )
+        operator fun <A> invoke(func: () -> A): ProcessResult<A> = try {
+            Success(func())
+        } catch (e: Exception) {
+            Failure(ErrorResult(e), true)
+        }
     }
 
     internal class Success<A>(
@@ -112,13 +105,4 @@ sealed class ProcessResult<A> {
             Failure(ErrorResult(e), true, this.recoverHandler)
         }
     }
-}
-
-inline fun <T> executeExceptionSafeContext(
-    run: () -> T,
-    failed: (e: ErrorResult) -> T,
-): T = try {
-    run()
-} catch (e: Exception) {
-    failed(ErrorResult(e))
 }
