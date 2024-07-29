@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional
 @Component
 @Transactional(readOnly = true)
 internal class PaymentAdapter(
-    private val paymentRepository: PaymentRepository
+    private val paymentRepository: PaymentRepository,
 ) : PaymentPort {
 
     @Transactional
@@ -21,5 +21,10 @@ internal class PaymentAdapter(
         val savedPayment = paymentRepository.save(paymentEntity)
 
         return savedPayment.id
+    }
+
+    @Transactional
+    override fun deletePayData(payId: Long) {
+        paymentRepository.deleteById(payId)
     }
 }

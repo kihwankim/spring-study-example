@@ -1,7 +1,6 @@
 package com.example.payapi.pay.application
 
 import com.example.common.domain.ProcessResult
-import com.example.common.domain.ErrorResponse
 import com.example.payapi.pay.domain.command.PayCommand
 import com.example.payapi.pay.domain.event.OrderPayFailEvent
 import com.example.payapi.pay.domain.event.OrderPaySuccessEvent
@@ -20,8 +19,19 @@ class PayService(
 ) : PayMoneyUseCase {
     override fun payMoney(payCommand: PayCommand) {
         ProcessResult { paymentPort.pay(payCommand) }
-            .onSuccess { payId -> handlePaySuccess(payId, payCommand) }
-            .onFailure { err -> handleFailure(err, payCommand) }
+            .doOnNext { payId -> handlePaySuccess(payId, payCommand) }
+            .doFailRollback { payId ->
+                paymentPort.deletePayData(payId)
+                paymentFailHandlerPort.sendOrderPaymentRecover(
+                    OrderPayFailEvent(
+                        userId = payCommand.userId,
+                        orderId = payCommand.orderId,
+                        totalPrice = payCommand.totalPrice
+                    )
+                )
+            }
+            .onFailure { logger.info("pay error") }
+            .runOrThrow()
     }
 
     private fun handlePaySuccess(payId: Long, payCommand: PayCommand) {
@@ -35,12 +45,5 @@ class PayService(
                 totalPrice = payCommand.totalPrice
             )
         )
-    }
-
-    private fun handleFailure(it: ErrorResponse, payCommand: PayCommand) {
-        logger.info("pay error")
-
-        paymentFailHandlerPort.sendOrderPaymentRecover(OrderPayFailEvent(userId = payCommand.userId, orderId = payCommand.orderId, totalPrice = payCommand.totalPrice))
-        it.throwError()
     }
 }
