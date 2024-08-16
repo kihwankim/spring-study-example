@@ -3,7 +3,7 @@ spring:
     name: mongo-decimel-example
   data:
     mongodb:
-      uri: mongodb://root:root%21@localhost:28017/
+      uri: mongodb://root:root!@localhost:28017/
       database: test
       auto-index-creation: false
 
