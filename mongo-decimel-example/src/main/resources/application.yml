@@ -1,1 +1,12 @@
-spring.application.name: mongo-decimel-example
+spring:
+  application:
+    name: mongo-decimel-example
+  data:
+    mongodb:
+      uri: mongodb://root:root%21@localhost:28017/
+      database: test
+      auto-index-creation: false
+
+logging:
+  level:
+    org.springframework.data.mongodb.core: DEBUG
