@@ -15,7 +15,7 @@ class CoroutineConfig {
     @Bean
     fun globalCustomExecutorService(): ExecutorService {
         return Executors.newFixedThreadPool(
-            100,
+            1_000,
             CustomizableThreadFactory("custom-executor-")
         )
     }

@@ -13,6 +13,7 @@ class SchedulerConfig : SchedulingConfigurer {
         val thread = ThreadPoolTaskScheduler().apply {
             poolSize = 16
         }
+        thread.initialize()
         taskRegistrar.setTaskScheduler(thread)
     }
 }
