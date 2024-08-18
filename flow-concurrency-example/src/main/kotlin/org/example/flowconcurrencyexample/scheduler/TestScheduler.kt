@@ -14,7 +14,7 @@ class TestScheduler(
         private val log = KotlinLogging.logger { }
     }
 
-    @Scheduled(fixedDelay = 20_000)
+    @Scheduled(fixedDelay = 10_000)
     fun runThreadPool() {
         val startTime = System.currentTimeMillis()
         val reuslt = runBlocking { // 40 만명 기준

@@ -29,15 +29,15 @@ class ConcurrentService(
         val result = items.asFlow()
             .flatMapMerge(concurrency = CHUNK_SIZE) {
                 flow {
-                    delay(2_500) // 1s
-                    log.info("process data $it")
+                    delay(1_000) // 1s
+                    log.info("> process data $it")
                     emit(it)
                 }
             }.buffer(TPS_SIZE)
             .flatMapMerge(concurrency = TPS_SIZE) {
                 flow {
-                    delay(5_000) // 2초 씩 10번 -> 20초
-                    log.info("publish data $it")
+                    delay(2_000) // 2초 씩 10번 -> 20초
+                    log.info("-- publish data $it")
                     emit(it)
                 }
             }
