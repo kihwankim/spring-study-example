@@ -12,6 +12,7 @@ class TestScheduler(
 ) {
     companion object {
         private val log = KotlinLogging.logger { }
+        private const val SIZE = 10_000
     }
 
     @Scheduled(fixedDelay = 10_000)
@@ -19,7 +20,7 @@ class TestScheduler(
         val startTime = System.currentTimeMillis()
         val reuslt = runBlocking { // 40 만명 기준
             (0..0).map { index ->
-                concurrentService.runBatch(index, (10_000 * index..<10_000 * (index + 1)).toList())
+                concurrentService.runBatch(index, (SIZE * index..<SIZE * (index + 1)).toList())
             }.fold(0) { acc: Int, i: Int ->
                 acc + i
             }
