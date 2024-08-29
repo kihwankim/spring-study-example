@@ -1,4 +1,4 @@
-package com.example.quartzexample.simple_job
+package com.example.quartzexample.other_job
 
 import org.quartz.CronScheduleBuilder
 import org.quartz.JobBuilder
@@ -11,12 +11,11 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.scheduling.quartz.SchedulerFactoryBean
 
 @Configuration
-class SimpleJobConfig {
-
+class OtherJobConfig {
     @Bean
-    fun simpleJobDetail(): JobDetail {
-        return JobBuilder.newJob(SimpleLogJob::class.java)
-            .withIdentity(SimpleLogJob::class.simpleName)
+    fun otherJobDetail(): JobDetail {
+        return JobBuilder.newJob(OtherLogJob::class.java)
+            .withIdentity(OtherLogJob::class.simpleName)
             .storeDurably()
             .build()
     }
@@ -25,29 +24,29 @@ class SimpleJobConfig {
      * Job을 실행시키기 위한 정보를 담고 있는 객체이다. Job의 이름, 그룹, JobDataMap 속성 등을 지정할 수 있다. Trigger가 Job을 수행할 때 이 정보를 기반으로 스케줄링을 한다
      */
     @Bean
-    fun simpleLogTrigger(): Trigger {
-        val jobDetail = JobBuilder.newJob(SimpleLogJob::class.java)
-            .withIdentity(SimpleLogJob::class.simpleName)  // Job의 이름과 그룹 설정
+    fun otherLogTrigger(): Trigger {
+        val jobDetail = JobBuilder.newJob(OtherLogJob::class.java)
+            .withIdentity(OtherLogJob::class.simpleName)  // Job의 이름과 그룹 설정
             .usingJobData("myKey", "myValue")  // Job에 데이터 전달
             .build()
 
         return TriggerBuilder.newTrigger()
             .forJob(jobDetail)
-            .withIdentity(SimpleLogJob::class.simpleName)
+            .withIdentity(OtherLogJob::class.simpleName)
             .withSchedule(CronScheduleBuilder.cronSchedule("0 41 19 * * ?"))
             .build()
     }
 
     @Bean
-    fun simpleLogScheduler(schedulerFactoryBean: SchedulerFactoryBean): Scheduler {
+    fun otherLogScheduler(schedulerFactoryBean: SchedulerFactoryBean): Scheduler {
         val scheduler = schedulerFactoryBean.scheduler
 
         // JobDetail과 Trigger를 Scheduler에 등록
-        val jobDetail = simpleJobDetail()
-        val trigger = simpleLogTrigger()
+        val jobDetail = otherJobDetail()
+        val trigger = otherLogTrigger()
 
         scheduler.scheduleJob(jobDetail, trigger)
-        scheduler.listenerManager.addJobListener(CustomJobListener())
+        scheduler.listenerManager.addJobListener(OhterLogJobListener())
 
         return scheduler
     }

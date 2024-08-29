@@ -1,10 +1,10 @@
-package com.example.quartzexample.simple_job
+package com.example.quartzexample.other_job
 
 import mu.KotlinLogging
 import org.quartz.Job
 import org.quartz.JobExecutionContext
 
-class SimpleLogJob : Job {
+class OtherLogJob : Job {
     companion object {
         private val log = KotlinLogging.logger { }
     }
