@@ -8,7 +8,9 @@ import org.quartz.Trigger
 import org.quartz.TriggerBuilder
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.scheduling.concurrent.CustomizableThreadFactory
 import org.springframework.scheduling.quartz.SchedulerFactoryBean
+import java.util.concurrent.Executors
 
 @Configuration
 class SimpleJobConfig {
@@ -34,19 +36,24 @@ class SimpleJobConfig {
         return TriggerBuilder.newTrigger()
             .forJob(jobDetail)
             .withIdentity(SimpleLogJob::class.simpleName)
-            .withSchedule(CronScheduleBuilder.cronSchedule("0 27 18 * * ?"))
+            .withSchedule(CronScheduleBuilder.cronSchedule("0 29 18 * * ?"))
             .build()
     }
 
     @Bean
-    fun schedulerFactoryBean(): SchedulerFactoryBean {
-        return SchedulerFactoryBean()
-        // 설정을 추가할 수 있습니다 (예: 데이터베이스 연결, JobStore 설정 등)
+    fun simpleSchedulerFactoryBean(): SchedulerFactoryBean {
+        val executor = Executors.newFixedThreadPool(
+            100,
+            CustomizableThreadFactory("custom-executor-")
+        )
+        return SchedulerFactoryBean().apply {
+            setTaskExecutor(executor)
+        }
     }
 
     @Bean
-    fun simpleLogScheduler(factoryBean: SchedulerFactoryBean): Scheduler {
-        val scheduler = factoryBean.scheduler
+    fun simpleLogScheduler(simpleSchedulerFactoryBean: SchedulerFactoryBean): Scheduler {
+        val scheduler = simpleSchedulerFactoryBean.scheduler
 
         // JobDetail과 Trigger를 Scheduler에 등록
         val jobDetail = simpleJobDetail()
