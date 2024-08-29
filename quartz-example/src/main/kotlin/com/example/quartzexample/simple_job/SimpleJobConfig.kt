@@ -8,9 +8,8 @@ import org.quartz.Trigger
 import org.quartz.TriggerBuilder
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.scheduling.concurrent.CustomizableThreadFactory
 import org.springframework.scheduling.quartz.SchedulerFactoryBean
-import java.util.concurrent.Executors
+import java.util.concurrent.ExecutorService
 
 @Configuration
 class SimpleJobConfig {
@@ -41,13 +40,11 @@ class SimpleJobConfig {
     }
 
     @Bean
-    fun simpleSchedulerFactoryBean(): SchedulerFactoryBean {
-        val executor = Executors.newFixedThreadPool(
-            100,
-            CustomizableThreadFactory("custom-executor-")
-        )
+    fun simpleSchedulerFactoryBean(
+        executorService: ExecutorService,
+    ): SchedulerFactoryBean {
         return SchedulerFactoryBean().apply {
-            setTaskExecutor(executor)
+            setTaskExecutor(executorService)
         }
     }
 
