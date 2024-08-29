@@ -8,6 +8,7 @@ import org.quartz.Trigger
 import org.quartz.TriggerBuilder
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.scheduling.quartz.SchedulerFactoryBean
 
 @Configuration
 class SimpleJobConfig {
@@ -33,20 +34,25 @@ class SimpleJobConfig {
         return TriggerBuilder.newTrigger()
             .forJob(jobDetail)
             .withIdentity(SimpleLogJob::class.simpleName)
-            .withSchedule(CronScheduleBuilder.cronSchedule("0 43 17 * * ?"))
+            .withSchedule(CronScheduleBuilder.cronSchedule("0 27 18 * * ?"))
             .build()
     }
 
     @Bean
-    fun scheduler(
-        simpleLogTrigger: Trigger,
-        simpleJobDetail: JobDetail,
-        scheduler: Scheduler,
-    ): Scheduler {
-        // JobDetail 및 Trigger를 스케줄러에 등록
-        scheduler.scheduleJob(simpleJobDetail, simpleLogTrigger)
+    fun schedulerFactoryBean(): SchedulerFactoryBean {
+        return SchedulerFactoryBean()
+        // 설정을 추가할 수 있습니다 (예: 데이터베이스 연결, JobStore 설정 등)
+    }
 
-        // Listener 등록
+    @Bean
+    fun simpleLogScheduler(factoryBean: SchedulerFactoryBean): Scheduler {
+        val scheduler = factoryBean.scheduler
+
+        // JobDetail과 Trigger를 Scheduler에 등록
+        val jobDetail = simpleJobDetail()
+        val trigger = simpleLogTrigger()
+
+        scheduler.scheduleJob(jobDetail, trigger)
         scheduler.listenerManager.addJobListener(CustomJobListener())
 
         return scheduler
