@@ -1,9 +1,9 @@
 package com.example.quartzexample.simple_job
 
-import org.quartz.CronScheduleBuilder
 import org.quartz.JobBuilder
 import org.quartz.JobDetail
 import org.quartz.Scheduler
+import org.quartz.SimpleScheduleBuilder
 import org.quartz.Trigger
 import org.quartz.TriggerBuilder
 import org.springframework.context.annotation.Bean
@@ -34,7 +34,12 @@ class SimpleJobConfig {
         return TriggerBuilder.newTrigger()
             .forJob(jobDetail)
             .withIdentity(SimpleLogJob::class.simpleName)
-            .withSchedule(CronScheduleBuilder.cronSchedule("0 41 19 * * ?"))
+            .withSchedule(
+                SimpleScheduleBuilder.simpleSchedule()
+                    .withIntervalInSeconds(10)
+                    .withRepeatCount(1)
+            )
+//            .withSchedule(CronScheduleBuilder.cronSchedule("0 41 19 * * ?"))
             .build()
     }
 
@@ -47,7 +52,10 @@ class SimpleJobConfig {
         val trigger = simpleLogTrigger()
 
         scheduler.scheduleJob(jobDetail, trigger)
-        scheduler.listenerManager.addJobListener(CustomJobListener())
+        scheduler.listenerManager.apply {
+            addJobListener(CustomJobListener())
+            addTriggerListener(SimpleLogTriggerListner())
+        }
 
         return scheduler
     }
