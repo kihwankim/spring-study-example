@@ -19,7 +19,7 @@ class SimpleLogTriggerListner : TriggerListener {
 
     override fun vetoJobExecution(trigger: Trigger, context: JobExecutionContext): Boolean {
         log.info("vetoJobExecution trigger listener ${trigger.key}")
-        return true
+        return false // 거부권 이라서 true  면 종료
     }
 
     override fun triggerMisfired(trigger: Trigger) {
