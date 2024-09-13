@@ -47,4 +47,41 @@ object LuaScriptCreator {
             values = values.toTypedArray(),
         )
     }
+
+    private val INCRE_IF_GT_THAN_AND_EXIST = DefaultRedisScript<String>(
+        """
+            local key = KEYS[1]        -- 조회할 Redis 키
+            local A = tonumber(ARGV[1])  -- 비교할 값 A (숫자)
+
+            -- 해당 키가 nil인 경우
+            local value = redis.call('GET', key)
+
+            if value == false then -- nil case
+                local newData = tonumber(ARGV[2]) + A
+                redis.call('SET', key, newData)
+                return 'save and update'
+            end
+
+            -- 조회된 값이 숫자가 아니거나 A보다 작은 경우
+            local numeric_value = tonumber(value)
+           
+            
+            -- 조회된 값이 A보다 작은 경우
+            if (numeric_value + A) < 0 then
+                return 'value is less than ' .. A
+            else
+                redis.call('INCRBY', key, A)
+            end
+            return 'value is valid and greater than or equal to ' .. (numeric_value + A)
+        """.trimIndent(),
+        String::class.java
+    )
+
+    fun increIfGtThanAndIfExist(key: String, incre: Int, default: Int): LuaScriptInfo<String> {
+        return LuaScriptInfo(
+            script = INCRE_IF_GT_THAN_AND_EXIST,
+            keys = listOf(key),
+            values = listOf(incre.toString(), default.toString()).toTypedArray(),
+        )
+    }
 }

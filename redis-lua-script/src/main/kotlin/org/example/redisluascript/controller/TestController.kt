@@ -1,8 +1,10 @@
 package org.example.redisluascript.controller
 
 import org.example.redisluascript.infra.redis.RedisRepository
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
@@ -19,8 +21,20 @@ class TestController(
             true
         )
     }
-}
 
+    @GetMapping("/incre")
+    fun increTest(
+        @RequestParam("key") key: String,
+        @RequestParam("value") value: Int,
+        @RequestParam("default") default: Int,
+    ) {
+        redisRepository.increIfGtDefault(
+            key,
+            value,
+            default
+        )
+    }
+}
 
 data class DataSaveRequest(
     val redisKey: String,
