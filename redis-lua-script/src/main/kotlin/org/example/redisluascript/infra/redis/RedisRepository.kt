@@ -2,12 +2,14 @@ package org.example.redisluascript.infra.redis
 
 import org.slf4j.LoggerFactory
 import org.springframework.data.redis.core.RedisTemplate
+import org.springframework.data.redis.core.StringRedisTemplate
 import org.springframework.stereotype.Repository
 import java.time.Duration
 
 @Repository
 class RedisRepository(
     private val redisTemplate: RedisTemplate<String, String>,
+    private val stringRedisTemplate: StringRedisTemplate,
 ) {
 
     companion object {
@@ -35,6 +37,20 @@ class RedisRepository(
             *scriptInfo.values
         ).also {
             log.info("result: $it")
+        }
+    }
+
+    fun increIfGtList(key: List<String>, inventories: List<Int>): List<String> {
+        val scriptInfo = LuaScriptCreator.increIfGtThanAndReturnData(
+            key,
+            inventories
+        )
+        return redisTemplate.execute(
+            scriptInfo.script,
+            scriptInfo.keys,
+            *scriptInfo.values
+        ).let {
+            it.map { item -> item as String }
         }
     }
 }

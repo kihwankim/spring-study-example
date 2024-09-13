@@ -48,7 +48,7 @@ object LuaScriptCreator {
         )
     }
 
-    private val INCRE_IF_GT_THAN_AND_EXIST = DefaultRedisScript<String>(
+    private val INCRE_IF_GT_THAN_AND_EXIST = DefaultRedisScript(
         """
             local key = KEYS[1]        -- 조회할 Redis 키
             local A = tonumber(ARGV[1])  -- 비교할 값 A (숫자)
@@ -82,6 +82,36 @@ object LuaScriptCreator {
             script = INCRE_IF_GT_THAN_AND_EXIST,
             keys = listOf(key),
             values = listOf(incre.toString(), default.toString()).toTypedArray(),
+        )
+    }
+
+    private val DECREASE_LUA_SCRIPT = DefaultRedisScript(
+        """
+                -- increaseIfExist.lua
+                local result = {}
+
+                for i, key in pairs(KEYS) do
+                    local inventory = redis.call('GET', key)
+                    if inventory == false then -- nil case
+                        table.insert(result, key)
+                    elseif (tonumber(inventory) + tonumber(ARGV[i])) < 0 then
+                        table.insert(result, 'FAIL::' .. key)
+                    else
+                        -- redis에 재고 정보가 존재하면 재고 수량을 더한다.
+                        redis.call('INCRBY', key, tonumber(ARGV[i]))
+                    end
+                end
+
+                return result
+            """.trimIndent(),
+        List::class.java
+    )
+
+    fun increIfGtThanAndReturnData(keys: List<String>, incre: List<Int>): LuaScriptInfo<List<*>> {
+        return LuaScriptInfo(
+            script = DECREASE_LUA_SCRIPT,
+            keys = keys,
+            values = incre.map { it.toString() }.toTypedArray()
         )
     }
 }

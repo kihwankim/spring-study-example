@@ -34,6 +34,14 @@ class TestController(
             default
         )
     }
+
+    @PostMapping("/incre-all")
+    fun increTestAll(
+        @RequestBody body: IncreaseRequest,
+    ) = redisRepository.increIfGtList(
+        body.items.map { it.key },
+        body.items.map { it.value },
+    )
 }
 
 data class DataSaveRequest(
@@ -45,4 +53,13 @@ data class DataSaveRequest(
 data class DataSaveItemRequest(
     val key: String,
     val value: String,
+)
+
+data class IncreaseRequest(
+    val items: List<IncreRequestItem>,
+)
+
+data class IncreRequestItem(
+    val key: String,
+    val value: Int,
 )
