@@ -42,6 +42,15 @@ class TestController(
         body.items.map { it.key },
         body.items.map { it.value },
     )
+
+    @PostMapping("/incre-all-loop")
+    fun increTestAllLoop(
+        @RequestBody body: IncreaseRequest,
+    ) = redisRepository.loopLuaScript(
+        keys = body.items.map { it.key },
+        incrementQtyValue = body.items.map { it.value.toString() },
+        initQtyValue = body.items.map { (it.init ?: 100).toString() },
+    )
 }
 
 data class DataSaveRequest(
@@ -62,4 +71,5 @@ data class IncreaseRequest(
 data class IncreRequestItem(
     val key: String,
     val value: Int,
+    val init: Int? = null,
 )
