@@ -22,6 +22,15 @@ class OrderController(
         orderService.addNewLog(id, type)
     }
 
+    @GetMapping("/api/v1/orders/{id}/new-not-cascade-log")
+    fun addNotCascadeNewLog(
+        @PathVariable id: Long,
+        @RequestParam type: OrderEventLogType,
+        @RequestParam(defaultValue = "false") isUpdatedAt: Boolean
+    ) {
+        orderService.addNewNotCascadeLog(id, type, isUpdatedAt)
+    }
+
     @GetMapping("/api/v1/orders/{id}/change-name")
     fun changeName(@PathVariable id: Long, @RequestParam name: String) {
         orderService.changeName(id, name)

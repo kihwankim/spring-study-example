@@ -9,6 +9,7 @@ import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
+import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
 import jakarta.persistence.Version
 
@@ -25,6 +26,8 @@ class OrderJpaEntity(
     val version: Long = 0L,
     @Embedded
     val logs: OrderEventLogsEmbedded = OrderEventLogsEmbedded(),
+    @OneToMany(mappedBy = "order")
+    var notCascadeLogs: MutableList<OrderNotCascadeLogJpaEnity> = mutableListOf()
 ) : BaseTimeEntity() {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -42,5 +45,15 @@ class OrderJpaEntity(
             this,
             type
         )
+    }
+
+    fun addNewNotCascadeLog(
+        data: OrderNotCascadeLogJpaEnity,
+        isUpdatedAt: Boolean
+    ) {
+        notCascadeLogs.add(data)
+        if (isUpdatedAt) {
+            updateNew()
+        }
     }
 }
