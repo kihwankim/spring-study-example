@@ -5,7 +5,7 @@ spring:
     show-sql: true
     open-in-view: false
     hibernate:
-      ddl-auto: none
+      ddl-auto: create-drop
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
@@ -21,6 +21,6 @@ spring:
       driver-class-name: com.mysql.cj.jdbc.Driver
       username: root
       password: root
-      jdbc-url: jdbc:mysql://localhost:3306/orders?serverTimezone=Asia/Seoul
+      jdbc-url: jdbc:mysql://localhost:3306/test?serverTimezone=Asia/Seoul
       connection-timeout: 5000
       pool-name: Spring-HikariPool
