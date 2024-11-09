@@ -1,0 +1,26 @@
+spring:
+  application:
+    name: spring-data-jpa-relative-example
+  jpa:
+    show-sql: true
+    open-in-view: false
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        dialect.storage_engine: innodb
+        default_batch_fetch_size: 500
+        format_sql: true
+      jakarta.persistence.lock.timeout: 2000
+      jakarta.persistence.query.timeout: 3000
+  datasource:
+    hikari:
+      maximum-pool-size: 40
+      max-lifetime: 60000
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      username: root
+      password: root
+      jdbc-url: jdbc:mysql://localhost:3306/orders?serverTimezone=Asia/Seoul
+      connection-timeout: 5000
+      pool-name: Spring-HikariPool
