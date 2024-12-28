@@ -32,7 +32,7 @@ class RestTemplateConfig(
 
     private fun createHttpRequestFactory(): ClientHttpRequestFactory {
         val connectionManager = PoolingHttpClientConnectionManagerBuilder.create()
-            .setMaxConnTotal(200) // 최대 전체 커넥션 수, default 25
+            .setMaxConnTotal(500) // 최대 전체 커넥션 수, default 25
             .setMaxConnPerRoute(200) // 동일 호스트당 최대 커넥션 수, default 5
             .build()
 
