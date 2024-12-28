@@ -26,4 +26,13 @@ class CalleeController {
                 log.info("callee call!!")
             }
     }
+
+    @GetMapping("/json")
+    fun jsonData(): Mono<TestBody> {
+        return Mono.just(TestBody(name = "owa"))
+    }
 }
+
+data class TestBody(
+    val name: String,
+)

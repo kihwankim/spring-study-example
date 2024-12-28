@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.client.ClientHttpRequestFactory
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory
+import org.springframework.http.converter.StringHttpMessageConverter
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
 import org.springframework.web.client.RestTemplate
 import org.springframework.web.client.support.RestTemplateAdapter
@@ -25,7 +26,10 @@ class RestTemplateConfig(
     fun restTemplate(): RestTemplate {
         return restTemplateBuilder
             .customizers(observationRestTemplateCustomizer)
-            .messageConverters(MappingJackson2HttpMessageConverter(ClientConfig.DEFAULT_OBJECT_MAPPER))
+            .messageConverters(
+                StringHttpMessageConverter(Charsets.UTF_8),
+                MappingJackson2HttpMessageConverter(ClientConfig.DEFAULT_OBJECT_MAPPER),
+            )
             .requestFactory { -> createHttpRequestFactory() }
             .build()
     }

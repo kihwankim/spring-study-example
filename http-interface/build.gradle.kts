@@ -29,14 +29,23 @@ subprojects {
         plugin("kotlin-spring")
     }
 
+    dependencyManagement {
+        val springCloudDependenciesVersion = "2023.0.3"
+        imports {
+            mavenBom("org.springframework.cloud:spring-cloud-dependencies:$springCloudDependenciesVersion")
+        }
+    }
+
     dependencies {
         implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
         implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
         implementation("org.jetbrains.kotlin:kotlin-reflect")
+        implementation("org.springframework.boot:spring-boot-starter-aop")
         testImplementation("org.springframework.boot:spring-boot-starter-test")
         implementation("org.springframework.boot:spring-boot-starter-actuator")
         implementation("io.micrometer:micrometer-registry-prometheus")
         implementation("io.micrometer:micrometer-tracing-bridge-brave")
+        implementation("org.springframework.cloud:spring-cloud-starter-circuitbreaker-resilience4j")
         val kotlinLoggingVersion = "3.0.5"
         implementation("io.github.microutils:kotlin-logging-jvm:$kotlinLoggingVersion")
         testImplementation("org.springframework.boot:spring-boot-starter-test")
