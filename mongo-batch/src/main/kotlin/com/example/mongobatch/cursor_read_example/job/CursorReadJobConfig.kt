@@ -12,12 +12,15 @@ import org.springframework.batch.core.step.builder.StepBuilder
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.data.mongodb.MongoTransactionManager
+import java.util.concurrent.atomic.AtomicLong
 
 @Configuration
 class CursorReadJobConfig(
     private val jobRepository: JobRepository,
     private val mongoTransactionManager: MongoTransactionManager,
 ) {
+    val atomicLong = AtomicLong(0L)
+
     companion object {
         private val log = KotlinLogging.logger { }
         private const val JOB_NAME = "cursorReadJob"
@@ -33,8 +36,9 @@ class CursorReadJobConfig(
             .writer { chunkedItems ->
                 chunkedItems.forEach {
                     log.info("!!! ${it.cursorItem}, ${it.randomId}")
+                    atomicLong.set(atomicLong.get() + 1L)
                     if (it.cursorItem == 9219680444340982263L) {
-                        log.warn("!!! last")
+                        log.warn("!!! last ${atomicLong.get()}")
                     }
                 }
             }
