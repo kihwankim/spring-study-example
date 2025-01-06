@@ -1,2 +1,31 @@
 spring:
   application.name: mongo-batch
+  batch:
+    job:
+      enabled: true
+      name: ${job.name:NONE}
+    jdbc:
+      initialize-schema: always
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  datasource:
+    hikari:
+      maximum-pool-size: 30
+      max-lifetime: 60000
+      jdbc-url: jdbc:h2:mem:testdb;MODE=MYSQL
+      username: sa
+      password:
+      connection-timeout: 5000
+      pool-name: Spring-HikariPool
+  data:
+    mongodb:
+      uri: mongodb://root:root%21@localhost:27017,localhost:27018,localhost:27019/owa-shoppingmall?replicaSet=owa-replication-1
+      connection-pool-size: 10
+      connection-timeout: 5000
+      auto-index-creation: true
+
+logging:
+  level:
+    org.springframework.data.mongodb.core: DEBUG
