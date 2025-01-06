@@ -12,8 +12,6 @@ class CalleePureRestTeamplate(
     private val localUriBuilderFactory: UriBuilderFactory,
     private val restClientCircuitBreaker: CircuitBreaker
 ) {
-
-    @io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker(name = "restClientCircuitBreaker")
     fun callRestTemplate(): String? {
         return restClientCircuitBreaker.executeSupplier {
             restTemplate.getForEntity<String>(
