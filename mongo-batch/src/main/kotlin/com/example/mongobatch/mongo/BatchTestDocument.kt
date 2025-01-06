@@ -5,8 +5,8 @@ import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.Document
 import kotlin.random.Random
 
-@Document
-class BatchTestDocument(
+@Document("batchTest")
+data class BatchTestDocument(
     @Id
     val id: ObjectId? = null,
     val cursorItem: Long,

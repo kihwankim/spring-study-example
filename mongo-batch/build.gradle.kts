@@ -18,6 +18,10 @@ repositories {
     mavenCentral()
 }
 
+allOpen {
+    annotation("org.springframework.data.mongodb.core.mapping.Document")
+}
+
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-aop")
     implementation("org.springframework.boot:spring-boot-starter-batch")
