@@ -1,6 +1,6 @@
 package com.example.mongobatch.cursor_read_example.reader
 
-import com.example.mongobatch.lib.batch.mongo.AbstractMongoCursorItemReader
+import com.example.mongobatch.libs.batch.mongo.AbstractMongoCursorItemReader
 import com.example.mongobatch.mongo.BatchTestDocument
 import org.springframework.data.domain.Sort
 import org.springframework.data.mongodb.core.MongoTemplate
