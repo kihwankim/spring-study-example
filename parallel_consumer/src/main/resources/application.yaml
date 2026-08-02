@@ -1,3 +1,13 @@
 spring:
   application:
     name: parallel_consumer
+  config:
+    import:
+      - rds.yaml
+      - kafka.yaml
+      - monitoring.yaml
+  profiles:
+    active: dev
+  web:
+    resources:
+      add-mappings: false

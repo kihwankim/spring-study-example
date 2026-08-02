@@ -1,0 +1,33 @@
+spring:
+  kafka:
+    bootstrap-servers: localhost:9092,localhost:9093,localhost:9094
+    consumer:
+      group-id: ${kafka.phase}.${spring.application.name}.v1
+      enable-auto-commit: false
+      auto-offset-reset: latest
+
+    producer:
+      retries: 10
+
+kafka:
+  phase: ${spring.profiles.active}
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile:
+        - local
+        - integration-test
+        - test
+kafka:
+  phase: local
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: dev
+
