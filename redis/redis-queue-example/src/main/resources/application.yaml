@@ -1,3 +1,11 @@
 spring:
   application:
     name: redis-queue-example
+  data:
+    redis:
+      host: localhost
+      port: 6379
+app:
+  redis-stream:
+    key: test-data-stream
+    group: test-data-group
