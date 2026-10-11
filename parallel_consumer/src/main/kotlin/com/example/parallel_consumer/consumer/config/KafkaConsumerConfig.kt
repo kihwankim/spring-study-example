@@ -30,7 +30,7 @@ class KafkaConsumerConfig(
     ): ParallelStreamProcessor<String, String> {
         val options = ParallelConsumerOptions.builder<String, String>()
             .ordering(ParallelConsumerOptions.ProcessingOrder.KEY)
-            .retryDelayProvider { Duration.ofMinutes(1) }
+            .retryDelayProvider { Duration.ofMillis(100) }
             .maxConcurrency(5)
             .commitMode(ParallelConsumerOptions.CommitMode.PERIODIC_CONSUMER_ASYNCHRONOUS)
             .consumer(KafkaConsumer(consumerConfigs()))
