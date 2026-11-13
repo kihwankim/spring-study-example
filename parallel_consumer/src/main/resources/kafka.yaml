@@ -8,6 +8,8 @@ spring:
 
     producer:
       retries: 10
+      properties:
+        max.block.ms: 5000
 
 kafka:
   phase: ${spring.profiles.active}

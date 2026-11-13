@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import tools.jackson.databind.ObjectMapper
 import java.time.Duration
-import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.random.Random
 
@@ -88,14 +87,13 @@ class AckModeExampleController(
 ) {
     @GetMapping("/test-call")
     fun produce(@RequestParam size: Int): Map<String, Int> {
-        val sends = (1..size).map { id ->
+        (1..size).forEach { id ->
             kafkaTemplate.send(
                 ACK_MODE_TOPIC,
                 id.toString(),
                 objectMapper.writeValueAsString(AckModeExampleBody(id)),
             )
         }
-        CompletableFuture.allOf(*sends.toTypedArray()).join()
         return mapOf("produced" to size)
     }
 }
